@@ -1,14 +1,11 @@
-// ═══ ANIMAIS — rebanho, bezerros e detalhe de animal ══════════════
-// Exporta: Animais, AnimalDetailPage
-// Props de Animais:
-//   animais, setAnimais, pastos, movs, setMovs, manejos
-
+// ═══ ANIMAIS — rebanho, bezerros e pastos ══════════════════════════
 import { useState }                          from 'react'
 import { useT, PS, TM }                      from '../constants.js'
 import { TODAY, fmtD, calcIdade }            from '../utils.js'
 import { Card, Badge, Btn, Inp, Sel, Modal,
          DetailPage, Section, InfoRow,
          DeleteBtn, PgH }                    from '../ui.jsx'
+import { Pastos }                            from './Pastos.jsx'
 
 // ═══ ANIMAL DETAIL PAGE ═══════════════════════════════════════════
 export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejos, setAnimais, setMovs }) {
@@ -52,7 +49,6 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
 
   return (
     <DetailPage onBack={onBack} title={animal.ident} icon={animal.cat === 'Bezerro' ? '🐮' : animal.sexo === 'M' ? '🐂' : '🐄'} color={corTopo}>
-
       <Section title="Dados do Animal">
         <Card ch={<>
           <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
@@ -129,7 +125,6 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
       <DeleteBtn label={animal.ident} onConfirm={deleteAnimal} />
       <div style={{ height: 20 }} />
 
-      {/* Modal mover pasto */}
       <Modal open={moveM} onClose={() => setMoveM(false)} title={`Mover ${animal.ident}`}>
         <div style={{ background: T.gPale, borderRadius: 12, padding: 11, marginBottom: 12 }}>
           <div style={{ fontWeight: 700, color: T.text }}>{animal.ident}</div>
@@ -142,7 +137,6 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
         <Btn l="✅ Confirmar" onClick={mover} dis={!dest} />
       </Modal>
 
-      {/* Modal editar animal */}
       <Modal open={editM} onClose={() => setEditM(false)} title="✏️ Editar Animal">
         <Sel label="Categoria" value={ef.cat} onChange={v => setEf(e => ({ ...e, cat: v }))} opts={['Boi', 'Vaca', 'Novilha', 'Bezerro', 'Touro'].map(v => ({ v, l: v }))} />
         <div style={{ marginBottom: 12 }}>
@@ -175,12 +169,12 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
   )
 }
 
-// ═══ ANIMAIS (lista rebanho + bezerros) ════════════════════════════
-export function Animais({ animais, setAnimais, pastos, movs, setMovs, manejos }) {
+// ═══ ANIMAIS (lista rebanho, bezerros e pastos) ════════════════════
+export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs, sal, setSal, manejos }) {
   const T = useT()
-  const [aba,         setAba]         = useState('rebanho')
-  const [addM,        setAddM]        = useState(false)
-  const [busca,       setBusca]       = useState('')
+  const [aba,          setAba]         = useState('rebanho')
+  const [addM,         setAddM]        = useState(false)
+  const [busca,        setBusca]       = useState('')
   const [detailAnimal, setDetailAnimal] = useState(null)
 
   const vacas   = animais.filter(a => a.status === 'ativo' && (a.cat === 'Vaca' || a.cat === 'Novilha'))
@@ -210,6 +204,12 @@ export function Animais({ animais, setAnimais, pastos, movs, setMovs, manejos })
     return <AnimalDetailPage animal={fresh} onBack={() => setDetailAnimal(null)} animais={animais} pastos={pastos} movs={movs} manejos={manejos} setAnimais={setAnimais} setMovs={setMovs} />
   }
 
+  const TABS = [
+    { id: 'rebanho',  label: `🐄 Rebanho (${rebanho.length})`   },
+    { id: 'bezerros', label: `🐮 Bezerros (${bezerros.length})`  },
+    { id: 'pastos',   label: `🌿 Pastos (${pastos.length})`      },
+  ]
+
   return (
     <div style={{ paddingBottom: 100 }}>
       <PgH sub="Gestão de" title="Animais 🐄" extra={
@@ -220,104 +220,112 @@ export function Animais({ animais, setAnimais, pastos, movs, setMovs, manejos })
       } />
 
       {/* Tabs */}
-      <div style={{ display: 'flex', background: T.gDark, padding: '0 16px', gap: 4 }}>
-        {[['rebanho', `🐄 Rebanho (${rebanho.length})`], ['bezerros', `🐮 Bezerros (${bezerros.length})`]].map(([id, lbl]) => (
+      <div style={{ display: 'flex', background: T.gDark, padding: '0 16px', gap: 4, overflowX: 'auto' }}>
+        {TABS.map(({ id, label }) => (
           <button key={id} onClick={() => setAba(id)} style={{
-            flex: 1, border: 'none', background: 'none',
+            flexShrink: 0, border: 'none', background: 'none',
             color: aba === id ? '#FFF' : 'rgba(255,255,255,0.45)',
             fontWeight: aba === id ? 600 : 400, fontSize: 13,
-            padding: '13px 0', cursor: 'pointer',
-            borderBottom: aba === id ? '2.5px solid #FFF' : '2.5px solid transparent'
-          }}>{lbl}</button>
+            padding: '13px 8px', cursor: 'pointer',
+            borderBottom: aba === id ? '2.5px solid #FFF' : '2.5px solid transparent',
+            whiteSpace: 'nowrap'
+          }}>{label}</button>
         ))}
       </div>
 
-      <div style={{ padding: '12px 14px 0' }}>
-        {/* Busca */}
-        <input value={busca} onChange={e => setBusca(e.target.value)} placeholder="🔍 Buscar..."
-          style={{ width: '100%', border: `1.5px solid ${T.border}`, borderRadius: 12, padding: '11px 13px', fontSize: 14, outline: 'none', background: T.card, color: T.text, marginBottom: 11 }}
+      {/* Aba Pastos — renderiza o componente Pastos completo */}
+      {aba === 'pastos' && (
+        <Pastos
+          pastos={pastos}   setPastos={setPastos}
+          animais={animais} sal={sal} setSal={setSal}
+          manejos={manejos} movs={movs}
         />
+      )}
 
-        {/* Aba Rebanho */}
-        {aba === 'rebanho' && <>
-          {filtrR.map(a => (
-            <Card key={a.id} onClick={() => setDetailAnimal(a)} ch={<>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', gap: 11, alignItems: 'center' }}>
-                  <div style={{ fontSize: 32, flexShrink: 0 }}>{cI[a.cat] || '🐄'}</div>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 15, color: T.text }}>{a.ident}</div>
-                    <div style={{ fontSize: 12, color: T.gray }}>{a.cat}{a.raca ? ` · ${a.raca}` : ''} · Lote {a.lote}</div>
-                    <div style={{ fontSize: 11, color: T.green, marginTop: 2 }}>📍 {nomePasto(a.pastoId)}</div>
-                    {a.peso > 0 && <div style={{ fontSize: 11, color: T.gray }}>⚖️ {a.peso}kg</div>}
-                  </div>
-                </div>
-                <span style={{ color: T.gray, fontSize: 18 }}>›</span>
-              </div>
-              {a.obs && <div style={{ fontSize: 11, color: T.orange, marginTop: 5 }}>📝 {a.obs}</div>}
-            </>} />
-          ))}
-          {filtrR.length === 0 && busca && <div style={{ textAlign: 'center', padding: 20, color: T.gray }}>Nenhum resultado</div>}
-        </>}
+      {/* Abas Rebanho e Bezerros */}
+      {aba !== 'pastos' && (
+        <div style={{ padding: '12px 14px 0' }}>
+          <input value={busca} onChange={e => setBusca(e.target.value)} placeholder="🔍 Buscar..."
+            style={{ width: '100%', border: `1.5px solid ${T.border}`, borderRadius: 12, padding: '11px 13px', fontSize: 14, outline: 'none', background: T.card, color: T.text, marginBottom: 11 }}
+          />
 
-        {/* Aba Bezerros */}
-        {aba === 'bezerros' && <>
-          {bezerros.length > 0 && (
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 7, marginBottom: 12 }}>
-              {[['Total', bezerros.length, T.text, T.bg], ['♂ Machos', bezerros.filter(b => b.sexo === 'M').length, T.blueMid, T.bluePale], ['♀ Fêmeas', bezerros.filter(b => b.sexo === 'F').length, T.pinkDark, T.pinkPale]].map(([l, v, c, bg]) => (
-                <div key={l} style={{ background: bg, borderRadius: 12, padding: '9px 6px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: c }}>{v}</div>
-                  <div style={{ fontSize: 10, color: c, fontWeight: 700 }}>{l}</div>
-                </div>
-              ))}
-            </div>
-          )}
-          {bezOrd.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '36px 20px', color: T.gray }}>
-              <div style={{ fontSize: 44 }}>🐮</div>
-              <div style={{ fontSize: 15, fontWeight: 600, marginTop: 10 }}>Nenhum bezerro</div>
-            </div>
-          )}
-          {bezOrd.map(b => {
-            const id   = calcIdade(b.dataNasc)
-            const fase = !id ? null : id.dias < 30 ? 'Neonato' : id.dias < 90 ? 'Lactente' : id.dias < 210 ? 'Desmame' : 'Recria'
-            const mae  = b.maeId ? animais.find(a => a.id === b.maeId) : null
-            return (
-              <div key={b.id} onClick={() => setDetailAnimal(b)} style={{ background: T.card, borderRadius: 16, marginBottom: 11, boxShadow: `0 2px 8px ${T.shadow}`, overflow: 'hidden', cursor: 'pointer' }}>
-                <div style={{ background: b.sexo === 'M' ? `linear-gradient(135deg,${T.blueMid},${T.bLight})` : `linear-gradient(135deg,${T.pinkDark},${T.pink})`, padding: '7px 13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                    <span style={{ fontSize: 20 }}>🐮</span>
-                    <span style={{ color: '#FFF', fontWeight: 800, fontSize: 14 }}>{b.ident}</span>
-                    <span style={{ background: 'rgba(255,255,255,0.25)', color: '#FFF', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 700 }}>{b.sexo === 'M' ? '♂' : '♀'}</span>
-                  </div>
-                  {fase && <span style={{ background: 'rgba(255,255,255,0.2)', color: '#FFF', borderRadius: 20, padding: '1px 9px', fontSize: 10, fontWeight: 700 }}>{fase}</span>}
-                </div>
-                <div style={{ padding: '10px 13px' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 7 }}>
-                    <div style={{ background: T.bg, borderRadius: 9, padding: '7px 9px' }}>
-                      <div style={{ fontSize: 9, color: T.gray, fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>⏱ Idade</div>
-                      {id ? <div style={{ fontWeight: 800, color: id.cor, fontSize: 14 }}>{id.label}</div> : <div style={{ color: T.gray, fontSize: 12 }}>—</div>}
-                      {b.dataNasc && <div style={{ fontSize: 10, color: T.gray }}>📅 {fmtD(b.dataNasc)}</div>}
-                    </div>
-                    <div style={{ background: T.bg, borderRadius: 9, padding: '7px 9px' }}>
-                      <div style={{ fontSize: 9, color: T.gray, fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>🐄 Mãe</div>
-                      {mae ? <><div style={{ fontWeight: 700, color: T.text, fontSize: 13 }}>{mae.ident}</div><div style={{ fontSize: 10, color: T.gray }}>{mae.raca || '—'}</div></> : <div style={{ color: T.gray, fontSize: 12 }}>—</div>}
+          {aba === 'rebanho' && <>
+            {filtrR.map(a => (
+              <Card key={a.id} onClick={() => setDetailAnimal(a)} ch={<>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', gap: 11, alignItems: 'center' }}>
+                    <div style={{ fontSize: 32, flexShrink: 0 }}>{cI[a.cat] || '🐄'}</div>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: T.text }}>{a.ident}</div>
+                      <div style={{ fontSize: 12, color: T.gray }}>{a.cat}{a.raca ? ` · ${a.raca}` : ''} · Lote {a.lote}</div>
+                      <div style={{ fontSize: 11, color: T.green, marginTop: 2 }}>📍 {nomePasto(a.pastoId)}</div>
+                      {a.peso > 0 && <div style={{ fontSize: 11, color: T.gray }}>⚖️ {a.peso}kg</div>}
                     </div>
                   </div>
-                  <div style={{ fontSize: 11, color: T.green }}>📍 {pastos.find(p => p.id === b.pastoId)?.nome || 'Sem pasto'}{b.peso > 0 ? ` · ⚖️ ${b.peso}kg` : ''}</div>
+                  <span style={{ color: T.gray, fontSize: 18 }}>›</span>
                 </div>
+                {a.obs && <div style={{ fontSize: 11, color: T.orange, marginTop: 5 }}>📝 {a.obs}</div>}
+              </>} />
+            ))}
+            {filtrR.length === 0 && busca && <div style={{ textAlign: 'center', padding: 20, color: T.gray }}>Nenhum resultado</div>}
+          </>}
+
+          {aba === 'bezerros' && <>
+            {bezerros.length > 0 && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 7, marginBottom: 12 }}>
+                {[['Total', bezerros.length, T.text, T.bg], ['♂ Machos', bezerros.filter(b => b.sexo === 'M').length, T.blueMid, T.bluePale], ['♀ Fêmeas', bezerros.filter(b => b.sexo === 'F').length, T.pinkDark, T.pinkPale]].map(([l, v, c, bg]) => (
+                  <div key={l} style={{ background: bg, borderRadius: 12, padding: '9px 6px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 20, fontWeight: 800, color: c }}>{v}</div>
+                    <div style={{ fontSize: 10, color: c, fontWeight: 700 }}>{l}</div>
+                  </div>
+                ))}
               </div>
-            )
-          })}
-        </>}
+            )}
+            {bezOrd.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '36px 20px', color: T.gray }}>
+                <div style={{ fontSize: 44 }}>🐮</div>
+                <div style={{ fontSize: 15, fontWeight: 600, marginTop: 10 }}>Nenhum bezerro</div>
+              </div>
+            )}
+            {bezOrd.map(b => {
+              const id   = calcIdade(b.dataNasc)
+              const fase = !id ? null : id.dias < 30 ? 'Neonato' : id.dias < 90 ? 'Lactente' : id.dias < 210 ? 'Desmame' : 'Recria'
+              const mae  = b.maeId ? animais.find(a => a.id === b.maeId) : null
+              return (
+                <div key={b.id} onClick={() => setDetailAnimal(b)} style={{ background: T.card, borderRadius: 16, marginBottom: 11, boxShadow: `0 2px 8px ${T.shadow}`, overflow: 'hidden', cursor: 'pointer' }}>
+                  <div style={{ background: b.sexo === 'M' ? `linear-gradient(135deg,${T.blueMid},${T.bLight})` : `linear-gradient(135deg,${T.pinkDark},${T.pink})`, padding: '7px 13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                      <span style={{ fontSize: 20 }}>🐮</span>
+                      <span style={{ color: '#FFF', fontWeight: 800, fontSize: 14 }}>{b.ident}</span>
+                      <span style={{ background: 'rgba(255,255,255,0.25)', color: '#FFF', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 700 }}>{b.sexo === 'M' ? '♂' : '♀'}</span>
+                    </div>
+                    {fase && <span style={{ background: 'rgba(255,255,255,0.2)', color: '#FFF', borderRadius: 20, padding: '1px 9px', fontSize: 10, fontWeight: 700 }}>{fase}</span>}
+                  </div>
+                  <div style={{ padding: '10px 13px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 7, marginBottom: 7 }}>
+                      <div style={{ background: T.bg, borderRadius: 9, padding: '7px 9px' }}>
+                        <div style={{ fontSize: 9, color: T.gray, fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>⏱ Idade</div>
+                        {id ? <div style={{ fontWeight: 800, color: id.cor, fontSize: 14 }}>{id.label}</div> : <div style={{ color: T.gray, fontSize: 12 }}>—</div>}
+                        {b.dataNasc && <div style={{ fontSize: 10, color: T.gray }}>📅 {fmtD(b.dataNasc)}</div>}
+                      </div>
+                      <div style={{ background: T.bg, borderRadius: 9, padding: '7px 9px' }}>
+                        <div style={{ fontSize: 9, color: T.gray, fontWeight: 700, textTransform: 'uppercase', marginBottom: 2 }}>🐄 Mãe</div>
+                        {mae ? <><div style={{ fontWeight: 700, color: T.text, fontSize: 13 }}>{mae.ident}</div><div style={{ fontSize: 10, color: T.gray }}>{mae.raca || '—'}</div></> : <div style={{ color: T.gray, fontSize: 12 }}>—</div>}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 11, color: T.green }}>📍 {pastos.find(p => p.id === b.pastoId)?.nome || 'Sem pasto'}{b.peso > 0 ? ` · ⚖️ ${b.peso}kg` : ''}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </>}
 
-        <Btn l={`+ Cadastrar ${aba === 'bezerros' ? 'Bezerro' : 'Animal'}`} onClick={() => { setForm({ ...eF, cat: aba === 'bezerros' ? 'Bezerro' : 'Boi' }); setAddM(true) }} />
-      </div>
+          <Btn l={`+ Cadastrar ${aba === 'bezerros' ? 'Bezerro' : 'Animal'}`} onClick={() => { setForm({ ...eF, cat: aba === 'bezerros' ? 'Bezerro' : 'Boi' }); setAddM(true) }} />
+        </div>
+      )}
 
-      {/* Modal cadastrar animal */}
       <Modal open={addM} onClose={() => setAddM(false)} title="Cadastrar Animal">
         <Sel label="Categoria" value={form.cat} onChange={v => setForm(f => ({ ...f, cat: v }))} opts={['Boi', 'Vaca', 'Novilha', 'Bezerro', 'Touro'].map(v => ({ v, l: v }))} />
-
         {form.cat === 'Bezerro' && (
           <div style={{ background: T.pinkPale, borderRadius: 12, padding: 12, marginBottom: 12 }}>
             <div style={{ fontWeight: 700, color: T.pinkDark, fontSize: 12, marginBottom: 10 }}>🐮 Dados do Bezerro</div>
@@ -333,7 +341,6 @@ export function Animais({ animais, setAnimais, pastos, movs, setMovs, manejos })
             />
           </div>
         )}
-
         {form.cat !== 'Bezerro' && (
           <div style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.gray, marginBottom: 7, textTransform: 'uppercase' }}>Sexo</label>
@@ -344,7 +351,6 @@ export function Animais({ animais, setAnimais, pastos, movs, setMovs, manejos })
             </div>
           </div>
         )}
-
         <Inp label="Identificador *" value={form.ident} onChange={v => setForm(f => ({ ...f, ident: v }))} placeholder="Ex: BOI-023" />
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <Inp label="Raça" value={form.raca} onChange={v => setForm(f => ({ ...f, raca: v }))} placeholder="Nelore" />

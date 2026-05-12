@@ -1,12 +1,4 @@
 // ═══ APP — raiz da aplicação ══════════════════════════════════════
-// Responsabilidades:
-//   • ThemeContext provider (TC)
-//   • Boot assíncrono (carrega dados do Supabase em sequência)
-//   • mk() — wrapper de setState que aciona o saver Supabase automaticamente
-//   • Roteamento por `page` state
-//   • GlobalModals via `globalAction` state
-//   • BottomNav com badge de bezerros novos
-
 import { useState, useEffect }           from 'react'
 import { TC, LIGHT, DARK }               from './constants.js'
 import { calcIdade }                     from './utils.js'
@@ -19,7 +11,6 @@ import {
   saveAdubacoes, saveCfg, dbReset
 }                                        from './storage.js'
 import { Dashboard }                     from './pages/Dashboard.jsx'
-import { Pastos }                        from './pages/Pastos.jsx'
 import { Animais }                       from './pages/Animais.jsx'
 import { Financeiro }                    from './pages/Financeiro.jsx'
 import { HistoricoManejo }               from './pages/Historico.jsx'
@@ -28,17 +19,14 @@ import { GlobalModals }                  from './pages/GlobalModals.jsx'
 import { Ferramentas }                   from './tools/Ferramentas.jsx'
 
 export function App() {
-  // ── Tema ────────────────────────────────────────────────────────
   const [dark, setDark] = useState(false)
   const T = dark ? DARK : LIGHT
   useEffect(() => { document.body.style.background = T.bg }, [T.bg])
 
-  // ── Roteamento ───────────────────────────────────────────────────
   const [page,         setPage] = useState('home')
   const [globalAction, setGA]   = useState(null)
   const [loading,   setLoading] = useState(true)
 
-  // ── Estado das entidades (raw — sem instrumentação) ──────────────
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
   const [fin,       setF]   = useState([])
@@ -47,8 +35,6 @@ export function App() {
   const [manejos,   setMj]  = useState([])
   const [adubacoes, setAdu] = useState([])
 
-  // ── mk() — instrumenta cada setter para auto-salvar no Supabase ──
-  // Uso: setPastos(fn | value) — idêntico ao setState padrão
   const SAVERS = {
     pastos: savePastos, animais: saveAnimais,
     fin: saveFin, movs: saveMovs, sal: saveSal,
@@ -60,7 +46,6 @@ export function App() {
     return next
   })
 
-  // Setters instrumentados (usados por todas as páginas)
   const setPastos    = mk('pastos',    setP)
   const setAnimais   = mk('animais',   setA)
   const setFin       = mk('fin',       setF)
@@ -69,7 +54,6 @@ export function App() {
   const setManejos   = mk('manejos',   setMj)
   const setAdubacoes = mk('adubacoes', setAdu)
 
-  // ── Reset completo ───────────────────────────────────────────────
   const handleReset = () => {
     setP([]); setA([]); setF([]); setMv([])
     setSl([]); setMj([]); setAdu([])
@@ -77,15 +61,11 @@ export function App() {
     setPage('home')
   }
 
-  // ── Boot: carrega dados do Supabase em sequência ─────────────────
   useEffect(() => {
     ;(async () => {
       try {
-        // 1. Configuração (dark mode)
         const cfg = await loadCfg()
         if (cfg?.dark !== undefined) setDark(cfg.dark)
-
-        // 2. Entidades — carregadas em sequência para respeitar dependências
         const loaders = [
           [loadPastos,    setP,   'pastos'],
           [loadAnimais,   setA,   'animais'],
@@ -95,7 +75,6 @@ export function App() {
           [loadManejos,   setMj,  'manejos'],
           [loadAdubacoes, setAdu, 'adubacoes'],
         ]
-
         for (const [loader, setter, name] of loaders) {
           const v = await loader()
           if (v !== null) {
@@ -105,7 +84,6 @@ export function App() {
             console.warn(`⚠️ ${name}: vazio ou não encontrado no banco`)
           }
         }
-
         console.log('🌿 Sincronização completa')
       } catch (e) {
         console.error('❌ Erro crítico ao carregar do Supabase:', e)
@@ -115,23 +93,20 @@ export function App() {
     })()
   }, [])
 
-  // ── Badge de bezerros novos (< 7 dias) ──────────────────────────
   const bezNovos = animais.filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
     a.dataNasc && calcIdade(a.dataNasc)?.dias < 7
   ).length
 
-  // ── Itens da BottomNav ───────────────────────────────────────────
+  // Pastos removido da nav — agora é aba interna de Animais
   const NAV = [
     { id: 'home',        icon: '🏠', label: 'Home'        },
-    { id: 'pastos',      icon: '🌿', label: 'Pastos'      },
     { id: 'animais',     icon: '🐄', label: 'Animais'     },
     { id: 'financeiro',  icon: '💰', label: 'Caixa'       },
     { id: 'historico',   icon: '📋', label: 'Manejo'      },
     { id: 'ferramentas', icon: '🧮', label: 'Ferramentas' },
   ]
 
-  // ── Loading screen ───────────────────────────────────────────────
   if (loading) return (
     <div style={{
       minHeight: '100vh',
@@ -164,7 +139,6 @@ export function App() {
     </div>
   )
 
-  // ── App shell ────────────────────────────────────────────────────
   return (
     <TC.Provider value={T}>
       <div style={{
@@ -174,31 +148,26 @@ export function App() {
         position: 'relative', overflowX: 'hidden'
       }}>
 
-        {/* ── Páginas ── */}
         {page === 'home'        && <Dashboard
             pastos={pastos} animais={animais} fin={fin} sal={sal}
             setPage={setPage}
-            setAction={a => a === 'settings'     ? setPage('settings')
-                          : a === 'ferramentas'  ? setPage('ferramentas')
+            setAction={a => a === 'settings'    ? setPage('settings')
+                          : a === 'ferramentas' ? setPage('ferramentas')
                           : setGA(a)}
           />}
 
-        {page === 'pastos'      && <Pastos
-            pastos={pastos} setPastos={setPastos}
-            animais={animais} sal={sal} setSal={setSal}
-            manejos={manejos} movs={movs}
-          />}
-
         {page === 'animais'     && <Animais
-            animais={animais} setAnimais={setAnimais}
-            pastos={pastos} movs={movs} setMovs={setMovs}
+            animais={animais}   setAnimais={setAnimais}
+            pastos={pastos}     setPastos={setPastos}
+            movs={movs}         setMovs={setMovs}
+            sal={sal}           setSal={setSal}
             manejos={manejos}
           />}
 
         {page === 'financeiro'  && <Financeiro fin={fin} setFin={setFin} />}
 
         {page === 'historico'   && <HistoricoManejo
-            movs={movs} setMovs={setMovs}
+            movs={movs}       setMovs={setMovs}
             manejos={manejos} setManejos={setManejos}
             animais={animais} fin={fin} setFin={setFin}
             pastos={pastos}
@@ -214,22 +183,20 @@ export function App() {
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}
-            movs={movs} manejos={manejos}
+            movs={movs}     manejos={manejos}
             animais={animais} fin={fin}
-            pastos={pastos} sal={sal}
+            pastos={pastos}   sal={sal}
           />}
 
-        {/* ── GlobalModals (ações rápidas) ── */}
         {globalAction && <GlobalModals
             action={globalAction}
             onClose={() => setGA(null)}
-            pastos={pastos} animais={animais}
+            pastos={pastos}   animais={animais}
             setAnimais={setAnimais}
             setSal={setSal}
             setMovs={setMovs}
           />}
 
-        {/* ── BottomNav ── */}
         {page !== 'settings' && (
           <div style={{
             position: 'fixed', bottom: 0,
@@ -256,7 +223,6 @@ export function App() {
                     position: 'relative'
                   }}
                 >
-                  {/* Badge bezerros novos */}
                   {n.id === 'animais' && bezNovos > 0 && (
                     <div style={{
                       position: 'absolute', top: 6, left: '55%',
@@ -268,15 +234,12 @@ export function App() {
                       border: '2px solid ' + T.bg
                     }}>{bezNovos}</div>
                   )}
-
                   <span style={{ fontSize: 21, lineHeight: 1, filter: isActive ? 'none' : 'grayscale(40%) opacity(0.6)' }}>
                     {n.icon}
                   </span>
                   <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400, color: isActive ? T.green : T.gray, letterSpacing: '-0.1px', lineHeight: 1 }}>
                     {n.label}
                   </span>
-
-                  {/* Indicador ativo */}
                   {isActive && (
                     <div style={{
                       position: 'absolute', bottom: 0,
