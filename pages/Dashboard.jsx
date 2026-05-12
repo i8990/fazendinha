@@ -1,13 +1,4 @@
 // ═══ DASHBOARD — tela principal ═══════════════════════════════════
-// Props:
-//   pastos       : array
-//   animais      : array
-//   sal          : array
-//   fin          : array
-//   cfg          : object
-//   setPage()    : navega para outra página
-//   setAction()  : abre um GlobalModal ('sal' | 'nascimento' | 'pasto')
-
 import { useT }           from '../constants.js'
 import { TODAY, calcSal, calcIdade, fmtR } from '../utils.js'
 import { Card, Badge }    from '../ui.jsx'
@@ -17,50 +8,54 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
   const T = useT()
 
   const ativos    = animais.filter(a => a.status === 'ativo')
-  const bezRecent = ativos.filter(a => {
-    if (a.cat !== 'Bezerro' || !a.dataNasc) return false
+  const adultos   = ativos.filter(a => a.cat !== 'Bezerro')
+  const bezerros  = ativos.filter(a => a.cat === 'Bezerro')
+  const bezRecent = bezerros.filter(a => {
+    if (!a.dataNasc) return false
     const ms = Date.now() - new Date(a.dataNasc + 'T12:00')
     return ms >= 0 && ms < 30 * 86400000
   })
 
-  // Receita e despesa do mês atual
-  const mes    = TODAY.slice(0, 7)
+  const mes     = TODAY.slice(0, 7)
   const receita = fin.filter(f => f.tipo === 'receita' && f.data?.startsWith(mes)).reduce((s, f) => s + (+f.valor || 0), 0)
   const despesa = fin.filter(f => f.tipo === 'despesa' && f.data?.startsWith(mes)).reduce((s, f) => s + (+f.valor || 0), 0)
 
-  // Alertas críticos
+  // Alertas críticos agrupados
   const alertas = []
-
-  // Animais sem pasto
   const semPasto = ativos.filter(a => !a.pastoId)
   if (semPasto.length) alertas.push({ icon: '🚜', msg: `${semPasto.length} animal(is) sem pasto`, cor: T.orange, page: 'animais' })
-
-  // Sal em alerta
   pastos.filter(p => p.status === 'ocupado').forEach(p => {
     const an = ativos.filter(a => a.pastoId === p.id).length
     if (an === 0) return
     const st = calcSal(p.id, an, sal, cfg?.taxaSal || 225)
     if (st.alerta) alertas.push({ icon: '🧂', msg: `Sal baixo: ${p.nome}`, cor: T.red, page: 'pastos' })
   })
-
-  // Bezerros recentes
-  if (bezRecent.length) alertas.push({ icon: '🐣', msg: `${bezRecent.length} bezerro(s) nos últimos 30 dias`, cor: T.green, page: 'animais' })
-
-  // Pastos degradados
   const degradados = pastos.filter(p => p.status === 'degradado')
   if (degradados.length) alertas.push({ icon: '🌱', msg: `${degradados.length} pasto(s) degradado(s)`, cor: T.orange, page: 'pastos' })
 
-  // Quick-actions
   const QA = [
-    { icon: '🧂', l: 'Sal Mineral',  action: 'sal'        },
     { icon: '🐮', l: 'Nascimento',   action: 'nascimento' },
-    { icon: '🌿', l: 'Mover Pasto',  action: 'pasto'      }
+    { icon: '🧂', l: 'Sal Mineral',  action: 'sal'        },
+    { icon: '💸', l: 'Despesa',      action: 'despesa'    },
   ]
 
   return (
     <div>
       {/* Header */}
-      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, padding: '22px 20px 36px' }}>
+      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, padding: '22px 20px 36px', position: 'relative' }}>
+        {/* Settings icon */}
+        <button
+          onClick={() => setPage('settings')}
+          style={{
+            position: 'absolute', top: 20, right: 18,
+            background: 'rgba(255,255,255,0.15)',
+            border: 'none', borderRadius: 12,
+            width: 36, height: 36,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', fontSize: 18
+          }}
+        >⚙️</button>
+
         <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
           {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
         </div>
@@ -70,6 +65,18 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         {cfg?.nomeFazenda && (
           <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, marginTop: 2 }}>{cfg.nomeFazenda}</div>
         )}
+
+        {/* Contadores discretos */}
+        <div style={{ display: 'flex', gap: 14, marginTop: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>🐄</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>{adultos.length} adultos</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>🐣</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>{bezerros.length} bezerros</span>
+          </div>
+        </div>
       </div>
 
       <div style={{ padding: '0 14px', marginTop: -18 }}>
@@ -78,9 +85,9 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         <Card ch={
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
             {[
-              { l: 'Animais', v: ativos.length,            icon: '🐄', page: 'animais' },
-              { l: 'Pastos',  v: pastos.length,            icon: '🌿', page: 'pastos'  },
-              { l: 'Pastando',v: pastos.filter(p => p.status === 'ocupado').length, icon: '✅', page: 'pastos' }
+              { l: 'Animais',  v: ativos.length,                                          icon: '🐄', page: 'animais' },
+              { l: 'Pastos',   v: pastos.length,                                          icon: '🌿', page: 'pastos'  },
+              { l: 'Pastando', v: pastos.filter(p => p.status === 'ocupado').length,      icon: '✅', page: 'pastos'  }
             ].map((k, i) => (
               <div
                 key={i}
@@ -99,31 +106,71 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
           </div>
         } />
 
-        {/* Alertas */}
+        {/* Alertas agrupados */}
         {alertas.length > 0 && (
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 8, paddingLeft: 2 }}>
-              ⚠️ Atenção
-            </div>
-            {alertas.map((al, i) => (
-              <Card
-                key={i}
-                onClick={() => setPage(al.page)}
-                ch={
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <span style={{ fontSize: 20 }}>{al.icon}</span>
-                    <span style={{ fontSize: 14, fontWeight: 600, color: al.cor, flex: 1 }}>{al.msg}</span>
-                    <span style={{ color: T.gray, fontSize: 18 }}>›</span>
+          <Card
+            ch={
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.orange, marginBottom: 10 }}>
+                  ⚠️ Atenção ({alertas.length})
+                </div>
+                {alertas.map((al, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setPage(al.page)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      paddingTop: i > 0 ? 10 : 0,
+                      borderTop: i > 0 ? `1px solid ${T.border}` : 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <span style={{ fontSize: 18 }}>{al.icon}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: al.cor, flex: 1 }}>{al.msg}</span>
+                    <span style={{ color: T.gray, fontSize: 16 }}>›</span>
                   </div>
-                }
-                style={{ marginBottom: 8, border: `1px solid ${al.cor}30` }}
-              />
-            ))}
-          </div>
+                ))}
+              </div>
+            }
+            style={{ border: `1px solid ${T.orange}30`, marginBottom: 12 }}
+          />
         )}
 
-        {/* Clima */}
-        <ClimaWidget />
+        {/* Bezerros recentes */}
+        {bezRecent.length > 0 && (
+          <Card
+            ch={
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: T.green, marginBottom: 10 }}>
+                  🐣 Bezerros recentes — últimos 30 dias
+                </div>
+                {bezRecent.map((b, i) => {
+                  const id = calcIdade(b.dataNasc)
+                  const nascDate = new Date(b.dataNasc + 'T12:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                  return (
+                    <div
+                      key={b.id}
+                      style={{
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        paddingTop: i > 0 ? 10 : 0,
+                        borderTop: i > 0 ? `1px solid ${T.border}` : 'none',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 14, color: T.text }}>{b.ident}</div>
+                        <div style={{ fontSize: 12, color: T.gray, marginTop: 2 }}>
+                          {b.sexo === 'M' ? '♂ Macho' : '♀ Fêmea'} · {b.raca || 'Sem raça'} · nasceu {nascDate}
+                        </div>
+                      </div>
+                      {id && <Badge l={id.label} c={id.cor} bg={id.cor + '22'} />}
+                    </div>
+                  )
+                })}
+              </div>
+            }
+            style={{ border: `1px solid ${T.green}30`, marginBottom: 12 }}
+          />
+        )}
 
         {/* Financeiro do mês */}
         <Card ch={
@@ -160,39 +207,21 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
               style={{
                 background: T.card,
                 border: `1px solid ${T.border}`,
-                borderRadius: 18, padding: '14px 8px',
+                borderRadius: 18, padding: '16px 8px',
                 cursor: 'pointer', textAlign: 'center',
                 boxShadow: `0 1px 6px ${T.shadow}`
               }}
             >
-              <div style={{ fontSize: 24, marginBottom: 5 }}>{q.icon}</div>
+              <div style={{ fontSize: 26, marginBottom: 6 }}>{q.icon}</div>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.text, lineHeight: 1.2 }}>{q.l}</div>
             </button>
           ))}
         </div>
 
-        {/* Bezerros recentes */}
-        {bezRecent.length > 0 && (
-          <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 8, paddingLeft: 2 }}>
-              🐣 Bezerros recentes
-            </div>
-            {bezRecent.map(b => {
-              const id = calcIdade(b.dataNasc)
-              return (
-                <Card key={b.id} ch={
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <div style={{ fontWeight: 700, color: T.text }}>{b.ident}</div>
-                      <div style={{ fontSize: 12, color: T.gray }}>{b.sexo === 'M' ? '♂ Macho' : '♀ Fêmea'} · {b.raca || 'Sem raça'}</div>
-                    </div>
-                    {id && <Badge l={id.label} c={id.cor} bg={id.cor + '22'} />}
-                  </div>
-                } />
-              )
-            })}
-          </div>
-        )}
+        {/* Clima — ao final */}
+        <div style={{ marginBottom: 100 }}>
+          <ClimaWidget />
+        </div>
 
       </div>
     </div>
