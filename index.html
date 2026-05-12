@@ -4,113 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>FazendinhaApp v11.0</title>
-
-  <!-- Leaflet CSS (MapaMedicao) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
-
-  <!-- ═══ ESTILOS GLOBAIS ══════════════════════════════════════════ -->
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-    /* Reset mínimo */
-    *, *::before, *::after {
-      margin: 0; padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      overscroll-behavior: none;
-      font-family: 'SF Pro Text', 'SF Pro Display', -apple-system,
-                   BlinkMacSystemFont, 'Inter', 'Helvetica Neue',
-                   system-ui, sans-serif;
-      transition: background 0.25s ease;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* Scrollbar invisível */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { overscroll-behavior: none; font-family: 'SF Pro Text','SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif; -webkit-font-smoothing: antialiased; }
     ::-webkit-scrollbar { width: 0; height: 0; }
-
-    /* Herança de fonte para controles nativos */
-    input, select, button, textarea {
-      font-family: 'SF Pro Text', 'SF Pro Display', -apple-system,
-                   BlinkMacSystemFont, 'Inter', system-ui, sans-serif;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── Animações ────────────────────────────────────────────────── */
-
-    /* Card slide-up (listas) */
-    @keyframes su {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0);    }
-    }
-    .su { animation: su 0.22s cubic-bezier(0.34, 1.1, 0.64, 1); }
-
-    /* Fade-in (páginas fullscreen) */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
+    input, select, button, textarea { font-family: inherit; }
+    @keyframes su { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+    .su { animation: su 0.22s cubic-bezier(0.34,1.1,0.64,1); }
     .fi { animation: fadeIn 0.18s ease-out; }
-
-    /* Slide-up da parte inferior (modais) */
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(100%); }
-      to   { opacity: 1; transform: translateY(0);    }
-    }
-    .modal-enter { animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1); }
-
-    /* Spinner de carregamento */
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Pulse para estados ativos */
-    @keyframes pulse {
-      0%, 100% { opacity: 1;   }
-      50%       { opacity: 0.6; }
-    }
-
-    /* Microinteração de botão */
-    button:active {
-      transform: scale(0.97);
-      transition: transform 0.08s ease;
-    }
-
-    /* Remove outline padrão (tratado via box-shadow nos componentes) */
+    .modal-enter { animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
+    button:active { transform:scale(0.97); transition:transform 0.08s ease; }
     input:focus, select:focus, textarea:focus { outline: none; }
-
-    /* Remove spinner nativo de inputs number no iOS/Chrome */
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-    }
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
   </style>
 </head>
-
 <body>
-  <!-- Mount point do React -->
   <div id="root"></div>
-
-  <!-- ═══ DEPENDÊNCIAS VIA CDN ═════════════════════════════════════ -->
-
-  <!-- React 18 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
-  <!-- Babel standalone (transpila JSX + ES modules in-browser) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-
-  <!-- Leaflet JS (MapaMedicao — satélite ESRI) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-
-  <!-- ═══ BOOTSTRAP DA APLICAÇÃO ════════════════════════════════════
-       type="text/babel" → Babel transpila JSX e resolve imports relativos.
-       data-type="module" → habilita import/export entre os arquivos.
-  -->
-  <script type="text/babel" data-type="module">
-    import { App } from './app.jsx'
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />)
-  </script>
+  <script type="module" src="/main.jsx"></script>
 </body>
 </html>
