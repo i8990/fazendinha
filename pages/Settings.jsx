@@ -11,6 +11,7 @@ import { useT, MESES }                    from '../constants.js'
 import { TODAY, fmtD, fmtR }              from '../utils.js'
 import { Card, Btn }                      from '../ui.jsx'
 import { dbReset, dbExport }              from '../storage.js'
+import { Ajuda }                          from './Ajuda.jsx'
 
 // ── Toggle (iOS-style switch) ─────────────────────────────────────
 function Toggle({ value, onChange, label, sub }) {
@@ -215,6 +216,9 @@ export function Settings({ dark, setDark, onReset, onClose, movs, manejos, anima
   const T = useT()
   const [confirmReset, setCR]  = useState(false)
   const [aba, setAba]          = useState('geral')
+  const [ajudaOpen, setAjuda]  = useState(false)
+
+  if (ajudaOpen) return <Ajuda onClose={() => setAjuda(false)} />
 
   const allData = { pastos, animais, fin, movs, manejos, sal }
 
@@ -296,6 +300,15 @@ export function Settings({ dark, setDark, onReset, onClose, movs, manejos, anima
                   </div>
                 </div>
             }
+          </>} />
+
+          {/* Ajuda */}
+          <Card ch={<>
+            <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>📖 Ajuda</div>
+            <div style={{ fontSize: 13, color: T.gray, marginBottom: 14, lineHeight: 1.6 }}>
+              Manuais do usuário e do desenvolvedor com instruções detalhadas do app.
+            </div>
+            <Btn l="📖 Abrir Ajuda" color={T.green} onClick={() => setAjuda(true)} />
           </>} />
 
           {/* Sobre */}

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Manual do Usuário — Fazendinha App</title>
+<style>
+  :root {
+    --green: #1A7A4A;
+    --gDark: #0F4D2E;
+    --gLight: #30A86A;
+    --gPale: #EAF7F0;
+    --bg: #F5F5F7;
+    --card: #FFFFFF;
+    --text: #1D1D1F;
+    --gray: #6E6E73;
+    --border: #E5E5EA;
+    --orange: #FF9F0A;
+    --red: #FF3B30;
+    --blue: #007AFF;
+    --shadow: rgba(0,0,0,0.07);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'SF Pro Text','SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 0 80px;
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(145deg, var(--gDark), var(--green));
+    padding: 56px 28px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    top: -120px; right: -80px;
+  }
+  .hero-icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.3));
+  }
+  .hero h1 {
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    margin-bottom: 8px;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.7);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-top: 14px;
+    backdrop-filter: blur(4px);
+    letter-spacing: 0.3px;
+  }
+
+  /* NAV */
+  .toc {
+    background: var(--card);
+    margin: 20px 16px;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+  .toc-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gray);
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .toc a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .toc a:last-child { border-bottom: none; }
+  .toc a .ic { font-size: 18px; width: 28px; text-align: center; }
+  .toc a .arr { margin-left: auto; color: var(--gray); font-size: 14px; }
+
+  /* SECTION */
+  .section {
+    margin: 0 16px 20px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-top: 8px;
+  }
+  .section-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .section-icon.green { background: var(--gPale); }
+  .section-icon.orange { background: #FFF3E0; }
+  .section-icon.blue { background: #EBF5FF; }
+  .section-icon.red { background: #FFF0F0; }
+  .section-icon.purple { background: #F5EEFF; }
+  .section-icon.gray { background: rgba(120,120,128,0.1); }
+  .section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.4px;
+  }
+  .card {
+    background: var(--card);
+    border-radius: 18px;
+    padding: 18px;
+    box-shadow: 0 2px 10px var(--shadow);
+    margin-bottom: 10px;
+  }
+  .card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: -0.2px;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.65;
+  }
+  .card p + p { margin-top: 8px; }
+  .card strong { color: var(--text); }
+  .tag {
+    display: inline-block;
+    background: var(--gPale);
+    color: var(--green);
+    border-radius: 8px;
+    padding: 3px 9px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .tag.orange { background: #FFF3E0; color: var(--orange); }
+  .tag.blue { background: #EBF5FF; color: var(--blue); }
+  .tag.red { background: #FFF0F0; color: var(--red); }
+
+  /* STEPS */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* INFO ROWS */
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+  }
+  .info-row:last-child { border-bottom: none; }
+  .info-label { font-size: 14px; color: var(--gray); }
+  .info-value { font-size: 14px; font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
+
+  /* TIPS */
+  .tip {
+    background: var(--gPale);
+    border-left: 4px solid var(--green);
+    border-radius: 0 12px 12px 0;
+    padding: 14px 16px;
+    font-size: 13.5px;
+    color: var(--gDark);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .tip-orange {
+    background: #FFF3E0;
+    border-left-color: var(--orange);
+    color: #5c3900;
+  }
+  .tip strong { font-weight: 700; }
+
+  /* GRID */
+  .grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .pill {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 14px;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .pill .emoji { font-size: 22px; }
+  .pill .title { font-size: 13px; font-weight: 700; color: var(--text); }
+  .pill .sub { font-size: 12px; color: var(--gray); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--gray);
+    font-size: 13px;
+  }
+  .footer span { color: var(--green); font-weight: 700; }
+
+  /* divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 6px 0 16px;
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 40px 20px 32px; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-icon">🌿</div>
+  <h1>Manual do Usuário</h1>
+  <p>Tudo que você precisa saber para usar o Fazendinha App</p>
+  <div class="badge">v11.0 — Guia Completo</div>
+</div>
+
+<!-- SUMÁRIO -->
+<div class="toc">
+  <div class="toc-title">📋 Conteúdo</div>
+  <a href="#inicio"><span class="ic">🏠</span> Primeiros Passos<span class="arr">›</span></a>
+  <a href="#animais"><span class="ic">🐄</span> Animais e Rebanho<span class="arr">›</span></a>
+  <a href="#pastos"><span class="ic">🌿</span> Gestão de Pastos<span class="arr">›</span></a>
+  <a href="#financeiro"><span class="ic">💰</span> Financeiro<span class="arr">›</span></a>
+  <a href="#historico"><span class="ic">📋</span> Histórico e Manejo<span class="arr">›</span></a>
+  <a href="#ferramentas"><span class="ic">🧮</span> Ferramentas<span class="arr">›</span></a>
+  <a href="#modais"><span class="ic">⚡</span> Ações Rápidas<span class="arr">›</span></a>
+  <a href="#config"><span class="ic">⚙️</span> Configurações<span class="arr">›</span></a>
+</div>
+
+<!-- PRIMEIROS PASSOS -->
+<div class="section" id="inicio">
+  <div class="section-header">
+    <div class="section-icon green">🏠</div>
+    <h2>Primeiros Passos</h2>
+  </div>
+
+  <div class="card">
+    <h3>O que é o Fazendinha App?</h3>
+    <p>O Fazendinha App é um sistema de gestão rural completo que roda no seu celular ou computador. Ele permite controlar seu <strong>rebanho</strong>, gerenciar seus <strong>pastos</strong>, registrar <strong>movimentações financeiras</strong> e executar <strong>manejos</strong> — tudo sincronizado automaticamente na nuvem.</p>
+  </div>
+
+  <div class="card">
+    <h3>A tela Home</h3>
+    <p>Ao abrir o app, você vê o <strong>painel principal</strong> com:</p>
+    <br/>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div><strong>KPIs do rebanho</strong> — total de animais, bezerros, vacas, etc.</div></li>
+      <li><div class="step-num">2</div><div><strong>Alertas automáticos</strong> — bezerros nascidos há menos de 7 dias, pastos sem sal há mais de 14 dias, e outros.</div></li>
+      <li><div class="step-num">3</div><div><strong>Ações Rápidas</strong> — botões para registrar nascimento, aplicar sal ou lançar despesa sem sair da Home.</div></li>
+      <li><div class="step-num">4</div><div><strong>Widget de clima</strong> — temperatura, chuva e previsão para os próximos dias com base na localização da fazenda.</div></li>
+    </ul>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Dica:</strong> A barra de navegação inferior (Home · Animais · Caixa · Manejo · Ferramentas) está sempre visível para você alternar entre as seções rapidamente.
+  </div>
+</div>
+
+<!-- ANIMAIS -->
+<div class="section" id="animais">
+  <div class="section-header">
+    <div class="section-icon orange">🐄</div>
+    <h2>Animais e Rebanho</h2>
+  </div>
+
+  <div class="card">
+    <h3>Abas da seção Animais</h3>
+    <div class="info-row"><span class="info-label">🐄 Rebanho</span><span class="info-value">Todos os animais adultos ativos</span></div>
+    <div class="info-row"><span class="info-label">🐮 Bezerros</span><span class="info-value">Filhotes com ficha própria e alertas de idade</span></div>
+    <div class="info-row"><span class="info-label">🌿 Pastos</span><span class="info-value">Lista de piquetes vinculados a animais</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Cadastrar um animal</h3>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div>Toque no botão <strong>+ Novo Animal</strong> dentro da aba Rebanho ou Bezerros.</div></li>
+      <li><div class="step-num">2</div><div>Preencha: identificação (brinco/nome), categoria (Boi, Vaca, Novilha, etc.), data de nascimento e pasto onde está.</div></li>
+      <li><div class="step-num">3</div><div>Campos opcionais: raça, pai, mãe, peso inicial.</div></li>
+      <li><div class="step-num">4</div><div>Toque em <strong>Salvar</strong>. O animal aparece no rebanho imediatamente.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Ficha do animal</h3>
+    <p>Ao tocar em um animal da lista, você abre sua ficha completa com:</p>
+    <div class="info-row"><span class="info-label">📅 Idade calculada</span><span class="info-value">Dias, meses ou anos automaticamente</span></div>
+    <div class="info-row"><span class="info-label">🏡 Pasto atual</span><span class="info-value">Com opção de mover para outro</span></div>
+    <div class="info-row"><span class="info-label">💉 Histórico de manejos</span><span class="info-value">Vacinas, vermífugos, antibióticos…</span></div>
+    <div class="info-row"><span class="info-label">🔄 Movimentações</span><span class="info-value">Compra, venda, transferência</span></div>
+    <div class="info-row"><span class="info-label">🐄 Linhagem</span><span class="info-value">Pai e mãe cadastrados</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Mover animal de pasto</h3>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div>Abra a ficha do animal.</div></li>
+      <li><div class="step-num">2</div><div>Toque em <strong>Mover para Pasto</strong>.</div></li>
+      <li><div class="step-num">3</div><div>Selecione o pasto de destino e confirme. A movimentação é registrada no histórico automaticamente.</div></li>
+    </ul>
+  </div>
+
+  <div class="tip tip-orange">
+    <strong>⚠️ Atenção:</strong> Ao registrar a <strong>venda</strong> de um animal, ele sai do rebanho ativo mas permanece no histórico para relatórios financeiros e de rastreabilidade.
+  </div>
+</div>
+
+<!-- PASTOS -->
+<div class="section" id="pastos">
+  <div class="section-header">
+    <div class="section-icon green">🌿</div>
+    <h2>Gestão de Pastos</h2>
+  </div>
+
+  <div class="card">
+    <h3>Cadastrar um pasto</h3>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div>Vá em <strong>Animais → aba Pastos</strong>.</div></li>
+      <li><div class="step-num">2</div><div>Toque em <strong>+ Novo Pasto</strong>.</div></li>
+      <li><div class="step-num">3</div><div>Informe o nome, área em hectares e o status inicial.</div></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Status dos pastos</h3>
+    <div class="info-row"><span class="info-label">🟡 Ocupado</span><span class="info-value">Com animais pastejando</span></div>
+    <div class="info-row"><span class="info-label">🟢 Vazio</span><span class="info-value">Sem animais, em descanso curto</span></div>
+    <div class="info-row"><span class="info-label">🟣 Descanso</span><span class="info-value">Período programado de descanso</span></div>
+    <div class="info-row"><span class="info-label">🔴 Degradado</span><span class="info-value">Necessita recuperação ou reforma</span></div>
+    <div class="info-row"><span class="info-label">🟡 Recuperando</span><span class="info-value">Em processo de recuperação</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Estado da pastagem</h3>
+    <p>Além do status, cada pasto tem um <strong>estado de condição</strong>:</p>
+    <div class="info-row"><span class="info-label">Bom</span><span class="info-value">Forragem abundante e saudável</span></div>
+    <div class="info-row"><span class="info-label">Médio</span><span class="info-value">Atenção recomendada</span></div>
+    <div class="info-row"><span class="info-label">Ruim</span><span class="info-value">Intervenção necessária</span></div>
+    <div class="info-row"><span class="info-label">Muito Ruim</span><span class="info-value">Urgente — reformar ou descansar</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Registro de sal mineral</h3>
+    <p>O app rastreia a última data em que o sal foi aplicado em cada pasto. Quando passa de <strong>14 dias</strong>, um alerta aparece na tela Home.</p>
+    <br/>
+    <p>Para registrar: <strong>Home → Ação Rápida "Sal Mineral" → selecione o pasto → confirme.</strong></p>
+  </div>
+</div>
+
+<!-- FINANCEIRO -->
+<div class="section" id="financeiro">
+  <div class="section-header">
+    <div class="section-icon blue">💰</div>
+    <h2>Financeiro</h2>
+  </div>
+
+  <div class="card">
+    <h3>Como funciona o Caixa?</h3>
+    <p>A tela Financeiro mostra o <strong>saldo consolidado do mês atual</strong>, com todas as receitas e despesas registradas. Você pode navegar por meses anteriores usando as setas.</p>
+  </div>
+
+  <div class="card">
+    <h3>Lançar receita ou despesa</h3>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div>Toque no botão <strong>+ Receita</strong> ou <strong>+ Despesa</strong>.</div></li>
+      <li><div class="step-num">2</div><div>Informe descrição, valor e data.</div></li>
+      <li><div class="step-num">3</div><div>Salve. O saldo é atualizado imediatamente.</div></li>
+    </ul>
+  </div>
+
+  <div class="tip">
+    <strong>💡 Dica:</strong> Vendas de animais registradas no módulo de Animais são lançadas automaticamente como receita no Financeiro.
+  </div>
+
+  <div class="card">
+    <h3>Lançamento rápido</h3>
+    <p>Você também pode lançar uma despesa direto da Home usando a <strong>Ação Rápida "Despesa"</strong>, sem precisar navegar até a aba Financeiro.</p>
+  </div>
+</div>
+
+<!-- HISTÓRICO -->
+<div class="section" id="historico">
+  <div class="section-header">
+    <div class="section-icon purple">📋</div>
+    <h2>Histórico e Manejo</h2>
+  </div>
+
+  <div class="card">
+    <h3>O que é o Histórico?</h3>
+    <p>A aba <strong>Manejo</strong> (ícone 📋) reúne todos os registros históricos do rebanho: movimentações entre pastos, manejos sanitários aplicados, e eventos de nascimento e venda.</p>
+  </div>
+
+  <div class="card">
+    <h3>Tipos de manejo registrados</h3>
+    <div class="grid2">
+      <div class="pill"><span class="emoji">💉</span><span class="title">Ivermectina</span><span class="sub">Antiparasitário injetável</span></div>
+      <div class="pill"><span class="emoji">🩺</span><span class="title">Fio do Lombo</span><span class="sub">Avaliação corporal</span></div>
+      <div class="pill"><span class="emoji">💊</span><span class="title">Antibiótico</span><span class="sub">Tratamento sanitário</span></div>
+      <div class="pill"><span class="emoji">🩹</span><span class="title">Vacina</span><span class="sub">Imunização do lote</span></div>
+      <div class="pill"><span class="emoji">🔬</span><span class="title">Vermífugo</span><span class="sub">Controle de helmintos</span></div>
+      <div class="pill"><span class="emoji">✚</span><span class="title">Outro</span><span class="sub">Manejo personalizado</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Ferramenta Curral</h3>
+    <p>A <strong>Ferramenta Curral</strong> (dentro de Ferramentas) é a forma mais rápida de registrar um manejo em lote. Funciona como um checklist:</p>
+    <ul class="steps">
+      <li><div class="step-num">1</div><div>Selecione o tipo de manejo e preencha dose e data.</div></li>
+      <li><div class="step-num">2</div><div>Filtre os animais por pasto ou busque pelo brinco.</div></li>
+      <li><div class="step-num">3</div><div>Marque cada animal conforme é atendido no curral.</div></li>
+      <li><div class="step-num">4</div><div>Toque em <strong>Salvar Manejo</strong>. Todos os registros são criados de uma vez.</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- FERRAMENTAS -->
+<div class="section" id="ferramentas">
+  <div class="section-header">
+    <div class="section-icon gray">🧮</div>
+    <h2>Ferramentas e Calculadoras</h2>
+  </div>
+
+  <div class="card">
+    <span class="tag">⚖️ Unidade Animal (UA)</span>
+    <h3>O que calcula?</h3>
+    <p>Converte o número de animais e o peso médio em <strong>Unidades Animais</strong> (referência: 1 UA = 450 kg). Útil para dimensionar a pressão de pastejo nos piquetes.</p>
+    <p><strong>Como usar:</strong> informe o número de animais e o peso médio. O resultado aparece automaticamente.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">🌿 Lotação do Pasto</span>
+    <h3>O que calcula?</h3>
+    <p>Quanto o pasto suporta em UA com base na sua área e na taxa de lotação desejada. Inclui <strong>presets de referência</strong>: extensivo (0,5 UA/ha), médio (1,0), intensivo (1,5) e superintensivo (2,5).</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">🧂 Sal Mineral</span>
+    <h3>O que calcula?</h3>
+    <p>Quantidade de sal mineral necessária para o lote durante um período determinado, com base no número de animais e consumo diário por cabeça.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag">📈 GMD — Ganho de Peso</span>
+    <h3>O que calcula?</h3>
+    <p>Projeção de ganho de peso diário (GMD). Informe o peso inicial, o peso alvo e o GMD esperado — o app calcula os dias necessários para atingir a meta.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag orange">🌱 Análise de Solo / Adubação</span>
+    <h3>O que calcula?</h3>
+    <p>Interpreta os resultados de uma análise de solo e gera <strong>recomendações de adubação baseadas em Embrapa</strong> (saturação de bases):</p>
+    <div class="info-row"><span class="info-label">Calagem</span><span class="info-value">Toneladas por ha e sacos necessários</span></div>
+    <div class="info-row"><span class="info-label">Adubação de plantio</span><span class="info-value">Fórmula NPK e quantidade por ha</span></div>
+    <div class="info-row"><span class="info-label">Cobertura nitrogenada</span><span class="info-value">Ureia — época e dose</span></div>
+    <p style="margin-top:10px;font-size:13px;color:var(--gray);">Cada análise fica salva e pode ser vinculada a um pasto específico para rastreabilidade.</p>
+  </div>
+
+  <div class="card">
+    <span class="tag blue">🏚️ Confinamento</span>
+    <h3>O que calcula?</h3>
+    <p>Simulador completo de confinamento. Informe número de animais, peso inicial, GMD desejado e dias de confinamento. O app calcula:</p>
+    <div class="info-row"><span class="info-label">Peso de saída estimado</span><span class="info-value">Por animal e por lote</span></div>
+    <div class="info-row"><span class="info-label">Consumo total de ração</span><span class="info-value">Em toneladas e sacos</span></div>
+    <div class="info-row"><span class="info-label">Ingredientes da dieta</span><span class="info-value">Silagem, fubá, farelo, sal e núcleo</span></div>
+    <div class="info-row"><span class="info-label">Dias para atingir peso alvo</span><span class="info-value">Com qualquer GMD</span></div>
+  </div>
+</div>
+
+<!-- AÇÕES RÁPIDAS -->
+<div class="section" id="modais">
+  <div class="section-header">
+    <div class="section-icon orange">⚡</div>
+    <h2>Ações Rápidas</h2>
+  </div>
+
+  <div class="card">
+    <p>Na tela Home, os botões de <strong>Ação Rápida</strong> permitem registrar os eventos mais frequentes sem navegar entre abas:</p>
+    <div class="info-row"><span class="info-label">🐮 Nascimento</span><span class="info-value">Registra um novo bezerro com mãe e pasto</span></div>
+    <div class="info-row"><span class="info-label">🧂 Sal Mineral</span><span class="info-value">Atualiza a data de sal de um pasto</span></div>
+    <div class="info-row"><span class="info-label">💸 Despesa</span><span class="info-value">Lança uma saída financeira</span></div>
+    <div class="info-row"><span class="info-label">🔀 Mover Pasto</span><span class="info-value">Move um lote de animais entre piquetes</span></div>
+  </div>
+</div>
+
+<!-- CONFIGURAÇÕES -->
+<div class="section" id="config">
+  <div class="section-header">
+    <div class="section-icon gray">⚙️</div>
+    <h2>Configurações</h2>
+  </div>
+
+  <div class="card">
+    <div class="info-row"><span class="info-label">🌙 Modo Escuro</span><span class="info-value">Liga/desliga o tema dark</span></div>
+    <div class="info-row"><span class="info-label">📅 Calendário</span><span class="info-value">Visão mensal de todos os eventos</span></div>
+    <div class="info-row"><span class="info-label">💾 Exportar dados</span><span class="info-value">Baixa um JSON de backup completo</span></div>
+    <div class="info-row"><span class="info-label">🗑️ Resetar tudo</span><span class="info-value">Apaga todos os dados (irreversível)</span></div>
+  </div>
+
+  <div class="tip tip-orange">
+    <strong>⚠️ Importante:</strong> Use <strong>Exportar Dados</strong> regularmente para manter um backup local. O app sincroniza automaticamente com a nuvem, mas uma cópia local nunca é demais.
+  </div>
+</div>
+
+<div class="footer">
+  Fazendinha App <span>v11.0</span> · Desenvolvido por Jblleite<br/>
+  Baependi, MG · 2025
+</div>
+
+</body>
+</html>
