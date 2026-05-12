@@ -79,62 +79,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         </div>
       </div>
 
-      <div style={{ padding: '0 14px', marginTop: -18 }}>
-
-        {/* KPIs */}
-        <Card ch={
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 0 }}>
-            {[
-              { l: 'Animais',  v: ativos.length,                                          icon: '🐄', page: 'animais' },
-              { l: 'Pastos',   v: pastos.length,                                          icon: '🌿', page: 'pastos'  },
-              { l: 'Pastando', v: pastos.filter(p => p.status === 'ocupado').length,      icon: '✅', page: 'pastos'  }
-            ].map((k, i) => (
-              <div
-                key={i}
-                onClick={() => setPage(k.page)}
-                style={{
-                  textAlign: 'center', padding: '14px 6px',
-                  borderRight: i < 2 ? `1px solid ${T.border}` : 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <div style={{ fontSize: 22 }}>{k.icon}</div>
-                <div style={{ fontSize: 26, fontWeight: 800, color: T.text, lineHeight: 1.1 }}>{k.v}</div>
-                <div style={{ fontSize: 11, color: T.gray, fontWeight: 500 }}>{k.l}</div>
-              </div>
-            ))}
-          </div>
-        } />
-
-        {/* Alertas agrupados */}
-        {alertas.length > 0 && (
-          <Card
-            ch={
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: T.orange, marginBottom: 10 }}>
-                  ⚠️ Atenção ({alertas.length})
-                </div>
-                {alertas.map((al, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setPage(al.page)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      paddingTop: i > 0 ? 10 : 0,
-                      borderTop: i > 0 ? `1px solid ${T.border}` : 'none',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    <span style={{ fontSize: 18 }}>{al.icon}</span>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: al.cor, flex: 1 }}>{al.msg}</span>
-                    <span style={{ color: T.gray, fontSize: 16 }}>›</span>
-                  </div>
-                ))}
-              </div>
-            }
-            style={{ border: `1px solid ${T.orange}30`, marginBottom: 12 }}
-          />
-        )}
+      <div style={{ padding: '0 14px', marginTop: -18 }}>        )}
 
         {/* Bezerros recentes */}
         {bezRecent.length > 0 && (
@@ -199,7 +144,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 10, paddingLeft: 2 }}>
           Ações Rápidas
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10, marginBottom: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 10, marginBottom: 16 }}>
           {QA.map(q => (
             <button
               key={q.action}
