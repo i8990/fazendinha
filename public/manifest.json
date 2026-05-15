@@ -1,0 +1,18 @@
+{
+  "name": "Fazendinha",
+  "short_name": "Fazendinha",
+  "description": "Gestão de fazenda",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F4D2E",
+  "theme_color": "#0F4D2E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

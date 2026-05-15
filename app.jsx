@@ -115,15 +115,17 @@ export function App() {
       background: `linear-gradient(160deg,${T.gDark} 0%,${T.green} 100%)`,
       gap: 20
     }}>
-      <div style={{
-        width: 84, height: 84,
-        background: 'rgba(255,255,255,0.15)',
-        borderRadius: 24,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 44,
-        backdropFilter: 'blur(10px)',
-        boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
-      }}>🌿</div>
+      <img
+        src="/logo.png"
+        alt="Fazendinha"
+        style={{
+          width: 110, height: 110,
+          borderRadius: 28,
+          objectFit: 'cover',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
+          animation: 'fadeIn 0.5s ease'
+        }}
+      />
       <div>
         <div style={{ color: '#FFF', fontSize: 26, fontWeight: 700, letterSpacing: '-0.5px', textAlign: 'center' }}>Fazendinha</div>
         <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textAlign: 'center', marginTop: 4, fontWeight: 400 }}>Sincronizando dados...</div>
@@ -135,7 +137,10 @@ export function App() {
         borderRadius: '50%',
         animation: 'spin 0.75s linear infinite'
       }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg) } }
+        @keyframes fadeIn { from { opacity:0; transform:scale(0.9) } to { opacity:1; transform:scale(1) } }
+      `}</style>
     </div>
   )
 

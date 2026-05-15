@@ -3,8 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>FazendinhaApp v11.0</title>
+  <title>Fazendinha</title>
+
+  <!-- ── PWA: ícone e manifest ─────────────────────────────── -->
+  <link rel="icon"             type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon"                  href="/logo.png" />
+  <link rel="manifest"                          href="/manifest.json" />
+
+  <!-- ── PWA: comportamento iOS ───────────────────────────── -->
+  <meta name="apple-mobile-web-app-capable"          content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title"            content="Fazendinha" />
+
+  <!-- ── PWA: tema Android / Chrome ──────────────────────── -->
+  <meta name="theme-color" content="#0F4D2E" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- ── Leaflet ──────────────────────────────────────────── -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { overscroll-behavior: none; font-family: 'SF Pro Text','SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif; -webkit-font-smoothing: antialiased; }
