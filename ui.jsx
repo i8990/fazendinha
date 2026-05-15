@@ -266,41 +266,39 @@ export function DetailPage({ onBack, title, color, icon, children }) {
     }}>
       <div style={{
         background: color || `linear-gradient(145deg,${T.gDark},${T.green})`,
-        padding: '16px 20px 36px',
-        position: 'relative'
+        padding: '10px 16px 12px',
+        position: 'sticky', top: 0, zIndex: 10,
+        display: 'flex', alignItems: 'center', gap: 10
       }}>
         <button
           onClick={onBack}
           style={{
             background: 'rgba(255,255,255,0.18)',
             border: 'none', color: '#FFF',
-            borderRadius: 24,
-            padding: '9px 18px 9px 14px',
+            borderRadius: 20,
+            padding: '7px 14px 7px 10px',
             fontWeight: 600, cursor: 'pointer',
-            fontSize: 15,
-            marginBottom: 18,
+            fontSize: 14, flexShrink: 0,
             display: 'flex', alignItems: 'center', gap: 4,
             backdropFilter: 'blur(4px)',
             letterSpacing: '-0.1px'
           }}
         >
-          <svg width="9" height="15" viewBox="0 0 9 15" fill="none" style={{ marginRight: 2 }}>
+          <svg width="8" height="13" viewBox="0 0 9 15" fill="none" style={{ marginRight: 1 }}>
             <path d="M8 1L1.5 7.5L8 14" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Voltar
         </button>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {icon && (
-            <div style={{
-              width: 48, height: 48,
-              borderRadius: 14,
-              background: 'rgba(255,255,255,0.18)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 24
-            }}>{icon}</div>
-          )}
-          <div style={{ color: '#FFF', fontSize: 22, fontWeight: 700, letterSpacing: '-0.4px', lineHeight: 1.2 }}>{title}</div>
-        </div>
+        {icon && (
+          <div style={{
+            width: 32, height: 32,
+            borderRadius: 10,
+            background: 'rgba(255,255,255,0.18)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 17, flexShrink: 0
+          }}>{icon}</div>
+        )}
+        <div style={{ color: '#FFF', fontSize: 16, fontWeight: 700, letterSpacing: '-0.3px', lineHeight: 1.2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{title}</div>
       </div>
       <div style={{ padding: '20px 16px 0' }}>{children}</div>
     </div>
@@ -390,22 +388,27 @@ export function PgH({ sub, title, extra }) {
   return (
     <div style={{
       background: `linear-gradient(145deg,${T.gDark},${T.green})`,
-      padding: '20px 20px 32px'
+      padding: '10px 16px 14px',
+      position: 'sticky', top: 0, zIndex: 10
     }}>
-      {sub && (
-        <div style={{
-          color: 'rgba(255,255,255,0.55)',
-          fontSize: 12,
-          letterSpacing: '0.6px',
-          textTransform: 'uppercase',
-          fontWeight: 500
-        }}>{sub}</div>
-      )}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 5 }}>
-        <div style={{
-          color: '#FFF', fontSize: 26, fontWeight: 700,
-          letterSpacing: '-0.5px', lineHeight: 1.1
-        }}>{title}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          {sub && (
+            <div style={{
+              color: 'rgba(255,255,255,0.55)',
+              fontSize: 10,
+              letterSpacing: '0.6px',
+              textTransform: 'uppercase',
+              fontWeight: 500,
+              lineHeight: 1
+            }}>{sub}</div>
+          )}
+          <div style={{
+            color: '#FFF', fontSize: 18, fontWeight: 700,
+            letterSpacing: '-0.4px', lineHeight: 1.2,
+            marginTop: sub ? 2 : 0
+          }}>{title}</div>
+        </div>
         {extra}
       </div>
     </div>

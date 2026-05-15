@@ -233,24 +233,25 @@ export function Settings({ dark, setDark, onReset, onClose, movs, manejos, anima
       {/* Header */}
       <div style={{
         background: `linear-gradient(145deg,${T.gDark},${T.green})`,
-        padding: '20px 20px 28px',
-        display: 'flex', alignItems: 'center', gap: 12
+        padding: '10px 16px 12px',
+        position: 'sticky', top: 0, zIndex: 10,
+        display: 'flex', alignItems: 'center', gap: 10
       }}>
         <button
           onClick={onClose}
           style={{
             background: 'rgba(255,255,255,0.18)', border: 'none', color: '#FFF',
-            borderRadius: 24, padding: '9px 18px 9px 14px',
-            fontWeight: 600, cursor: 'pointer', fontSize: 15,
-            display: 'flex', alignItems: 'center', gap: 4
+            borderRadius: 20, padding: '7px 14px 7px 10px',
+            fontWeight: 600, cursor: 'pointer', fontSize: 14,
+            display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0
           }}
         >
-          <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
+          <svg width="8" height="13" viewBox="0 0 9 15" fill="none">
             <path d="M8 1L1.5 7.5L8 14" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Voltar
         </button>
-        <div style={{ color: '#FFF', fontSize: 22, fontWeight: 700, letterSpacing: '-0.4px' }}>Configurações ⚙️</div>
+        <div style={{ color: '#FFF', fontSize: 16, fontWeight: 700, letterSpacing: '-0.3px' }}>Configurações ⚙️</div>
       </div>
 
       {/* Tabs */}

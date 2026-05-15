@@ -42,44 +42,35 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
   return (
     <div>
       {/* Header */}
-      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, padding: '22px 20px 36px', position: 'relative' }}>
-        {/* Settings icon */}
-        <button
-          onClick={() => setPage('settings')}
-          style={{
-            position: 'absolute', top: 20, right: 18,
-            background: 'rgba(255,255,255,0.15)',
-            border: 'none', borderRadius: 12,
-            width: 36, height: 36,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', fontSize: 18
-          }}
-        >⚙️</button>
-
-        <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 12, letterSpacing: '0.5px', textTransform: 'uppercase' }}>
-          {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
-        </div>
-        <div style={{ color: '#FFF', fontSize: 26, fontWeight: 800, letterSpacing: '-0.5px', marginTop: 4 }}>
-          Fazendinha 🌾
-        </div>
-        {cfg?.nomeFazenda && (
-          <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 14, marginTop: 2 }}>{cfg.nomeFazenda}</div>
-        )}
-
-        {/* Contadores discretos */}
-        <div style={{ display: 'flex', gap: 14, marginTop: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>🐄</span>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>{adultos.length} adultos</span>
+      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, padding: '10px 16px 12px', position: 'sticky', top: 0, zIndex: 10 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, letterSpacing: '0.5px', textTransform: 'uppercase', lineHeight: 1 }}>
+              {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+            <div style={{ color: '#FFF', fontSize: 18, fontWeight: 800, letterSpacing: '-0.4px', marginTop: 2, lineHeight: 1 }}>
+              Fazendinha 🌾{cfg?.nomeFazenda ? ` · ${cfg.nomeFazenda}` : ''}
+            </div>
+            <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>🐄 {adultos.length} adultos</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>🐣 {bezerros.length} bezerros</span>
+            </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>🐣</span>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>{bezerros.length} bezerros</span>
-          </div>
+          {/* Settings icon */}
+          <button
+            onClick={() => setPage('settings')}
+            style={{
+              background: 'rgba(255,255,255,0.15)',
+              border: 'none', borderRadius: 12,
+              width: 34, height: 34, flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', fontSize: 17
+            }}
+          >⚙️</button>
         </div>
       </div>
 
-      <div style={{ padding: '0 14px', marginTop: -18 }}>        )}
+      <div style={{ padding: '0 14px', marginTop: 14 }}>        )}
 
         {/* Bezerros recentes */}
         {bezRecent.length > 0 && (
