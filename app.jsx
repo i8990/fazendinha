@@ -150,7 +150,8 @@ export function App() {
         fontFamily: "'SF Pro Text','SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif",
         background: T.bg, minHeight: '100vh',
         maxWidth: 500, margin: '0 auto',
-        position: 'relative', overflowX: 'hidden'
+        position: 'relative', overflowX: 'hidden',
+        height: '100dvh', overflowY: 'auto'
       }}>
 
         {page === 'home'        && <Dashboard

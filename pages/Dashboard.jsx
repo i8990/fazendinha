@@ -70,7 +70,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         </div>
       </div>
 
-      <div style={{ padding: '0 14px', marginTop: 14 }}>        )}
+      <div style={{ padding: '0 14px', marginTop: 14 }}>
 
         {/* Bezerros recentes */}
         {bezRecent.length > 0 && (
