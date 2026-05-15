@@ -2,7 +2,7 @@
 // Componentes primitivos reutilizados por todas as páginas.
 // Importado por: todas as páginas e ferramentas.
 
-import { useState }      from 'react'
+import { useState, useRef } from 'react'
 import { useT }          from './constants.js'
 
 // ── Card ──────────────────────────────────────────────────────────
@@ -172,36 +172,69 @@ export function Sel({ label, value, onChange, opts }) {
   )
 }
 
-// ── Modal ─────────────────────────────────────────────────────────
+// ── Modal (com drag-to-close) ──────────────────────────────────────
 export function Modal({ open, onClose, title, children }) {
   const T = useT()
+  const [dragY,    setDragY]    = useState(0)
+  const [dragging, setDragging] = useState(false)
+  const startY = useRef(null)
+
+  const handleTouchStart = e => {
+    startY.current = e.touches[0].clientY
+    setDragging(true)
+  }
+  const handleTouchMove = e => {
+    if (startY.current == null) return
+    const dy = e.touches[0].clientY - startY.current
+    if (dy > 0) setDragY(dy)
+  }
+  const handleTouchEnd = () => {
+    if (dragY > 120) { onClose() }
+    setDragY(0)
+    setDragging(false)
+    startY.current = null
+  }
+
   if (!open) return null
   return (
     <div
       style={{
         position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.45)',
+        background: `rgba(0,0,0,${Math.max(0, 0.45 - dragY / 600)})`,
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
         zIndex: 500,
-        display: 'flex', alignItems: 'flex-end', justifyContent: 'center'
+        display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
+        transition: dragging ? 'none' : 'background 0.3s'
       }}
       onClick={onClose}
     >
       <div
         onClick={e => e.stopPropagation()}
-        className="modal-enter"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className={dragging ? '' : 'modal-enter'}
         style={{
           background: T.card,
           borderRadius: '26px 26px 0 0',
           padding: '0 20px 40px',
           width: '100%', maxWidth: 500,
-          maxHeight: '92vh', overflowY: 'auto'
+          maxHeight: '92vh', overflowY: dragY > 0 ? 'hidden' : 'auto',
+          transform: `translateY(${dragY}px)`,
+          transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
+          cursor: 'grab',
+          userSelect: 'none'
         }}
       >
         {/* Pull indicator */}
         <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 18px' }}>
-          <div style={{ width: 36, height: 5, borderRadius: 3, background: T.bg === '#F5F5F7' ? 'rgba(60,60,67,0.18)' : 'rgba(255,255,255,0.18)' }} />
+          <div style={{
+            width: 36, height: 5, borderRadius: 3,
+            background: T.bg === '#F5F5F7' ? 'rgba(60,60,67,0.18)' : 'rgba(255,255,255,0.18)',
+            transition: 'width 0.2s',
+            ...(dragging && { width: 48 })
+          }} />
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 22 }}>
           <span style={{ fontSize: 18, fontWeight: 700, color: T.text, letterSpacing: '-0.3px' }}>{title}</span>
