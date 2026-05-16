@@ -49,7 +49,7 @@ export function App() {
       setAuthReady(true)
     })
     // timeout de segurança
-    setTimeout(() => setAuthReady(true), 5000)
+    setTimeout(() => { setAuthReady(true); setLoading(false) }, 8000)
 
     // escuta mudanças de sessão
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
