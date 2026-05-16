@@ -199,7 +199,7 @@ export function App() {
         {page === 'home'        && <Dashboard
             pastos={pastos} animais={animais} fin={fin} sal={sal}
             setPage={setPage}
-            cfg={{ nomeFazenda: perfil.nome_fazenda }}
+            cfg={{ nomeFazenda: perfil?.nome_fazenda || 'Minha Fazenda' }}
             setAction={a => a === 'settings'    ? setPage('settings')
                           : a === 'ferramentas' ? setPage('ferramentas')
                           : setGA(a)}
