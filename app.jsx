@@ -72,6 +72,12 @@ export function App() {
   const [globalAction, setGA]   = useState(null)
   const [loading,   setLoading] = useState(true)
 
+  // Timeout de segurança — nunca fica preso no loading
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 6000)
+    return () => clearTimeout(t)
+  }, [])
+
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
   const [fin,       setF]   = useState([])
