@@ -13,7 +13,6 @@ import {
 import { Dashboard }                     from './pages/Dashboard.jsx'
 import { Animais }                       from './pages/Animais.jsx'
 import { Financeiro }                    from './pages/Financeiro.jsx'
-import { HistoricoManejo }               from './pages/Historico.jsx'
 import { Settings }                      from './pages/Settings.jsx'
 import { GlobalModals }                  from './pages/GlobalModals.jsx'
 import { Ferramentas }                   from './tools/Ferramentas.jsx'
@@ -103,7 +102,6 @@ export function App() {
     { id: 'home',        icon: '🏠', label: 'Home'        },
     { id: 'animais',     icon: '🐄', label: 'Animais'     },
     { id: 'financeiro',  icon: '💰', label: 'Caixa'       },
-    { id: 'historico',   icon: '📋', label: 'Manejo'      },
     { id: 'ferramentas', icon: '🧮', label: 'Ferramentas' },
   ]
 
@@ -167,21 +165,17 @@ export function App() {
             pastos={pastos}     setPastos={setPastos}
             movs={movs}         setMovs={setMovs}
             sal={sal}           setSal={setSal}
-            manejos={manejos}
+            manejos={manejos}   setManejos={setManejos}
+            fin={fin}           setFin={setFin}
           />}
 
         {page === 'financeiro'  && <Financeiro fin={fin} setFin={setFin} />}
 
-        {page === 'historico'   && <HistoricoManejo
-            movs={movs}       setMovs={setMovs}
-            manejos={manejos} setManejos={setManejos}
-            animais={animais} fin={fin} setFin={setFin}
-            pastos={pastos}
-          />}
 
         {page === 'ferramentas' && <Ferramentas
             adubacoes={adubacoes} setAdubacoes={setAdubacoes}
             pastos={pastos}
+            animais={animais}     setManejos={setManejos}
           />}
 
         {page === 'settings'    && <Settings

@@ -6,6 +6,7 @@ import { Card, Badge, Btn, Inp, Sel, Modal,
          DetailPage, Section, InfoRow,
          DeleteBtn, PgH }                    from '../ui.jsx'
 import { Pastos }                            from './Pastos.jsx'
+import { HistoricoManejo }                   from './Historico.jsx'
 
 // ═══ ANIMAL DETAIL PAGE ═══════════════════════════════════════════
 export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejos, setAnimais, setMovs }) {
@@ -170,7 +171,7 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
 }
 
 // ═══ ANIMAIS (lista rebanho, bezerros e pastos) ════════════════════
-export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs, sal, setSal, manejos }) {
+export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs, sal, setSal, manejos, setManejos, fin, setFin }) {
   const T = useT()
   const [aba,          setAba]         = useState('rebanho')
   const [addM,         setAddM]        = useState(false)
@@ -208,6 +209,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
     { id: 'rebanho',  label: `🐄 Rebanho (${rebanho.length})`   },
     { id: 'bezerros', label: `🐮 Bezerros (${bezerros.length})`  },
     { id: 'pastos',   label: `🌿 Pastos (${pastos.length})`      },
+    { id: 'manejo',   label: '📋 Manejo'                        },
   ]
 
   return (
@@ -239,6 +241,16 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
           pastos={pastos}   setPastos={setPastos}
           animais={animais} sal={sal} setSal={setSal}
           manejos={manejos} movs={movs}
+        />
+      )}
+
+      {/* Aba Manejo */}
+      {aba === 'manejo' && (
+        <HistoricoManejo
+          movs={movs}       setMovs={setMovs}
+          manejos={manejos} setManejos={setManejos}
+          animais={animais} fin={fin} setFin={setFin}
+          pastos={pastos}
         />
       )}
 

@@ -4,6 +4,7 @@ import { useState }                        from 'react'
 import { useT }                            from '../constants.js'
 import { PgH }                             from '../ui.jsx'
 import { Adubacao }                        from './Adubacao.jsx'
+import { CurralTool }                      from './CurralTool.jsx'
 import { Confinamento }                    from './Confinamento.jsx'
 import {
   CalcUA,
@@ -93,7 +94,7 @@ export function ToolScreen({ title, icon, color, onBack, children }) {
   )
 }
 
-export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
+export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManejos }) {
   const T = useT()
   const [open, setOpen] = useState(null)
 
@@ -182,6 +183,17 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     )
   }
 
+  if (open === 'curral') {
+    return (
+      <CurralTool
+        animais={animais}
+        pastos={pastos}
+        onSalvar={manejo => { setManejos(m => [manejo, ...m]); setOpen(null) }}
+        onFechar={back}
+      />
+    )
+  }
+
   const MENU = [
     {
       id: 'uab',
@@ -221,6 +233,12 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
       icon: '📏',
       label: 'Peso Fita',
       bg: 'rgba(230,81,0,0.12)'
+    },
+    {
+      id: 'curral',
+      icon: '🏚️',
+      label: 'Curral',
+      bg: 'rgba(90,200,250,0.14)'
     }
   ]
 
