@@ -188,8 +188,7 @@ export function App() {
   // ── Guards ────────────────────────────────────────────────────
   if (!authReady)        return <Splash />
   if (!user)             return <Login onLogin={setUser} />
-  const temDados = pastos.length > 0 || animais.length > 0 || fin.length > 0
-  if (loading && !temDados) return <Splash />
+  if (loading) return <Splash />
 
   return (
     <TC.Provider value={T}>
