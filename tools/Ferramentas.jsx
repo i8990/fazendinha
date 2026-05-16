@@ -160,7 +160,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     return (
       <ToolScreen
         title="Confinamento"
-        icon="🐄"
+        icon={<img src='/iconeCONFIN.png' style={{ width: 28, height: 28, objectFit: 'contain' }} />}
         color="linear-gradient(135deg,#2C3E50,#4a6741)"
         onBack={back}
       >
@@ -209,7 +209,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     },
     {
       id: 'conf',
-      icon: '🐄',
+      icon: <img src='/iconeCONFIN.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Confin.',
       bg: 'rgba(90,200,250,0.14)'
     },
