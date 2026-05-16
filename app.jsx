@@ -31,8 +31,11 @@ export function App() {
   const [perfil,    setPerfil]    = useState(null)
 
   useEffect(() => {
-    // Usa APENAS onAuthStateChange — dispara com sessão inicial automaticamente
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+    let resolved = false
+
+    const resolve = async (session) => {
+      if (resolved) return
+      resolved = true
       const u = session?.user ?? null
       setUser(u)
       if (u) {
@@ -40,11 +43,31 @@ export function App() {
           const p = await getPerfil(u.id)
           setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
         } catch(e) { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
-      } else {
-        setPerfil(null)
       }
       setAuthReady(true)
+    }
+
+    // 1. onAuthStateChange — dispara em login/logout
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      resolved = false // permite atualizar em mudanças reais
+      await resolve(session)
     })
+
+    // 2. getSession — fallback para quando onAuthStateChange não dispara
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      resolve(session)
+    }).catch(() => {
+      resolve(null)
+    })
+
+    // 3. Timeout de segurança — nunca fica preso
+    setTimeout(() => {
+      if (!resolved) {
+        resolved = true
+        setAuthReady(true)
+        setLoading(false)
+      }
+    }, 6000)
 
     return () => subscription.unsubscribe()
   }, [])
