@@ -9,6 +9,10 @@ const DB_TABLE = 'app_state'
 
 // ── Pega o user_id do usuário logado ─────────────────────────────
 const getUserId = async () => {
+  // Tenta getSession primeiro (mais confiável que getUser após login recente)
+  const { data: { session } } = await supabaseClient.auth.getSession()
+  if (session?.user) return session.user.id
+  // Fallback para getUser
   const { data: { user } } = await supabaseClient.auth.getUser()
   if (!user) throw new Error('Usuário não autenticado')
   return user.id
