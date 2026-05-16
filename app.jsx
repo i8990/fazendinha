@@ -31,31 +31,7 @@ export function App() {
   const [perfil,    setPerfil]    = useState(null)
 
   useEffect(() => {
-    // sessão inicial com timeout de segurança
-    const sessionPromise = supabaseClient.auth.getSession()
-    const timeoutPromise = new Promise(resolve =>
-      setTimeout(() => resolve({ data: { session: null } }), 4000)
-    )
-    Promise.race([sessionPromise, timeoutPromise]).then(async ({ data: { session } }) => {
-      console.log('getSession resultado:', session?.user?.id ?? 'null')
-
-      let u = session?.user ?? null
-
-      setUser(u)
-      if (u) {
-        try {
-          const p = await getPerfil(u.id)
-          setPerfil(p)
-        } catch(e) {
-          console.error('getPerfil erro:', e)
-        }
-      }
-      setAuthReady(true)
-    }).catch(e => {
-      console.error('getSession erro:', e)
-      setAuthReady(true)
-    })
-    // escuta mudanças de sessão
+    // Usa APENAS onAuthStateChange — dispara com sessão inicial automaticamente
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
       const u = session?.user ?? null
       setUser(u)
@@ -67,6 +43,7 @@ export function App() {
       } else {
         setPerfil(null)
       }
+      setAuthReady(true)
     })
 
     return () => subscription.unsubscribe()
