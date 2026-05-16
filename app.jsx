@@ -31,8 +31,12 @@ export function App() {
   const [perfil,    setPerfil]    = useState(null)
 
   useEffect(() => {
-    // sessão inicial — lê direto do localStorage para ser síncrono
-    supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+    // sessão inicial com timeout de segurança
+    const sessionPromise = supabaseClient.auth.getSession()
+    const timeoutPromise = new Promise(resolve =>
+      setTimeout(() => resolve({ data: { session: null } }), 4000)
+    )
+    Promise.race([sessionPromise, timeoutPromise]).then(async ({ data: { session } }) => {
       console.log('getSession resultado:', session?.user?.id ?? 'null')
       const u = session?.user ?? null
       setUser(u)
