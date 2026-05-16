@@ -48,9 +48,6 @@ export function App() {
       console.error('getSession erro:', e)
       setAuthReady(true)
     })
-    // timeout de segurança
-    setTimeout(() => { setAuthReady(true); setLoading(false) }, 8000)
-
     // escuta mudanças de sessão
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
       const u = session?.user ?? null
@@ -71,12 +68,6 @@ export function App() {
   const [page,         setPage] = useState('home')
   const [globalAction, setGA]   = useState(null)
   const [loading,   setLoading] = useState(true)
-
-  // Timeout de segurança — nunca fica preso no loading
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 6000)
-    return () => clearTimeout(t)
-  }, [])
 
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
