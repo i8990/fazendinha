@@ -45,11 +45,10 @@
   <div id="root"></div>
   <script type="module" src="/main.jsx"></script>
   <script>
+    // Remove service workers antigos
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(() => console.log('✅ Service Worker registrado'))
-          .catch(e => console.warn('SW erro:', e))
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister())
       })
     }
   </script>
