@@ -68,7 +68,9 @@ export function CurralTool({ animais, pastos, onSalvar, onFechar }) {
       {/* ── Header ── */}
       <div style={{
         background: `linear-gradient(135deg,${T.gDark},${T.green})`,
-        color: '#FFF', padding: '13px 15px',
+        color: '#FFF',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 13px)',
+        paddingBottom: 13, paddingLeft: 15, paddingRight: 15,
         flexShrink: 0,
         display: 'flex', justifyContent: 'space-between', alignItems: 'center'
       }}>

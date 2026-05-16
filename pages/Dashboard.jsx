@@ -42,7 +42,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
   return (
     <div>
       {/* Header */}
-      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, padding: '10px 16px 12px', position: 'sticky', top: 0, zIndex: 10 }}>
+      <div style={{ background: `linear-gradient(145deg,${T.gDark},${T.green})`, paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)', paddingBottom: 12, paddingLeft: 16, paddingRight: 16, position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, letterSpacing: '0.5px', textTransform: 'uppercase', lineHeight: 1 }}>

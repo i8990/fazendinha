@@ -266,7 +266,8 @@ export function DetailPage({ onBack, title, color, icon, children }) {
     }}>
       <div style={{
         background: color || `linear-gradient(145deg,${T.gDark},${T.green})`,
-        padding: '10px 16px 12px',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+        paddingBottom: 12, paddingLeft: 16, paddingRight: 16,
         position: 'sticky', top: 0, zIndex: 10,
         display: 'flex', alignItems: 'center', gap: 10
       }}>
@@ -388,7 +389,8 @@ export function PgH({ sub, title, extra }) {
   return (
     <div style={{
       background: `linear-gradient(145deg,${T.gDark},${T.green})`,
-      padding: '10px 16px 14px',
+      paddingTop: 'calc(env(safe-area-inset-top, 0px) + 10px)',
+      paddingBottom: 14, paddingLeft: 16, paddingRight: 16,
       position: 'sticky', top: 0, zIndex: 10
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
