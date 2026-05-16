@@ -129,7 +129,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     return (
       <ToolScreen
         title="Sal Mineral"
-        icon="🧂"
+        icon={<img src='/iconeSAL.png' style={{ width: 28, height: 28, objectFit: 'contain' }} />}
         color="linear-gradient(135deg,#7B3F00,#E65100)"
         onBack={back}
       >
@@ -197,7 +197,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     },
     {
       id: 'sal',
-      icon: '🧂',
+      icon: <img src='/iconeSAL.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Sal',
       bg: 'rgba(255,159,10,0.12)'
     },
