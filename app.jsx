@@ -49,8 +49,14 @@ export function App() {
             if (stored?.user) {
               u = stored.user
               console.log('✅ usuário recuperado do localStorage:', u.id)
-              // Força refresh da sessão em background
-              supabaseClient.auth.refreshSession().catch(() => {})
+              // Aguarda refresh antes de setar user
+              try {
+                const { data } = await supabaseClient.auth.refreshSession()
+                if (data?.user) {
+                  u = data.user
+                  console.log('✅ sessão renovada:', u.id)
+                }
+              } catch(e) { console.warn('refresh erro:', e) }
             }
           }
         } catch(e) { console.warn('localStorage fallback erro:', e) }
@@ -127,7 +133,7 @@ export function App() {
 
   // Carrega dados quando user estiver pronto
   useEffect(() => {
-    if (!user) return
+    if (!user || !user.id) return
     ;(async () => {
       setLoading(true)
       try {
