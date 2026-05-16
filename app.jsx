@@ -31,8 +31,9 @@ export function App() {
   const [perfil,    setPerfil]    = useState(null)
 
   useEffect(() => {
-    // sessão inicial
+    // sessão inicial — lê direto do localStorage para ser síncrono
     supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+      console.log('getSession resultado:', session?.user?.id ?? 'null')
       const u = session?.user ?? null
       setUser(u)
       if (u) {
