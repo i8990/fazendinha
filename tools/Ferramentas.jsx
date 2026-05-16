@@ -9,7 +9,8 @@ import {
   CalcUA,
   CalcLotacao,
   CalcSalMineral,
-  CalcGMD
+  CalcGMD,
+  CalcPesoFita
 }                                          from './Calculadoras.jsx'
 
 export function ToolScreen({ title, icon, color, onBack, children }) {
@@ -181,6 +182,19 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     )
   }
 
+  if (open === 'fita') {
+    return (
+      <ToolScreen
+        title="Peso por Fita"
+        icon="📏"
+        color="linear-gradient(135deg,#E65100,#FF8F00)"
+        onBack={back}
+      >
+        <CalcPesoFita />
+      </ToolScreen>
+    )
+  }
+
   const MENU = [
     {
       id: 'uab',
@@ -217,6 +231,12 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
       icon: '🐄',
       label: 'Confin.',
       bg: 'rgba(90,200,250,0.14)'
+    },
+    {
+      id: 'fita',
+      icon: '📏',
+      label: 'Peso Fita',
+      bg: 'rgba(230,81,0,0.12)'
     }
   ]
 

@@ -183,3 +183,140 @@ export function CalcGMD() {
     </div>
   )
 }
+
+// ═══ PESO POR FITA ════════════════════════════════════════════════
+export function CalcPesoFita() {
+  const T = useT()
+  const [torax, setTorax] = useState('')
+  const [comp,  setComp]  = useState('')
+
+  const calcPeso = () => {
+    if (!torax) return null
+    const ct = +torax
+    const cg = comp ? +comp : 125
+    return Math.round((ct * ct * cg) / 10800)
+  }
+
+  const peso = calcPeso()
+  const faixaMin = peso ? Math.round(peso * 0.90) : null
+  const faixaMax = peso ? Math.round(peso * 1.10) : null
+  const usouComp = !!comp
+
+  return (
+    <div>
+      <div style={{
+        background: '#FFF8E1',
+        borderRadius: 14,
+        padding: 14,
+        marginBottom: 18,
+        border: '1.5px solid #FFD54F60'
+      }}>
+        <div style={{ fontWeight: 800, color: '#E65100', fontSize: 13, marginBottom: 6 }}>
+          📏 Como medir
+        </div>
+        <pre style={{
+          fontFamily: 'monospace',
+          fontSize: 11,
+          color: '#5D4037',
+          lineHeight: 1.45,
+          margin: '0 0 10px',
+          background: 'rgba(0,0,0,0.04)',
+          borderRadius: 8,
+          padding: '8px 10px',
+          overflowX: 'auto'
+        }}>
+{`   Cabeça
+     |
+  __/ \\__
+ |       |
+ | ═════ | ← fita aqui
+ |_______|
+     |
+  patas`}
+        </pre>
+        <div style={{ fontSize: 13, color: '#5D4037', lineHeight: 1.6 }}>
+          <b>Tórax:</b> passe a fita ao redor do peito, logo atrás das patas dianteiras, na parte mais larga.
+          Mantenha justa, sem apertar.
+        </div>
+        <div style={{ fontSize: 12, color: '#8D6E63', marginTop: 6, lineHeight: 1.5 }}>
+          <b>Comprimento</b> (opcional): da ponta do pescoço até a base da cauda. Melhora a precisão.
+        </div>
+      </div>
+
+      <Inp
+        label="Circunferência torácica (cm)"
+        value={torax}
+        onChange={setTorax}
+        type="number"
+        placeholder="Ex: 168"
+      />
+      <Inp
+        label="Comprimento corporal (cm) — opcional"
+        value={comp}
+        onChange={setComp}
+        type="number"
+        placeholder="Ex: 130"
+      />
+
+      {peso && (
+        <div style={{
+          background: 'linear-gradient(135deg,#E65100,#FF8F00)',
+          borderRadius: 16,
+          padding: 24,
+          textAlign: 'center',
+          marginTop: 8
+        }}>
+          <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: 700, marginBottom: 4 }}>
+            PESO ESTIMADO
+          </div>
+          <div style={{ color: '#FFF', fontSize: 64, fontWeight: 800, lineHeight: 1 }}>
+            {peso} <span style={{ fontSize: 24 }}>kg</span>
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: 700, marginTop: 12 }}>
+            Faixa provável: {faixaMin}–{faixaMax} kg
+          </div>
+          <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 12, marginTop: 6 }}>
+            {usouComp
+              ? `Tórax ${torax} cm × Comp. ${comp} cm`
+              : `Tórax ${torax} cm — comprimento estimado`}
+          </div>
+        </div>
+      )}
+
+      {peso && (
+        <div style={{
+          background: T.card,
+          border: `1px solid ${T.border}`,
+          borderRadius: 12,
+          padding: '10px 14px',
+          marginTop: 14
+        }}>
+          <div style={{ fontSize: 12, color: T.gray, lineHeight: 1.6 }}>
+            ⚠️ Aproximação de campo. Raça, idade, prenhez, escore corporal e genética
+            podem alterar o resultado real em até 15%.
+          </div>
+        </div>
+      )}
+
+      {(torax || comp) && (
+        <button
+          onClick={() => { setTorax(''); setComp('') }}
+          style={{
+            marginTop: 16,
+            width: '100%',
+            padding: '14px',
+            borderRadius: 12,
+            border: `1.5px solid ${T.border}`,
+            background: 'transparent',
+            color: T.gray,
+            fontSize: 14,
+            fontWeight: 600,
+            cursor: 'pointer'
+          }}
+        >
+          Limpar
+        </button>
+      )}
+    </div>
+  )
+}
