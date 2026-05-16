@@ -1,41 +1,45 @@
 // ═══ STORAGE — Supabase/app_state (fonte única de verdade) ════════
 // Importado por: app.jsx (apenas)
 // Nenhuma página acessa este módulo diretamente.
-//
-//  Tabela usada: app_state
-//  Schema esperado:
-//    key         text PRIMARY KEY
-//    value       jsonb NOT NULL
-//    updated_at  timestamptz DEFAULT now()
-//
-//  RLS mínimo necessário (rodar no SQL Editor do Supabase):
-//    ALTER TABLE app_state ENABLE ROW LEVEL SECURITY;
-//    CREATE POLICY "anon_all" ON app_state FOR ALL USING (true) WITH CHECK (true);
 
 import { supabaseClient } from './supabase.js'
 import { TODAY }          from './utils.js'
 
 const DB_TABLE = 'app_state'
 
+// ── Pega o user_id do usuário logado ─────────────────────────────
+const getUserId = async () => {
+  const { data: { user } } = await supabaseClient.auth.getUser()
+  if (!user) throw new Error('Usuário não autenticado')
+  return user.id
+}
+
 // ── Primitiva de escrita ──────────────────────────────────────────
-// fire-and-forget: não bloqueia a UI, mas loga erros detalhados
-export const dbSet = (k, v) => {
-  supabaseClient
-    .from(DB_TABLE)
-    .upsert({ key: k, value: v, updated_at: new Date().toISOString() }, { onConflict: 'key' })
-    .then(({ error }) => {
-      if (error) console.error(`❌ dbSet [${k}] falhou:`, error.code, error.message, error.hint || '')
-      else       console.log(`💾 dbSet [${k}] OK`)
-    })
+export const dbSet = async (k, v) => {
+  try {
+    const userId = await getUserId()
+    const { error } = await supabaseClient
+      .from(DB_TABLE)
+      .upsert(
+        { key: k, value: v, user_id: userId, updated_at: new Date().toISOString() },
+        { onConflict: 'key,user_id' }
+      )
+    if (error) console.error(`❌ dbSet [${k}] falhou:`, error.code, error.message, error.hint || '')
+    else       console.log(`💾 dbSet [${k}] OK`)
+  } catch (e) {
+    console.error(`❌ dbSet [${k}] exceção:`, e.message)
+  }
 }
 
 // ── Primitiva de leitura ──────────────────────────────────────────
 export const dbLoad = async (k) => {
   try {
+    const userId = await getUserId()
     const { data, error } = await supabaseClient
       .from(DB_TABLE)
       .select('value')
       .eq('key', k)
+      .eq('user_id', userId)
       .maybeSingle()
     if (error) {
       console.error(`❌ dbLoad [${k}] erro:`, error.code, error.message, error.hint || '')
@@ -49,16 +53,20 @@ export const dbLoad = async (k) => {
 }
 
 // ── Reset completo ────────────────────────────────────────────────
-export const dbReset = () => {
-  const KEYS = ['pastos', 'animais', 'fin', 'movs', 'sal', 'manejos', 'cfg', 'adubacoes']
-  supabaseClient
-    .from(DB_TABLE)
-    .delete()
-    .in('key', KEYS)
-    .then(({ error }) => {
-      if (error) console.error('❌ dbReset falhou:', error.message)
-      else       console.log('🗑️ dbReset OK')
-    })
+export const dbReset = async () => {
+  try {
+    const userId = await getUserId()
+    const KEYS = ['pastos', 'animais', 'fin', 'movs', 'sal', 'manejos', 'cfg', 'adubacoes']
+    const { error } = await supabaseClient
+      .from(DB_TABLE)
+      .delete()
+      .in('key', KEYS)
+      .eq('user_id', userId)
+    if (error) console.error('❌ dbReset falhou:', error.message)
+    else       console.log('🗑️ dbReset OK')
+  } catch (e) {
+    console.error('❌ dbReset exceção:', e.message)
+  }
 }
 
 // ── Exportação de backup ──────────────────────────────────────────
@@ -74,8 +82,6 @@ export const dbExport = (data) => {
 }
 
 // ── API nomeada por entidade ──────────────────────────────────────
-// Cada função deixa claro O QUE está sendo salvo/carregado.
-// Fácil de substituir por tabelas individuais no futuro.
 export const savePastos    = (v) => dbSet('pastos',    v)
 export const saveAnimais   = (v) => dbSet('animais',   v)
 export const saveFin       = (v) => dbSet('fin',       v)
