@@ -143,7 +143,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     return (
       <ToolScreen
         title="Adubação"
-        icon="🌱"
+        icon={<img src='/iconeSOLO.png' style={{ width: 28, height: 28, objectFit: 'contain' }} />}
         color="linear-gradient(135deg,#1a3a1a,#2D6A4F)"
         onBack={back}
       >
@@ -203,7 +203,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     },
     {
       id: 'adub',
-      icon: '🌱',
+      icon: <img src='/iconeSOLO.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Adubação',
       bg: 'rgba(48,209,88,0.12)'
     },
