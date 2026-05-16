@@ -113,6 +113,7 @@ export function App() {
     ;(async () => {
       setLoading(true)
       try {
+        await new Promise(r => setTimeout(r, 800))
         console.log('📦 Carregando cfg...')
         const cfg = await loadCfg()
         console.log('📦 cfg carregado:', cfg)
