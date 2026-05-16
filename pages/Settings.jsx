@@ -10,8 +10,32 @@ import { useState, useMemo }              from 'react'
 import { useT, MESES }                    from '../constants.js'
 import { TODAY, fmtD, fmtR }              from '../utils.js'
 import { Card, Btn }                      from '../ui.jsx'
-import { dbReset, dbExport }              from '../storage.js'
+import { dbReset, dbExport, dbSet }       from '../storage.js'
 import { Ajuda }                          from './Ajuda.jsx'
+
+// ── Importar backup ──────────────────────────────────────────────
+async function dbImport(file, setters) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = async (e) => {
+      try {
+        const json = JSON.parse(e.target.result)
+        const data = json.data || json
+        const KEYS = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
+        for (const k of KEYS) {
+          if (data[k] !== undefined) {
+            await dbSet(k, data[k])
+            if (setters[k]) setters[k](data[k])
+          }
+        }
+        resolve()
+      } catch (err) {
+        reject(err)
+      }
+    }
+    reader.readAsText(file)
+  })
+}
 
 // ── Toggle (iOS-style switch) ─────────────────────────────────────
 function Toggle({ value, onChange, label, sub }) {
@@ -212,7 +236,7 @@ function CalendarView({ movs, manejos, animais, fin }) {
 }
 
 // ═══ SETTINGS (tela principal) ════════════════════════════════════
-export function Settings({ dark, setDark, onReset, onClose, movs, manejos, animais, fin, pastos, sal }) {
+export function Settings({ dark, setDark, onReset, onClose, movs, manejos, animais, fin, pastos, sal, setAnimais, setFin, setMovs, setSal, setPastos, setManejos, setAdubacoes }) {
   const T = useT()
   const [confirmReset, setCR]  = useState(false)
   const [aba, setAba]          = useState('geral')
@@ -283,6 +307,37 @@ export function Settings({ dark, setDark, onReset, onClose, movs, manejos, anima
             <div style={{ fontSize: 12, color: T.gray, marginBottom: 14, lineHeight: 1.6 }}>
               Dados salvos localmente no dispositivo. Exporte regularmente para backup.
             </div>
+            <Btn
+              l={importing ? 'Importando...' : importOk ? '✅ Importado!' : '📥 Importar Backup (JSON)'}
+              color={importOk ? T.green : T.blue}
+              onClick={() => {
+                const input = document.createElement('input')
+                input.type = 'file'
+                input.accept = '.json'
+                input.onchange = async (e) => {
+                  const file = e.target.files[0]
+                  if (!file) return
+                  setImp(true); setImpOk(false)
+                  try {
+                    await dbImport(file, {
+                      pastos:    v => { setPastos(v) },
+                      animais:   v => { setAnimais(v) },
+                      fin:       v => { setFin(v) },
+                      movs:      v => { setMovs(v) },
+                      sal:       v => { setSal(v) },
+                      manejos:   v => { setManejos(v) },
+                      adubacoes: v => { setAdubacoes(v) },
+                    })
+                    setImpOk(true)
+                  } catch {
+                    alert('Arquivo inválido ou corrompido.')
+                  }
+                  setImp(false)
+                }
+                input.click()
+              }}
+              style={{ marginBottom: 10 }}
+            />
             <Btn l="📤 Exportar Backup (JSON)" color={T.blue} onClick={() => dbExport(allData)} style={{ marginBottom: 10 }} />
             {!confirmReset
               ? <Btn l="🗑️ Resetar Todos os Dados" color={T.red} onClick={() => setCR(true)} />

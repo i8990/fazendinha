@@ -217,9 +217,13 @@ export function App() {
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}
-            movs={movs}     manejos={manejos}
-            animais={animais} fin={fin}
-            pastos={pastos}   sal={sal}
+            movs={movs}         manejos={manejos}
+            animais={animais}   fin={fin}
+            pastos={pastos}     sal={sal}
+            setAnimais={setAnimais} setFin={setFin}
+            setMovs={setMovs}   setSal={setSal}
+            setPastos={setPastos} setManejos={setManejos}
+            setAdubacoes={setAdubacoes}
           />}
 
         {globalAction && <GlobalModals
