@@ -182,7 +182,6 @@ export function App() {
   // ── Guards ────────────────────────────────────────────────────
   if (!authReady)        return <Splash />
   if (!user)             return <Login onLogin={setUser} />
-  if (!perfil)           return <NomeFazenda user={user} onSalvo={setPerfil} />
   if (loading)           return <Splash />
 
   return (
