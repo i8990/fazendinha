@@ -239,6 +239,8 @@ function CalendarView({ movs, manejos, animais, fin }) {
 export function Settings({ dark, setDark, onReset, onClose, movs, manejos, animais, fin, pastos, sal, setAnimais, setFin, setMovs, setSal, setPastos, setManejos, setAdubacoes }) {
   const T = useT()
   const [confirmReset, setCR]  = useState(false)
+  const [importing,    setImp]  = useState(false)
+  const [importOk,     setImpOk] = useState(false)
   const [aba, setAba]          = useState('geral')
   const [ajudaOpen, setAjuda]  = useState(false)
 
