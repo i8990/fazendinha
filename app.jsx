@@ -109,21 +109,10 @@ export function App() {
   // Carrega dados quando user estiver pronto
   useEffect(() => {
     if (!user) return
-    console.log('🔄 Iniciando carregamento para user:', user.id)
     ;(async () => {
       setLoading(true)
       try {
-        await new Promise(r => setTimeout(r, 800))
-        console.log('📦 Carregando cfg...')
-        const cfgPromise = loadCfg()
-        const timeoutPromise = new Promise(r => setTimeout(() => r('TIMEOUT'), 5000))
-        const cfg = await Promise.race([cfgPromise, timeoutPromise])
-        console.log('📦 cfg resultado:', cfg)
-        if (cfg === 'TIMEOUT') {
-          console.error('❌ loadCfg travou — possível problema de RLS ou conexão')
-          setLoading(false)
-          return
-        }
+        const cfg = await loadCfg()
         if (cfg?.dark !== undefined) setDark(cfg.dark)
         const loaders = [
           [loadPastos,    setP,   'pastos'],
@@ -138,16 +127,13 @@ export function App() {
           const v = await loader()
           if (v !== null) {
             setter(v)
-            console.log(`✅ ${name}: ${Array.isArray(v) ? v.length + ' registros' : 'OK'}`)
-          } else {
+              } else {
             console.warn(`⚠️ ${name}: vazio ou não encontrado no banco`)
           }
         }
-        console.log('🌿 Sincronização completa')
       } catch (e) {
         console.error('❌ Erro crítico:', e.message, e)
       } finally {
-        console.log('✅ setLoading(false)')
         setLoading(false)
       }
     })()
