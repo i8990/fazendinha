@@ -36,11 +36,20 @@ export function App() {
       const u = session?.user ?? null
       setUser(u)
       if (u) {
-        const p = await getPerfil(u.id)
-        setPerfil(p)
+        try {
+          const p = await getPerfil(u.id)
+          setPerfil(p)
+        } catch(e) {
+          console.error('getPerfil erro:', e)
+        }
       }
       setAuthReady(true)
+    }).catch(e => {
+      console.error('getSession erro:', e)
+      setAuthReady(true)
     })
+    // timeout de segurança
+    setTimeout(() => setAuthReady(true), 5000)
 
     // escuta mudanças de sessão
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
@@ -217,9 +226,13 @@ export function App() {
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}
-            movs={movs}     manejos={manejos}
-            animais={animais} fin={fin}
-            pastos={pastos}   sal={sal}
+            movs={movs}         manejos={manejos}
+            animais={animais}   fin={fin}
+            pastos={pastos}     sal={sal}
+            setAnimais={setAnimais} setFin={setFin}
+            setMovs={setMovs}   setSal={setSal}
+            setPastos={setPastos} setManejos={setManejos}
+            setAdubacoes={setAdubacoes}
           />}
 
         {globalAction && <GlobalModals
