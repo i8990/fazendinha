@@ -1,4 +1,4 @@
-const CACHE = 'fazendinha-v1'
+const CACHE = 'fazendinha-v1778971388'
 
 const SHELL = [
   '/',
