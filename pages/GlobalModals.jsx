@@ -18,7 +18,7 @@ import { useT }                               from '../constants.js'
 import { TODAY, calcIdade }                   from '../utils.js'
 import { Modal, Btn, Inp, Sel }               from '../ui.jsx'
 
-export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs, fin, setFin }) {
+export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs, fin, setFin, setManejos }) {
   const T = useT()
 
   const oc     = pastos.filter(p => p.status === 'ocupado')
@@ -52,6 +52,33 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
   })
 
   const CATS_DESP = ['Alimentação','Medicamento','Sal Mineral','Manutenção','Combustível','Mão de Obra','Outros']
+
+  // ── Estado: gasolina ──────────────────────────────────────────
+  const [fG, setFG] = useState({ obs: '' })
+
+  const saveGasolina = () => {
+    const agora = Date.now()
+    setFin(f => [...f, {
+      id: agora,
+      tipo: 'despesa',
+      desc: 'Combustível — Ida à fazenda',
+      valor: 22,
+      cat: 'Combustível',
+      data: TODAY,
+      obs: fG.obs
+    }])
+    setManejos(m => [{
+      id: agora + 1,
+      tipoManejo: 'deslocamento',
+      nomeManejo: 'Deslocamento',
+      animaisIds: [],
+      animaisIdents: [],
+      dose: '',
+      data: TODAY,
+      obs: fG.obs || 'Ida à fazenda'
+    }, ...m])
+    onClose()
+  }
 
   const saveDespesa = () => {
     if (!fD.valor || !fD.desc.trim()) return
@@ -210,6 +237,32 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
         <Inp label="Observação" value={pObs} onChange={setPObs} placeholder="Motivo..." />
         <Btn l="✅ Confirmar Movimentação" onClick={savePasto} dis={!pDest} />
       </>}
+    </Modal>
+  )
+
+  // ── Render: gasolina ──────────────────────────────────────────
+  if (action === 'gasolina') return (
+    <Modal open title="⛽ Ida à Fazenda" onClose={onClose}>
+      <div style={{
+        background: T.gPale, borderRadius: 14,
+        padding: '14px 16px', marginBottom: 18,
+        border: `1.5px solid ${T.gLight}30`
+      }}>
+        <div style={{ fontWeight: 800, color: T.gDark, fontSize: 13, marginBottom: 4 }}>
+          Registro automático
+        </div>
+        <div style={{ fontSize: 13, color: T.gray, lineHeight: 1.6 }}>
+          💸 Saída de <b>R$ 22,00</b> no caixa<br />
+          📋 Entrada no histórico como <b>Deslocamento</b>
+        </div>
+      </div>
+      <Inp
+        label="Observações (opcional)"
+        value={fG.obs}
+        onChange={v => setFG(f => ({ ...f, obs: v }))}
+        placeholder="Ex: Visita semanal, urgência..."
+      />
+      <Btn l="⛽ Registrar Ida" onClick={saveGasolina} />
     </Modal>
   )
 

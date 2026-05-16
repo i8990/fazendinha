@@ -197,6 +197,7 @@ export function App() {
             setSal={setSal}
             setMovs={setMovs}
             fin={fin}         setFin={setFin}
+            setManejos={setManejos}
           />}
 
         {true && (

@@ -37,6 +37,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
     { icon: '🐮', l: 'Nascimento',   action: 'nascimento' },
     { icon: '🧂', l: 'Sal Mineral',  action: 'sal'        },
     { icon: '💸', l: 'Despesa',      action: 'despesa'    },
+    { icon: '⛽', l: 'Ida à Fazenda', action: 'gasolina'   },
   ]
 
   return (
