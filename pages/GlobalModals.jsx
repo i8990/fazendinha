@@ -18,7 +18,7 @@ import { useT }                               from '../constants.js'
 import { TODAY, calcIdade }                   from '../utils.js'
 import { Modal, Btn, Inp, Sel }               from '../ui.jsx'
 
-export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs }) {
+export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs, fin, setFin }) {
   const T = useT()
 
   const oc     = pastos.filter(p => p.status === 'ocupado')
@@ -45,6 +45,23 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
   const [pAnimal, setPAnimal] = useState('')
   const [pDest, setPDest]   = useState('')
   const [pObs, setPObs]     = useState('')
+
+  // ── Estado: despesa ───────────────────────────────────────────
+  const [fD, setFD] = useState({
+    desc: '', valor: '', cat: 'Alimentação', data: TODAY, obs: ''
+  })
+
+  const CATS_DESP = ['Alimentação','Medicamento','Sal Mineral','Manutenção','Combustível','Mão de Obra','Outros']
+
+  const saveDespesa = () => {
+    if (!fD.valor || !fD.desc.trim()) return
+    setFin(f => [...f, {
+      ...fD, id: Date.now(),
+      tipo: 'despesa',
+      valor: +fD.valor
+    }])
+    onClose()
+  }
 
   const filtr = pBusca
     ? ativos.filter(a => a.ident.toLowerCase().includes(pBusca.toLowerCase()))
@@ -193,6 +210,62 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
         <Inp label="Observação" value={pObs} onChange={setPObs} placeholder="Motivo..." />
         <Btn l="✅ Confirmar Movimentação" onClick={savePasto} dis={!pDest} />
       </>}
+    </Modal>
+  )
+
+  // ── Render: despesa ───────────────────────────────────────────
+  if (action === 'despesa') return (
+    <Modal open title="💸 Registrar Despesa" onClose={onClose}>
+      <Inp
+        label="Descrição *"
+        value={fD.desc}
+        onChange={v => setFD(f => ({ ...f, desc: v }))}
+        placeholder="Ex: Ração, vacina, diesel..."
+      />
+      <Inp
+        label="Valor (R$) *"
+        value={fD.valor}
+        onChange={v => setFD(f => ({ ...f, valor: v }))}
+        type="number"
+        placeholder="Ex: 850"
+      />
+      <div style={{ marginBottom: 14 }}>
+        <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.gray, marginBottom: 8, textTransform: 'uppercase', letterSpacing: '.5px' }}>
+          Categoria
+        </label>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7 }}>
+          {CATS_DESP.map(c => (
+            <button
+              key={c}
+              onClick={() => setFD(f => ({ ...f, cat: c }))}
+              style={{
+                border: `2px solid ${fD.cat === c ? T.red : T.border}`,
+                borderRadius: 20, padding: '6px 13px',
+                fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: fD.cat === c ? T.pinkPale : T.card,
+                color: fD.cat === c ? T.red : T.gray
+              }}
+            >{c}</button>
+          ))}
+        </div>
+      </div>
+      <Inp
+        label="Data"
+        value={fD.data}
+        onChange={v => setFD(f => ({ ...f, data: v }))}
+        type="date"
+      />
+      <Inp
+        label="Observações"
+        value={fD.obs}
+        onChange={v => setFD(f => ({ ...f, obs: v }))}
+        placeholder="Opcional..."
+      />
+      <Btn
+        l="💾 Salvar Despesa"
+        onClick={saveDespesa}
+        dis={!fD.valor || !fD.desc.trim()}
+      />
     </Modal>
   )
 

@@ -195,6 +195,7 @@ export function App() {
             setAnimais={setAnimais}
             setSal={setSal}
             setMovs={setMovs}
+            fin={fin}         setFin={setFin}
           />}
 
         {page !== 'settings' && (
