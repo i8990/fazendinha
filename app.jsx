@@ -57,7 +57,7 @@ export function App() {
       setUser(u)
       if (u) {
         const p = await getPerfil(u.id)
-        setPerfil(p)
+        if (p) setPerfil(p)
       } else {
         setPerfil(null)
       }
