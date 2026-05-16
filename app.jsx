@@ -39,38 +39,7 @@ export function App() {
     Promise.race([sessionPromise, timeoutPromise]).then(async ({ data: { session } }) => {
       console.log('getSession resultado:', session?.user?.id ?? 'null')
 
-      // Fallback: lê token direto do localStorage se getSession falhar
       let u = session?.user ?? null
-      if (!u) {
-        try {
-          const key = Object.keys(localStorage).find(k => k.includes('auth-token'))
-          if (key) {
-            const stored = JSON.parse(localStorage.getItem(key))
-            if (stored?.user) {
-              u = stored.user
-              console.log('✅ usuário recuperado do localStorage:', u.id)
-              // Tenta refresh com timeout
-              try {
-                const refreshPromise = supabaseClient.auth.refreshSession()
-                const refreshTimeout = new Promise((_,reject) => setTimeout(() => reject('timeout'), 3000))
-                const { data } = await Promise.race([refreshPromise, refreshTimeout])
-                if (data?.user) {
-                  u = data.user
-                  console.log('✅ sessão renovada:', u.id)
-                } else {
-                  console.warn('refresh retornou sem user — forçando logout')
-                  localStorage.clear()
-                  u = null
-                }
-              } catch(e) {
-                console.warn('refresh falhou:', e, '— forçando logout')
-                await supabaseClient.auth.signOut()
-                u = null
-              }
-            }
-          }
-        } catch(e) { console.warn('localStorage fallback erro:', e) }
-      }
 
       setUser(u)
       if (u) {
