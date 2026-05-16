@@ -106,9 +106,9 @@ export function App() {
     setPage('home')
   }
 
-  // Carrega dados apenas quando user + perfil prontos
+  // Carrega dados quando user estiver pronto
   useEffect(() => {
-    if (!user || !perfil) return
+    if (!user) return
     ;(async () => {
       setLoading(true)
       try {
