@@ -115,8 +115,15 @@ export function App() {
       try {
         await new Promise(r => setTimeout(r, 800))
         console.log('📦 Carregando cfg...')
-        const cfg = await loadCfg()
-        console.log('📦 cfg carregado:', cfg)
+        const cfgPromise = loadCfg()
+        const timeoutPromise = new Promise(r => setTimeout(() => r('TIMEOUT'), 5000))
+        const cfg = await Promise.race([cfgPromise, timeoutPromise])
+        console.log('📦 cfg resultado:', cfg)
+        if (cfg === 'TIMEOUT') {
+          console.error('❌ loadCfg travou — possível problema de RLS ou conexão')
+          setLoading(false)
+          return
+        }
         if (cfg?.dark !== undefined) setDark(cfg.dark)
         const loaders = [
           [loadPastos,    setP,   'pastos'],
