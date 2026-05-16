@@ -11,18 +11,20 @@ export default function NomeFazenda({ user, onSalvo }) {
     if (!nome.trim()) return
     setLoading(true); setErro('')
     try {
-      // Garante sessão ativa antes de salvar
       const { data: { session } } = await supabaseClient.auth.getSession()
+      console.log('Sessão:', session)
+      console.log('User ID:', user?.id)
       if (!session) {
         setErro('Sessão expirada. Faça login novamente.')
         setLoading(false)
         return
       }
       const perfil = await savePerfil(user.id, nome.trim())
+      console.log('Perfil salvo:', perfil)
       onSalvo(perfil)
     } catch (e) {
-      console.error('Erro ao salvar perfil:', e)
-      setErro('Não foi possível salvar. Tente novamente.')
+      console.error('Erro ao salvar perfil:', e.message, e)
+      setErro('Erro: ' + e.message)
     }
     setLoading(false)
   }
