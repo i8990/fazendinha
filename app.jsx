@@ -103,6 +103,7 @@ export function App() {
     { id: 'animais',     icon: '🐄', label: 'Animais'     },
     { id: 'financeiro',  icon: '💰', label: 'Caixa'       },
     { id: 'ferramentas', icon: '🧮', label: 'Ferramentas' },
+    { id: 'settings',    icon: '⚙️',  label: 'Config.'     },
   ]
 
   if (loading) return (
@@ -198,7 +199,7 @@ export function App() {
             fin={fin}         setFin={setFin}
           />}
 
-        {page !== 'settings' && (
+        {true && (
           <div style={{
             position: 'fixed', bottom: 0,
             left: '50%', transform: 'translateX(-50%)',

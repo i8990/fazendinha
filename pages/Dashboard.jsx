@@ -56,17 +56,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
               <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>🐣 {bezerros.length} bezerros</span>
             </div>
           </div>
-          {/* Settings icon */}
-          <button
-            onClick={() => setPage('settings')}
-            style={{
-              background: 'rgba(255,255,255,0.15)',
-              border: 'none', borderRadius: 12,
-              width: 34, height: 34, flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              cursor: 'pointer', fontSize: 17
-            }}
-          >⚙️</button>
+
         </div>
       </div>
 
