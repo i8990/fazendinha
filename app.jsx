@@ -49,14 +49,24 @@ export function App() {
             if (stored?.user) {
               u = stored.user
               console.log('✅ usuário recuperado do localStorage:', u.id)
-              // Aguarda refresh antes de setar user
+              // Tenta refresh com timeout
               try {
-                const { data } = await supabaseClient.auth.refreshSession()
+                const refreshPromise = supabaseClient.auth.refreshSession()
+                const refreshTimeout = new Promise((_,reject) => setTimeout(() => reject('timeout'), 3000))
+                const { data } = await Promise.race([refreshPromise, refreshTimeout])
                 if (data?.user) {
                   u = data.user
                   console.log('✅ sessão renovada:', u.id)
+                } else {
+                  console.warn('refresh retornou sem user — forçando logout')
+                  localStorage.clear()
+                  u = null
                 }
-              } catch(e) { console.warn('refresh erro:', e) }
+              } catch(e) {
+                console.warn('refresh falhou:', e, '— forçando logout')
+                await supabaseClient.auth.signOut()
+                u = null
+              }
             }
           }
         } catch(e) { console.warn('localStorage fallback erro:', e) }
