@@ -50,9 +50,7 @@ export function App() {
               u = stored.user
               console.log('✅ usuário recuperado do localStorage:', u.id)
               // Força refresh da sessão em background
-              supabaseClient.auth.refreshSession().then(({ data }) => {
-                if (data?.user) setUser(data.user)
-              })
+              supabaseClient.auth.refreshSession().catch(() => {})
             }
           }
         } catch(e) { console.warn('localStorage fallback erro:', e) }
