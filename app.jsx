@@ -109,10 +109,13 @@ export function App() {
   // Carrega dados quando user estiver pronto
   useEffect(() => {
     if (!user) return
+    console.log('🔄 Iniciando carregamento para user:', user.id)
     ;(async () => {
       setLoading(true)
       try {
+        console.log('📦 Carregando cfg...')
         const cfg = await loadCfg()
+        console.log('📦 cfg carregado:', cfg)
         if (cfg?.dark !== undefined) setDark(cfg.dark)
         const loaders = [
           [loadPastos,    setP,   'pastos'],
@@ -134,8 +137,9 @@ export function App() {
         }
         console.log('🌿 Sincronização completa')
       } catch (e) {
-        console.error('❌ Erro crítico ao carregar do Supabase:', e)
+        console.error('❌ Erro crítico:', e.message, e)
       } finally {
+        console.log('✅ setLoading(false)')
         setLoading(false)
       }
     })()
