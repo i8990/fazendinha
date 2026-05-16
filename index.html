@@ -44,5 +44,14 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/main.jsx"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(() => console.log('✅ Service Worker registrado'))
+          .catch(e => console.warn('SW erro:', e))
+      })
+    }
+  </script>
 </body>
 </html>
