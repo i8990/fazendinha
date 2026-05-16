@@ -197,18 +197,21 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     },
     {
       id: 'sal',
+      raw: true,
       icon: <img src='/iconeSAL.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Sal',
       bg: 'rgba(255,159,10,0.12)'
     },
     {
       id: 'adub',
+      raw: true,
       icon: <img src='/iconeSOLO.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Adubação',
       bg: 'rgba(48,209,88,0.12)'
     },
     {
       id: 'conf',
+      raw: true,
       icon: <img src='/iconeCONFIN.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
       label: 'Confin.',
       bg: 'rgba(90,200,250,0.14)'
@@ -263,8 +266,8 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
                   width: 78,
                   height: 78,
                   borderRadius: 22,
-                  background: T.card,
-                  border: `1px solid ${T.border}`,
+                  background: m.raw ? 'transparent' : T.card,
+                  border: m.raw ? 'none' : `1px solid ${T.border}`,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
