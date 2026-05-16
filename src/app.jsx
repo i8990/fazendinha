@@ -293,3 +293,4 @@ export function App() {
     </TC.Provider>
   )
 }
+/* sáb 16 mai 2026 11:41:01 -03 */
