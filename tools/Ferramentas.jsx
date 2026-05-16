@@ -9,7 +9,6 @@ import {
   CalcUA,
   CalcLotacao,
   CalcSalMineral,
-  CalcGMD,
   CalcPesoFita
 }                                          from './Calculadoras.jsx'
 
@@ -139,18 +138,6 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
     )
   }
 
-  if (open === 'gmd') {
-    return (
-      <ToolScreen
-        title="GMD"
-        icon="📈"
-        color={`linear-gradient(135deg,${T.blue},${T.bLight})`}
-        onBack={back}
-      >
-        <CalcGMD />
-      </ToolScreen>
-    )
-  }
 
   if (open === 'adub') {
     return (
@@ -213,12 +200,6 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos }) {
       icon: '🧂',
       label: 'Sal',
       bg: 'rgba(255,159,10,0.12)'
-    },
-    {
-      id: 'gmd',
-      icon: '📈',
-      label: 'GMD',
-      bg: 'rgba(10,132,255,0.12)'
     },
     {
       id: 'adub',
