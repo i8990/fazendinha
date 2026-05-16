@@ -2,7 +2,7 @@
 // Importado por: storage.js (apenas)
 // Nenhuma outra camada acessa supabaseClient diretamente.
 
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+import { createClient } from '@supabase/supabase-js'
 
 const SUPABASE_URL      = 'https://orrskyytignlneoftpft.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_E11Kg5KjCQR6S_mo0gWt5g_9AGA2JWH'
