@@ -11,6 +11,7 @@ import { useT, MESES }                    from '../constants.js'
 import { TODAY, fmtD, fmtR }              from '../utils.js'
 import { Card, Btn }                      from '../ui.jsx'
 import { dbReset, dbExport, dbSet }       from '../storage.js'
+import { signOut }                         from '../supabase.js'
 import { Ajuda }                          from './Ajuda.jsx'
 
 // ── Importar backup ──────────────────────────────────────────────
@@ -367,6 +368,19 @@ export function Settings({ dark, setDark, onReset, onClose, movs, manejos, anima
               Manuais do usuário e do desenvolvedor com instruções detalhadas do app.
             </div>
             <Btn l="📖 Abrir Ajuda" color={T.green} onClick={() => setAjuda(true)} />
+          </>} />
+
+          {/* Sair */}
+          <Card ch={<>
+            <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>🚪 Conta</div>
+            <div style={{ fontSize: 13, color: T.gray, marginBottom: 14, lineHeight: 1.6 }}>
+              Sair da conta neste dispositivo.
+            </div>
+            <Btn
+              l="🚪 Sair"
+              color={T.red}
+              onClick={async () => { await signOut(); window.location.reload() }}
+            />
           </>} />
 
           {/* Sobre */}
