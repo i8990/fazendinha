@@ -1,6 +1,6 @@
 // ═══ NOME FAZENDA — configuração inicial ══════════════════════════
 import { useState }          from 'react'
-import { savePerfil }        from '../supabase.js'
+import { savePerfil, supabaseClient } from '../supabase.js'
 
 export default function NomeFazenda({ user, onSalvo }) {
   const [nome,    setNome]    = useState('')
@@ -11,9 +11,17 @@ export default function NomeFazenda({ user, onSalvo }) {
     if (!nome.trim()) return
     setLoading(true); setErro('')
     try {
+      // Garante sessão ativa antes de salvar
+      const { data: { session } } = await supabaseClient.auth.getSession()
+      if (!session) {
+        setErro('Sessão expirada. Faça login novamente.')
+        setLoading(false)
+        return
+      }
       const perfil = await savePerfil(user.id, nome.trim())
       onSalvo(perfil)
-    } catch {
+    } catch (e) {
+      console.error('Erro ao salvar perfil:', e)
       setErro('Não foi possível salvar. Tente novamente.')
     }
     setLoading(false)
