@@ -56,8 +56,10 @@ export function App() {
       const u = session?.user ?? null
       setUser(u)
       if (u) {
-        const p = await getPerfil(u.id)
-        if (p) setPerfil(p)
+        try {
+          const p = await getPerfil(u.id)
+          setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
+        } catch(e) { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
       } else {
         setPerfil(null)
       }
@@ -137,7 +139,7 @@ export function App() {
         setLoading(false)
       }
     })()
-  }, [user, perfil])
+  }, [user])
 
   const bezNovos = animais.filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
