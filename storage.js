@@ -65,10 +65,12 @@ export const syncFromSupabase = async (userId) => {
     ])
     if (error || !data) return null
     // Grava no IndexedDB em background (cache offline)
-    data.forEach(row => localSet(row.key, row.value))
+    const valid = data.filter(r => r.value !== null && r.value !== undefined)
+    valid.forEach(row => localSet(row.key, row.value))
     localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
     // Retorna mapa direto
-    return Object.fromEntries(data.map(r => [r.key, r.value]))
+    const valid = data.filter(r => r.value !== null && r.value !== undefined)
+    return Object.fromEntries(valid.map(r => [r.key, r.value]))
   } catch { return null }
 }
 

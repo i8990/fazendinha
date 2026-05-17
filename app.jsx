@@ -170,13 +170,13 @@ export function App() {
     try {
       const snap = await syncFromSupabase(userId)
       if (snap) {
-        if (snap.pastos    !== undefined) setP(Array.isArray(snap.pastos)    ? snap.pastos    : [])
-        if (snap.animais   !== undefined) setA(Array.isArray(snap.animais)   ? snap.animais   : [])
-        if (snap.fin       !== undefined) setF(Array.isArray(snap.fin)       ? snap.fin       : [])
-        if (snap.movs      !== undefined) setMv(Array.isArray(snap.movs)     ? snap.movs      : [])
-        if (snap.sal       !== undefined) setSl(Array.isArray(snap.sal)      ? snap.sal       : [])
-        if (snap.manejos   !== undefined) setMj(Array.isArray(snap.manejos)  ? snap.manejos   : [])
-        if (snap.adubacoes !== undefined) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
+        if (snap.pastos    != null) setP(Array.isArray(snap.pastos)    ? snap.pastos    : [])
+        if (snap.animais   != null) setA(Array.isArray(snap.animais)   ? snap.animais   : [])
+        if (snap.fin       != null) setF(Array.isArray(snap.fin)       ? snap.fin       : [])
+        if (snap.movs      != null) setMv(Array.isArray(snap.movs)     ? snap.movs      : [])
+        if (snap.sal       != null) setSl(Array.isArray(snap.sal)      ? snap.sal       : [])
+        if (snap.manejos   != null) setMj(Array.isArray(snap.manejos)  ? snap.manejos   : [])
+        if (snap.adubacoes != null) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
         setLastSync(new Date())
       }
     } finally {
