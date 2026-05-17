@@ -69,7 +69,6 @@ export const syncFromSupabase = async (userId) => {
     valid.forEach(row => localSet(row.key, row.value))
     localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
     // Retorna mapa direto
-    const valid = data.filter(r => r.value !== null && r.value !== undefined)
     return Object.fromEntries(valid.map(r => [r.key, r.value]))
   } catch { return null }
 }
