@@ -92,7 +92,7 @@ export function App() {
       ]
       await Promise.all(loaders.map(async ([loader, setter]) => {
         const v = await loader()
-        if (v !== null) setter(v)
+        if (v !== null) setter(Array.isArray(v) ? v : [])
       }))
 
       // Última sync
@@ -157,7 +157,7 @@ export function App() {
       ]
       await Promise.all(loaders.map(async ([loader, setter]) => {
         const v = await loader()
-        if (v !== null) setter(v)
+        if (v !== null) setter(Array.isArray(v) ? v : [])
       }))
       setLastSync(new Date())
     }
@@ -173,7 +173,7 @@ export function App() {
     return () => { window.removeEventListener('online', goOn); window.removeEventListener('offline', goOff) }
   }, [user])
 
-  const bezNovos = animais.filter(a =>
+  const bezNovos = (animais ?? []).filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
     a.dataNasc && calcIdade(a.dataNasc)?.dias < 7
   ).length
