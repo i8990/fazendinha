@@ -100,6 +100,8 @@ export const syncFromSupabase = async (userId) => {
       .select('key,value,updated_at')
       .eq('user_id', userId)
       .in('key', KEYS)
+
+      console.log('🚀 query montada')
     if (error || !data) return false
     await Promise.all(data.map(row => localSet(row.key, row.value)))
     await localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
@@ -112,7 +114,9 @@ export const dbReset = async () => {
   await localClear()
   const userId = await getUserId()
   if (!userId) return
-  supabaseClient.from(DB_TABLE).delete().in('key', KEYS).eq('user_id', userId).catch(() => {})
+  supabaseClient.from(DB_TABLE).delete().in('key', KEYS)
+
+      console.log('🚀 query montada').eq('user_id', userId).catch(() => {})
 }
 
 // ── Export backup ─────────────────────────────────────────────────
@@ -160,6 +164,7 @@ export const bootstrapFromSupabase = async () => {
     const userId = session.user.id
 
     console.log('🚀 BOOTSTRAP USER:', userId)
+      console.log('🚀 buscando app_state...')
 
     if (!userId) return false
 
