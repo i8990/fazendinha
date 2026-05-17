@@ -58,7 +58,7 @@ export function App() {
   const [manejos,   setMj]  = useState([])
   const [adubacoes, setAdu] = useState([])
 
-  // Wrappers: toda mudança de estado salva no Supabase automaticamente
+  // Wrappers: toda mudanca de estado salva no Supabase automaticamente
   const SAVERS = {
     pastos: savePastos, animais: saveAnimais,
     fin: saveFin, movs: saveMovs, sal: saveSal,
@@ -78,7 +78,7 @@ export function App() {
   const setManejos   = mk('manejos',   setMj)
   const setAdubacoes = mk('adubacoes', setAdu)
 
-  // Busca dados do Supabase e popula estado (usa setters RAW para nao re-salvar)
+  // Busca dados do Supabase — usa setters RAW para nao re-salvar
   const loadFromSupabase = async (userId) => {
     setSyncing(true)
     try {
@@ -93,6 +93,8 @@ export function App() {
         if (snap.adubacoes != null) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
         if (snap.cfg?.dark != null) setDark(snap.cfg.dark)
       }
+    } catch (e) {
+      console.error('❌ loadFromSupabase:', e)
     } finally {
       setSyncing(false)
     }
@@ -105,12 +107,17 @@ export function App() {
     setPage('home')
   }
 
-  // Auth: resolve uma vez, carrega do Supabase logo apos
+  // Auth — onAuthStateChange captura login, logout e sessao inicial
   useEffect(() => {
-    let resolved = false
-    const resolve = async (session) => {
-      if (resolved) return
-      resolved = true
+    let initialDone = false
+    const finish = () => {
+      if (initialDone) return
+      initialDone = true
+      setAuthReady(true)
+      setLoading(false)
+    }
+
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
       const u = session?.user ?? null
       setUser(u)
       if (u) {
@@ -118,27 +125,20 @@ export function App() {
         try {
           const p = await getPerfil(u.id)
           setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
-        } catch { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
-        setAuthReady(true)
-        setLoading(false)
-        loadFromSupabase(u.id)
+        } catch {
+          setPerfil({ nome_fazenda: 'Minha Fazenda' })
+        }
+        await loadFromSupabase(u.id)
       } else {
-        setAuthReady(true)
-        setLoading(false)
+        // logout ou sem sessao: limpa estado
+        setP([]); setA([]); setF([]); setMv([])
+        setSl([]); setMj([]); setAdu([])
       }
-    }
-
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
-      await resolve(session)
+      finish()
     })
 
-    supabaseClient.auth.getSession()
-      .then(({ data: { session } }) => resolve(session))
-      .catch(() => resolve(null))
-
-    setTimeout(() => {
-      if (!resolved) { resolved = true; setAuthReady(true); setLoading(false) }
-    }, 8000)
+    // Fallback: se onAuthStateChange nao disparar em 8s
+    setTimeout(finish, 8000)
 
     return () => subscription.unsubscribe()
   }, [])
