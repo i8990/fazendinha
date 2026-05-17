@@ -4,6 +4,20 @@ import { localGet, localSet, localClear } from './localdb.js'
 import { TODAY } from './utils.js'
 
 const DB_TABLE = 'app_state'
+
+// ── Fila única de sincronização ──────────────────────────────────
+let syncQueue = Promise.resolve()
+
+const enqueueSync = (fn) => {
+  syncQueue = syncQueue
+    .then(() => fn())
+    .catch(e => {
+      console.error('❌ queue error:', e)
+    })
+
+  return syncQueue
+}
+
 const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
 
 // ── userId em memória — setado pelo app.jsx ao autenticar ─────────
