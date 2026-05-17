@@ -122,7 +122,17 @@ export const loadCfg       = () => dbLoad('cfg')
 // ── Bootstrap inicial remoto → local ─────────────────────────────
 export const bootstrapFromSupabase = async () => {
   try {
-    const userId = await getUserId()
+
+    console.log('⏳ aguardando sessao')
+
+    const session = await waitForSession()
+
+    if (!session) {
+      console.warn('❌ sem sessao valida')
+      return false
+    }
+
+    const userId = session.user.id
 
     console.log('🚀 BOOTSTRAP USER:', userId)
 
@@ -168,4 +178,30 @@ export const bootstrapFromSupabase = async () => {
     console.error('❌ BOOTSTRAP EXCEPTION:', e)
     return false
   }
+}
+
+
+// ── Espera sessão válida ──────────────────────────────────────────
+export const waitForSession = async (timeout = 8000) => {
+  const start = Date.now()
+
+  while (Date.now() - start < timeout) {
+    try {
+      const { data: { session } } =
+        await supabaseClient.auth.getSession()
+
+      if (session?.access_token) {
+        console.log('✅ sessao pronta')
+        return session
+      }
+
+    } catch(e) {
+      console.warn('⚠️ wait session:', e)
+    }
+
+    await new Promise(r => setTimeout(r, 400))
+  }
+
+  console.warn('⚠️ timeout sessao')
+  return null
 }
