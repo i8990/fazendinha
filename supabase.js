@@ -10,9 +10,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_E11Kg5KjCQR6S_mo0gWt5g_9AGA2JWH'
 export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
     persistSession: true,
-    autoRefreshToken: false,
+    autoRefreshToken: true,
     detectSessionInUrl: false,
-    flowType: 'pkce',
     storage: window.localStorage,
     storageKey: 'fzd-auth'
   }
