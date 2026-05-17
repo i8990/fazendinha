@@ -100,46 +100,7 @@ export function App() {
       const meta = await localGet('meta', 'syncInfo')
       if (meta?.lastSync) setLastSync(new Date(meta.lastSync))
 
-      // Nunca bloquear abertura do app
       setLoading(false)
-
-      // Bootstrap remoto roda em background
-      const tudoVazio =
-        (!pastos?.length) &&
-        (!animais?.length) &&
-        (!fin?.length)
-
-      if (tudoVazio && navigator.onLine) {
-        console.log('🚀 CACHE VAZIO — bootstrap remoto')
-
-        bootstrapFromSupabase().then(async ok => {
-
-          if (!ok) {
-            console.warn('⚠️ bootstrap falhou')
-            return
-          }
-
-          console.log('✅ bootstrap concluido')
-
-          const reloaders = [
-            [loadPastos,    setP],
-            [loadAnimais,   setA],
-            [loadFin,       setF],
-            [loadMovs,      setMv],
-            [loadSal,       setSl],
-            [loadManejos,   setMj],
-            [loadAdubacoes, setAdu],
-          ]
-
-          await Promise.all(reloaders.map(async ([loader, setter]) => {
-            const v = await loader()
-            if (v !== null) setter(v)
-          }))
-
-        }).catch(e => {
-          console.error('❌ bootstrap catch:', e)
-        })
-      }
     })()
   }, [])
 
