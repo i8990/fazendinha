@@ -99,7 +99,10 @@ export function App() {
       const meta = await localGet('meta', 'syncInfo')
       if (meta?.lastSync) setLastSync(new Date(meta.lastSync))
 
-      // Se tudo vazio, tenta restaurar do Supabase
+      // Nunca bloquear abertura do app
+      setLoading(false)
+
+      // Bootstrap remoto roda em background
       const tudoVazio =
         (!pastos?.length) &&
         (!animais?.length) &&
@@ -108,10 +111,14 @@ export function App() {
       if (tudoVazio && navigator.onLine) {
         console.log('🚀 CACHE VAZIO — bootstrap remoto')
 
-        const ok = await bootstrapFromSupabase()
+        bootstrapFromSupabase().then(async ok => {
 
-        if (ok) {
-          console.log('✅ bootstrap concluido — recarregando')
+          if (!ok) {
+            console.warn('⚠️ bootstrap falhou')
+            return
+          }
+
+          console.log('✅ bootstrap concluido')
 
           const reloaders = [
             [loadPastos,    setP],
@@ -127,10 +134,11 @@ export function App() {
             const v = await loader()
             if (v !== null) setter(v)
           }))
-        }
-      }
 
-      setLoading(false)
+        }).catch(e => {
+          console.error('❌ bootstrap catch:', e)
+        })
+      }
     })()
   }, [])
 

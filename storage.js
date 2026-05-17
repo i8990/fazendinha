@@ -128,10 +128,22 @@ export const bootstrapFromSupabase = async () => {
 
     if (!userId) return false
 
-    const { data, error } = await supabaseClient
+    const queryPromise = supabaseClient
       .from(DB_TABLE)
       .select('key,value')
       .eq('user_id', userId)
+
+    const timeoutPromise = new Promise(resolve =>
+      setTimeout(() =>
+        resolve({
+          data: null,
+          error: { message: 'timeout bootstrap' }
+        }),
+      5000)
+    )
+
+    const { data, error } =
+      await Promise.race([queryPromise, timeoutPromise])
 
     if (error) {
       console.error('❌ BOOTSTRAP ERROR:', error)
