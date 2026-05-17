@@ -9,7 +9,7 @@ import {
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  syncFromSupabase, getUserId, bootstrapFromSupabase, setCurrentUserId
+  syncFromSupabase, setCurrentUserId
 }                                        from './storage.js'
 import { localGet }                      from './localdb.js'
 import { supabaseClient, getPerfil }     from './supabase.js'
@@ -20,6 +20,25 @@ import { Settings }                      from './pages/Settings.jsx'
 import { GlobalModals }                  from './pages/GlobalModals.jsx'
 import { Ferramentas }                   from './tools/Ferramentas.jsx'
 import Login                             from './pages/Login.jsx'
+
+function Splash() {
+  return (
+    <div style={{
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center',
+      background: `linear-gradient(160deg,${LIGHT.gDark} 0%,${LIGHT.green} 100%)`,
+      gap: 20
+    }}>
+      <img src="/logo.png" alt="Fazendinha" style={{ width: 110, height: 110, borderRadius: 28, objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.35)' }} />
+      <div>
+        <div style={{ color: '#FFF', fontSize: 26, fontWeight: 700, textAlign: 'center' }}>Fazendinha</div>
+        <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textAlign: 'center', marginTop: 4 }}>Carregando...</div>
+      </div>
+      <div style={{ width: 36, height: 36, border: '3px solid rgba(255,255,255,0.2)', borderTop: '3px solid rgba(255,255,255,0.85)', borderRadius: '50%', animation: 'spin 0.75s linear infinite' }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
+    </div>
+  )
+}
 
 export function App() {
   const [dark, setDark] = useState(false)
@@ -181,17 +200,13 @@ export function App() {
   useEffect(() => {
     const goOn  = () => {
       setOnline(true)
-
-      if (user) {
-        console.log('🌐 internet reconectada — sincronizando')
-        doSync(user.id, true)
-      }
+      setUser(u => { if (u) doSync(u.id, true); return u })
     }
     const goOff = () => setOnline(false)
     window.addEventListener('online',  goOn)
     window.addEventListener('offline', goOff)
     return () => { window.removeEventListener('online', goOn); window.removeEventListener('offline', goOff) }
-  }, [user])
+  }, [])
 
   const bezNovos = (animais ?? []).filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
@@ -213,23 +228,6 @@ export function App() {
     { id: 'ferramentas', icon: '🧮', label: 'Ferramentas' },
     { id: 'settings',    icon: '⚙️',  label: 'Config.'     },
   ]
-
-  const Splash = () => (
-    <div style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      background: `linear-gradient(160deg,${LIGHT.gDark} 0%,${LIGHT.green} 100%)`,
-      gap: 20
-    }}>
-      <img src="/logo.png" alt="Fazendinha" style={{ width: 110, height: 110, borderRadius: 28, objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.35)' }} />
-      <div>
-        <div style={{ color: '#FFF', fontSize: 26, fontWeight: 700, textAlign: 'center' }}>Fazendinha</div>
-        <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textAlign: 'center', marginTop: 4 }}>Carregando...</div>
-      </div>
-      <div style={{ width: 36, height: 36, border: '3px solid rgba(255,255,255,0.2)', borderTop: '3px solid rgba(255,255,255,0.85)', borderRadius: '50%', animation: 'spin 0.75s linear infinite' }} />
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-    </div>
-  )
 
   if (loading)               return <Splash />
   if (authReady && !user)    return <Login onLogin={setUser} />

@@ -1,11 +1,8 @@
 // ═══ SUPABASE — cliente único da aplicação ════════════════════════
-// Importado por: storage.js (apenas)
-// Nenhuma outra camada acessa supabaseClient diretamente.
-
 import { createClient } from '@supabase/supabase-js'
 
-const SUPABASE_URL      = 'https://orrskyytignlneoftpft.supabase.co'
-const SUPABASE_ANON_KEY = 'sb_publishable_E11Kg5KjCQR6S_mo0gWt5g_9AGA2JWH'
+const SUPABASE_URL      = import.meta.env.VITE_SUPABASE_URL
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
@@ -18,8 +15,6 @@ export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 })
 
 console.log('Supabase conectado')
-
-// ═══ AUTH ════════════════════════════════════════════════════════
 
 export async function signIn(email, senha) {
   const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha })
@@ -43,24 +38,16 @@ export async function getUser() {
   return user
 }
 
-// ═══ PERFIL (nome da fazenda) ═════════════════════════════════════
-
 export async function getPerfil(userId) {
   const { data, error } = await supabaseClient
-    .from('perfis')
-    .select('*')
-    .eq('id', userId)
-    .single()
+    .from('perfis').select('*').eq('id', userId).single()
   if (error && error.code !== 'PGRST116') throw error
   return data ?? null
 }
 
 export async function savePerfil(userId, nomeFazenda) {
   const { data, error } = await supabaseClient
-    .from('perfis')
-    .upsert({ id: userId, nome_fazenda: nomeFazenda })
-    .select()
-    .single()
+    .from('perfis').upsert({ id: userId, nome_fazenda: nomeFazenda }).select().single()
   if (error) throw error
   return data
 }

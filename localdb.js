@@ -20,10 +20,3 @@ const getDB = async () => {
 export const localGet    = async (store, key = 'data') => { try { return (await getDB()).get(store, key) ?? null } catch { return null } }
 export const localSet    = async (store, value, key = 'data') => { try { await (await getDB()).put(store, value, key) } catch {} }
 export const localClear  = async () => { try { const db = await getDB(); await Promise.all(STORES.map(s => db.clear(s))) } catch {} }
-export const localHasAny = async () => {
-  try {
-    const db = await getDB()
-    const keys = await db.getAllKeys('animais')
-    return keys.length > 0
-  } catch { return false }
-}
