@@ -23,9 +23,11 @@ export const dbLoad = async (key) => await localGet(key)
 
 export const dbSet = async (key, value) => {
   await localSet(key, value)
+  console.log('💾 dbSet:', key, '| online:', navigator.onLine, '| userId:', _userId)
   if (!navigator.onLine) return
   const userId = await getUserId()
-  if (!userId) return
+  console.log('👤 userId resolvido:', userId)
+  if (!userId) { console.warn('❌ sem userId — não sincronizou'); return }
   try {
     const { error } = await supabaseClient
       .from(DB_TABLE)
