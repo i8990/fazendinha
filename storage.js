@@ -14,7 +14,12 @@ export const dbLoad = async (key) => await localGet(key)
 
 export const dbSet = async (key, value) => {
   await localSet(key, value)
-  if (!_userId || !navigator.onLine) return
+  if (!_userId || !navigator.onLine) {
+    const pending = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
+    if (!pending.includes(key)) pending.push(key)
+    localStorage.setItem('fzd-pending', JSON.stringify(pending))
+    return
+  }
   try {
     const { error } = await supabaseClient
       .from(DB_TABLE)
@@ -29,12 +34,36 @@ export const dbSet = async (key, value) => {
 }
 
 // Retorna { key: value } diretamente — sem passar por IndexedDB
+export const syncPendingToSupabase = async (userId) => {
+  if (!userId || !navigator.onLine) return
+  const pending = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
+  if (!pending.length) return
+  for (const key of pending) {
+    const value = await localGet(key)
+    if (value === null) continue
+    try {
+      const { error } = await supabaseClient
+        .from('app_state')
+        .upsert(
+          { key, value, user_id: userId, updated_at: new Date().toISOString() },
+          { onConflict: 'key,user_id' }
+        )
+      if (!error) {
+        const still = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
+        localStorage.setItem('fzd-pending', JSON.stringify(still.filter(k => k !== key)))
+      }
+    } catch {}
+  }
+}
+
 export const syncFromSupabase = async (userId) => {
   console.log("📡 syncFromSupabase chamado, userId:", userId)
   if (!userId) return null
   try {
-    const { data, error } = await supabaseClient
-      .from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS)
+    const { data, error } = await Promise.race([
+      supabaseClient.from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 8000))
+    ])
     console.log("📦 resultado — error:", JSON.stringify(error), "rows:", data?.length)
     if (error || !data) return null
     // Grava no IndexedDB em background (cache offline)

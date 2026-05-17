@@ -9,7 +9,7 @@ import {
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  syncFromSupabase, setCurrentUserId
+  syncFromSupabase, syncPendingToSupabase, setCurrentUserId
 }                                        from './storage.js'
 import { localGet }                      from './localdb.js'
 import { supabaseClient, getPerfil }     from './supabase.js'
@@ -190,7 +190,12 @@ export function App() {
   useEffect(() => {
     const goOn  = () => {
       setOnline(true)
-      setUser(u => { if (u) doSync(u.id, true); return u })
+      setUser(u => {
+        if (u) {
+          syncPendingToSupabase(u.id).then(() => doSync(u.id, true))
+        }
+        return u
+      })
     }
     const goOff = () => setOnline(false)
     document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') setUser(u => { if (u) doSync(u.id, true); return u }) })
