@@ -35,6 +35,7 @@ export const dbSet = async (key, value) => {
         { key, value, user_id: userId, updated_at: new Date().toISOString() },
         { onConflict: 'key,user_id' }
       )
+    console.log('☁️ upsert resultado — error:', error, '| status:', error?.code)
     if (error) console.error('❌ dbSet:', error.message)
   } catch (e) {
     console.error('❌ dbSet exception:', e.message)
