@@ -9,7 +9,7 @@ import {
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  syncFromSupabase, getUserId, setCurrentUserId
+  syncFromSupabase, getUserId, bootstrapFromSupabase, setCurrentUserId
 }                                        from './storage.js'
 import { localGet }                      from './localdb.js'
 import { supabaseClient, getPerfil }     from './supabase.js'
@@ -98,6 +98,37 @@ export function App() {
       // Última sync
       const meta = await localGet('meta', 'syncInfo')
       if (meta?.lastSync) setLastSync(new Date(meta.lastSync))
+
+      // Se tudo vazio, tenta restaurar do Supabase
+      const tudoVazio =
+        (!pastos?.length) &&
+        (!animais?.length) &&
+        (!fin?.length)
+
+      if (tudoVazio && navigator.onLine) {
+        console.log('🚀 CACHE VAZIO — bootstrap remoto')
+
+        const ok = await bootstrapFromSupabase()
+
+        if (ok) {
+          console.log('✅ bootstrap concluido — recarregando')
+
+          const reloaders = [
+            [loadPastos,    setP],
+            [loadAnimais,   setA],
+            [loadFin,       setF],
+            [loadMovs,      setMv],
+            [loadSal,       setSl],
+            [loadManejos,   setMj],
+            [loadAdubacoes, setAdu],
+          ]
+
+          await Promise.all(reloaders.map(async ([loader, setter]) => {
+            const v = await loader()
+            if (v !== null) setter(v)
+          }))
+        }
+      }
 
       setLoading(false)
     })()

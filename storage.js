@@ -117,3 +117,43 @@ export const loadSal       = () => dbLoad('sal')
 export const loadManejos   = () => dbLoad('manejos')
 export const loadAdubacoes = () => dbLoad('adubacoes')
 export const loadCfg       = () => dbLoad('cfg')
+
+
+// ── Bootstrap inicial remoto → local ─────────────────────────────
+export const bootstrapFromSupabase = async () => {
+  try {
+    const userId = await getUserId()
+
+    console.log('🚀 BOOTSTRAP USER:', userId)
+
+    if (!userId) return false
+
+    const { data, error } = await supabaseClient
+      .from(DB_TABLE)
+      .select('key,value')
+      .eq('user_id', userId)
+
+    if (error) {
+      console.error('❌ BOOTSTRAP ERROR:', error)
+      return false
+    }
+
+    console.log('📦 BOOTSTRAP DATA:', data)
+
+    if (!data || !data.length) {
+      console.warn('⚠️ sem dados remotos')
+      return false
+    }
+
+    for (const row of data) {
+      await localSet(row.key, row.value)
+      console.log('✅ CACHE RESTAURADO:', row.key)
+    }
+
+    return true
+
+  } catch(e) {
+    console.error('❌ BOOTSTRAP EXCEPTION:', e)
+    return false
+  }
+}
