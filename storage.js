@@ -6,11 +6,15 @@ import { TODAY } from './utils.js'
 const DB_TABLE = 'app_state'
 const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
 
-// ── Pega userId seguro ────────────────────────────────────────────
+// ── userId em memória — setado pelo app.jsx ao autenticar ─────────
+let _userId = null
+export const setCurrentUserId = (id) => { _userId = id }
 export const getUserId = async () => {
+  if (_userId) return _userId
   try {
     const { data: { session } } = await supabaseClient.auth.getSession()
-    return session?.user?.id ?? null
+    _userId = session?.user?.id ?? null
+    return _userId
   } catch { return null }
 }
 

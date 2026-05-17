@@ -9,7 +9,7 @@ import {
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  syncFromSupabase, getUserId
+  syncFromSupabase, getUserId, setCurrentUserId
 }                                        from './storage.js'
 import { localGet }                      from './localdb.js'
 import { supabaseClient, getPerfil }     from './supabase.js'
@@ -112,6 +112,7 @@ export function App() {
       const u = session?.user ?? null
       setUser(u)
       if (u) {
+        setCurrentUserId(u.id)
         try {
           const p = await getPerfil(u.id)
           setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
