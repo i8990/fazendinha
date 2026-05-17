@@ -193,6 +193,7 @@ export function App() {
       setUser(u => { if (u) doSync(u.id, true); return u })
     }
     const goOff = () => setOnline(false)
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') setUser(u => { if (u) doSync(u.id, true); return u }) })
     window.addEventListener('online',  goOn)
     window.addEventListener('offline', goOff)
     return () => { window.removeEventListener('online', goOn); window.removeEventListener('offline', goOff) }
