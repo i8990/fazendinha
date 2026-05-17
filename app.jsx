@@ -110,9 +110,8 @@ export function App() {
     setPage('home')
   }
 
-  // Carrega dados quando user estiver pronto
+  // Carrega dados locais imediatamente — não depende de auth
   useEffect(() => {
-    if (!user || !user.id) return
     ;(async () => {
       setLoading(true)
       try {
@@ -141,7 +140,7 @@ export function App() {
         setLoading(false)
       }
     })()
-  }, [user])
+  }, [])
 
   const bezNovos = animais.filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&

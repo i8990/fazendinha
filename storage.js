@@ -1,79 +1,94 @@
-// ═══ STORAGE — Supabase/app_state (fonte única de verdade) ════════
-// Importado por: app.jsx (apenas)
-// Nenhuma página acessa este módulo diretamente.
-
+// ═══ STORAGE — IndexedDB local + Supabase remoto ════════════════
 import { supabaseClient } from './supabase.js'
-import { TODAY }          from './utils.js'
+import { localGet, localSet, localClear } from './localdb.js'
+import { TODAY } from './utils.js'
 
 const DB_TABLE = 'app_state'
 
-// ── Pega o user_id do usuário logado ─────────────────────────────
+// ── user_id seguro ────────────────────────────────────────────────
 const getUserId = async () => {
-  // Tenta getSession primeiro (mais confiável que getUser após login recente)
   const { data: { session } } = await supabaseClient.auth.getSession()
   if (session?.user) return session.user.id
-  // Fallback para getUser
   const { data: { user } } = await supabaseClient.auth.getUser()
-  if (!user) throw new Error('Usuário não autenticado')
-  return user.id
+  return user?.id ?? null
 }
 
-// ── Primitiva de escrita ──────────────────────────────────────────
-export const dbSet = async (k, v) => {
-  try {
-    const userId = await getUserId()
-    const { error } = await supabaseClient
-      .from(DB_TABLE)
-      .upsert(
-        { key: k, value: v, user_id: userId, updated_at: new Date().toISOString() },
-        { onConflict: 'key,user_id' }
-      )
-    if (error) console.error(`❌ dbSet [${k}] falhou:`, error.code, error.message, error.hint || '')
-    else       console.log(`💾 dbSet [${k}] OK`)
-  } catch (e) {
-    console.error(`❌ dbSet [${k}] exceção:`, e.message)
-  }
-}
-
-// ── Primitiva de leitura ──────────────────────────────────────────
+// ── Leitura: local primeiro, remoto como fallback ─────────────────
 export const dbLoad = async (k) => {
+  // 1. Tenta local primeiro — instantâneo
+  const cached = await localGet(k)
+  if (cached !== null) {
+    // Atualiza do remoto em background sem bloquear
+    getUserId().then(userId => {
+      if (!userId) return
+      supabaseClient
+        .from(DB_TABLE)
+        .select('value')
+        .eq('key', k)
+        .eq('user_id', userId)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data?.value !== undefined) localSet(k, data.value)
+        })
+        .catch(() => {})
+    }).catch(() => {})
+    return cached
+  }
+
+  // 2. Sem cache local — busca do remoto
   try {
     const userId = await getUserId()
+    if (!userId) return null
     const { data, error } = await supabaseClient
       .from(DB_TABLE)
       .select('value')
       .eq('key', k)
       .eq('user_id', userId)
       .maybeSingle()
-    if (error) {
-      console.error(`❌ dbLoad [${k}] erro:`, error.code, error.message, error.hint || '')
-      return null
-    }
-    return data != null ? data.value : null
-  } catch (e) {
-    console.error(`❌ dbLoad [${k}] exceção:`, e.message)
+    if (error || data == null) return null
+    await localSet(k, data.value)
+    return data.value
+  } catch(e) {
+    console.error(`❌ dbLoad [${k}]:`, e.message)
     return null
   }
 }
 
-// ── Reset completo ────────────────────────────────────────────────
+// ── Escrita: local imediato + remoto em background ────────────────
+export const dbSet = async (k, v) => {
+  // 1. Salva local imediatamente
+  await localSet(k, v)
+
+  // 2. Sincroniza com Supabase em background
+  getUserId().then(userId => {
+    if (!userId) return
+    supabaseClient
+      .from(DB_TABLE)
+      .upsert(
+        { key: k, value: v, user_id: userId, updated_at: new Date().toISOString() },
+        { onConflict: 'key,user_id' }
+      )
+      .then(({ error }) => {
+        if (error) console.error(`❌ dbSet remoto [${k}]:`, error.message)
+      })
+      .catch(() => {})
+  }).catch(() => {})
+}
+
+// ── Reset ─────────────────────────────────────────────────────────
 export const dbReset = async () => {
+  await localClear()
   try {
     const userId = await getUserId()
-    const KEYS = ['pastos', 'animais', 'fin', 'movs', 'sal', 'manejos', 'cfg', 'adubacoes']
-    const { error } = await supabaseClient
-      .from(DB_TABLE)
-      .delete()
-      .in('key', KEYS)
-      .eq('user_id', userId)
-    if (error) console.error('❌ dbReset falhou:', error.message)
-    else       console.log('🗑️ dbReset OK')
-  } catch (e) {
-    console.error('❌ dbReset exceção:', e.message)
+    if (!userId) return
+    const KEYS = ['pastos','animais','fin','movs','sal','manejos','cfg','adubacoes']
+    await supabaseClient.from(DB_TABLE).delete().in('key', KEYS).eq('user_id', userId)
+  } catch(e) {
+    console.error('❌ dbReset:', e.message)
   }
 }
 
-// ── Exportação de backup ──────────────────────────────────────────
+// ── Export backup ─────────────────────────────────────────────────
 export const dbExport = (data) => {
   const b = new Blob(
     [JSON.stringify({ v: '9', ts: new Date().toISOString(), data }, null, 2)],
@@ -81,11 +96,11 @@ export const dbExport = (data) => {
   )
   const a = document.createElement('a')
   a.href = URL.createObjectURL(b)
-  a.download = `agrogestao-v11-${TODAY}.json`
+  a.download = `fazendinha-${TODAY}.json`
   a.click()
 }
 
-// ── API nomeada por entidade ──────────────────────────────────────
+// ── API por entidade ──────────────────────────────────────────────
 export const savePastos    = (v) => dbSet('pastos',    v)
 export const saveAnimais   = (v) => dbSet('animais',   v)
 export const saveFin       = (v) => dbSet('fin',       v)
