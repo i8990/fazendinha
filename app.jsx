@@ -162,38 +162,22 @@ export function App() {
   }, [user, online])
 
   const doSync = async (userId, fromReconnect = false) => {
-    if (!userId || !navigator.onLine) return
-
-    if (syncingRef.current) return
+    if (!userId || !navigator.onLine || syncingRef.current) return
     syncingRef.current = true
     setSyncing(true)
-
-    if (fromReconnect) {
-      setShowSyncBanner(true)
-
-      setTimeout(() => {
-        setShowSyncBanner(false)
-      }, 5000)
-    }
-
-    let ok = false
+    if (fromReconnect) { setShowSyncBanner(true); setTimeout(() => setShowSyncBanner(false), 4000) }
     try {
-      ok = await syncFromSupabase(userId)
-      // Recarrega dados do IndexedDB após sync
-      const loaders = [
-        [loadPastos,    setP],
-        [loadAnimais,   setA],
-        [loadFin,       setF],
-        [loadMovs,      setMv],
-        [loadSal,       setSl],
-        [loadManejos,   setMj],
-        [loadAdubacoes, setAdu],
-      ]
-      await Promise.all(loaders.map(async ([loader, setter]) => {
-        const v = await loader()
-        if (v !== null) setter(Array.isArray(v) ? v : [])
-      }))
-      setLastSync(new Date())
+      const snap = await syncFromSupabase(userId)
+      if (snap) {
+        if (snap.pastos    !== undefined) setP(Array.isArray(snap.pastos)    ? snap.pastos    : [])
+        if (snap.animais   !== undefined) setA(Array.isArray(snap.animais)   ? snap.animais   : [])
+        if (snap.fin       !== undefined) setF(Array.isArray(snap.fin)       ? snap.fin       : [])
+        if (snap.movs      !== undefined) setMv(Array.isArray(snap.movs)     ? snap.movs      : [])
+        if (snap.sal       !== undefined) setSl(Array.isArray(snap.sal)      ? snap.sal       : [])
+        if (snap.manejos   !== undefined) setMj(Array.isArray(snap.manejos)  ? snap.manejos   : [])
+        if (snap.adubacoes !== undefined) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
+        setLastSync(new Date())
+      }
     } finally {
       syncingRef.current = false
       setSyncing(false)

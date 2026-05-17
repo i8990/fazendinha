@@ -7,65 +7,48 @@ const DB_TABLE = 'app_state'
 const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
 
 let _userId = null
-
 export const setCurrentUserId = (id) => { _userId = id }
-
-export const getUserId = async () => {
-  if (_userId) return _userId
-  try {
-    const { data: { session } } = await supabaseClient.auth.getSession()
-    _userId = session?.user?.id ?? null
-    return _userId
-  } catch { return null }
-}
+export const getUserId = () => _userId
 
 export const dbLoad = async (key) => await localGet(key)
 
 export const dbSet = async (key, value) => {
   await localSet(key, value)
-  console.log('💾 dbSet:', key, '| online:', navigator.onLine, '| userId:', _userId)
-  if (!navigator.onLine) return
-  const userId = await getUserId()
-  console.log('👤 userId resolvido:', userId)
-  if (!userId) { console.warn('❌ sem userId — não sincronizou'); return }
+  if (!_userId || !navigator.onLine) return
   try {
     const { error } = await supabaseClient
       .from(DB_TABLE)
       .upsert(
-        { key, value, user_id: userId, updated_at: new Date().toISOString() },
+        { key, value, user_id: _userId, updated_at: new Date().toISOString() },
         { onConflict: 'key,user_id' }
       )
-    console.log('☁️ upsert resultado — error:', error, '| status:', error?.code)
     if (error) console.error('❌ dbSet:', error.message)
   } catch (e) {
-    console.error('❌ dbSet exception COMPLETO:', e)
+    console.error('❌ dbSet exception:', e)
   }
 }
 
+// Retorna { key: value } diretamente — sem passar por IndexedDB
 export const syncFromSupabase = async (userId) => {
-
-  if (!userId) return false
+  if (!userId) return null
   try {
     const { data, error } = await supabaseClient
       .from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS)
-
-    if (error || !data) return false
-    await Promise.all(data.map(row => localSet(row.key, row.value)))
-    await localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
-    return true
-  } catch { return false }
+    if (error || !data) return null
+    // Grava no IndexedDB em background (cache offline)
+    data.forEach(row => localSet(row.key, row.value))
+    localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
+    // Retorna mapa direto
+    return Object.fromEntries(data.map(r => [r.key, r.value]))
+  } catch { return null }
 }
-
-export const bootstrapFromSupabase = syncFromSupabase
 
 export const dbReset = async () => {
   await localClear()
-  const userId = await getUserId()
-  if (!userId) return
-  supabaseClient.from(DB_TABLE).delete().eq('user_id', userId).catch(() => {})
+  if (!_userId) return
+  supabaseClient.from(DB_TABLE).delete().eq('user_id', _userId).catch(() => {})
 }
 
-// Recebe dados em memória — exporta o que está na tela
 export const dbExport = (data) => {
   const blob = new Blob(
     [JSON.stringify({ v: '9', ts: new Date().toISOString(), data }, null, 2)],
