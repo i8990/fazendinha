@@ -347,6 +347,20 @@ export function App() {
 
         {page === 'settings'    && <Settings
             dark={dark}
+            syncing={syncing}
+            onSync={async () => {
+              if (!user?.id) return
+
+              console.log('🔄 sync manual')
+
+              setShowSyncBanner(true)
+
+              await doSync(user.id, true)
+
+              setTimeout(() => {
+                setShowSyncBanner(false)
+              }, 5000)
+            }}
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}

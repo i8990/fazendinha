@@ -237,7 +237,7 @@ function CalendarView({ movs, manejos, animais, fin }) {
 }
 
 // ═══ SETTINGS (tela principal) ════════════════════════════════════
-export function Settings({ dark, setDark, onReset, onClose, movs, manejos, animais, fin, pastos, sal, setAnimais, setFin, setMovs, setSal, setPastos, setManejos, setAdubacoes }) {
+export function Settings({ syncing, onSync, dark, setDark, onReset, onClose, movs, manejos, animais, fin, pastos, sal, setAnimais, setFin, setMovs, setSal, setPastos, setManejos, setAdubacoes }) {
   const T = useT()
   const [confirmReset, setCR]  = useState(false)
   const [importing,    setImp]  = useState(false)
