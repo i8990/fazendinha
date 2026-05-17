@@ -143,7 +143,6 @@ export function App() {
     }
 
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
-      resolved = false
       await resolve(session)
     })
 
