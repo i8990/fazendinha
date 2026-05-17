@@ -54,6 +54,7 @@ export function App() {
   const [online,    setOnline]    = useState(navigator.onLine)
   const [lastSync,  setLastSync]  = useState(null)
   const [syncing,   setSyncing]   = useState(false)
+  const syncingRef = useRef(false)
   const [showSyncBanner, setShowSyncBanner] = useState(false)
 
   // ── Dados ─────────────────────────────────────────────────────
@@ -164,6 +165,8 @@ export function App() {
   const doSync = async (userId, fromReconnect = false) => {
     if (!userId || !navigator.onLine) return
 
+    if (syncingRef.current) return
+    syncingRef.current = true
     setSyncing(true)
 
     if (fromReconnect) {
@@ -193,6 +196,7 @@ export function App() {
       }))
       setLastSync(new Date())
     }
+    syncingRef.current = false
     setSyncing(false)
   }
 
