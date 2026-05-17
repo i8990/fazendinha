@@ -1,5 +1,5 @@
 // ═══ APP — raiz da aplicação ══════════════════════════════════════
-import { useState, useEffect }           from 'react'
+import { useState, useEffect, useRef }           from 'react'
 import { TC, LIGHT, DARK }               from './constants.js'
 import { calcIdade }                     from './utils.js'
 import {
