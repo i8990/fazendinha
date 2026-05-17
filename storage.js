@@ -38,7 +38,7 @@ export const dbSet = async (key, value) => {
     console.log('☁️ upsert resultado — error:', error, '| status:', error?.code)
     if (error) console.error('❌ dbSet:', error.message)
   } catch (e) {
-    console.error('❌ dbSet exception:', e.message)
+    console.error('❌ dbSet exception COMPLETO:', e)
   }
 }
 
