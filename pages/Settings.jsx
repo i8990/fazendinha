@@ -304,7 +304,14 @@ export function Settings({ syncing, onSync, dark, setDark, onReset, onClose, mov
             <Toggle value={dark} onChange={setDark} label="Modo Escuro" sub="Interface adaptada para uso noturno" />
           </>} />
 
-          {/* Dados */}
+          {/* Sync */}
+          <Card ch={<>
+            <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>Sincronizacao</div>
+            <div style={{ fontSize: 13, color: T.gray, marginBottom: 14, lineHeight: 1.6 }}>
+              Busca os dados mais recentes do servidor.
+            </div>
+            <Btn l={syncing ? 'Sincronizando...' : 'Sincronizar Agora'} color={T.green} onClick={onSync} />
+          </>} />
           <Card ch={<>
             <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>💾 Dados</div>
             <div style={{ fontSize: 12, color: T.gray, marginBottom: 14, lineHeight: 1.6 }}>
