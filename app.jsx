@@ -162,6 +162,7 @@ export function App() {
   }, [user, online])
 
   const doSync = async (userId, fromReconnect = false) => {
+    console.log("🔄 doSync chamado, userId:", userId, "online:", navigator.onLine, "syncingRef:", syncingRef.current)
     if (!userId || !navigator.onLine || syncingRef.current) return
     syncingRef.current = true
     setSyncing(true)
