@@ -1,4 +1,4 @@
-// ═══ STORAGE — online first + offline fallback ════════════════════
+// ═══ STORAGE — Supabase realtime + fallback offline ══════════════
 
 import { supabaseClient } from './supabase.js'
 import { localGet, localSet, localClear } from './localdb.js'
@@ -16,178 +16,129 @@ const KEYS = [
   'cfg'
 ]
 
-// ── estado global ────────────────────────────────────────────────
+// ── usuário atual ────────────────────────────────────────────────
+
 let _userId = null
 
 export const setCurrentUserId = (id) => {
   _userId = id
 }
 
-// ── auth helper ──────────────────────────────────────────────────
 export const getUserId = async () => {
   if (_userId) return _userId
 
   try {
-    const { data: { session } } =
-      await supabaseClient.auth.getSession()
+    const {
+      data: { session }
+    } = await supabaseClient.auth.getSession()
 
     _userId = session?.user?.id ?? null
 
     return _userId
-
-  } catch(e) {
-    console.error('❌ getUserId:', e)
+  } catch {
     return null
   }
 }
 
-// ── pending sync queue ───────────────────────────────────────────
-const PENDING_KEY = 'pending-sync'
+// ── leitura local ────────────────────────────────────────────────
 
-const getPending = async () => {
-  return await localGet('meta', PENDING_KEY) ?? []
+export const dbLoad = async (key) => {
+  return await localGet(key)
 }
 
-const setPending = async (items) => {
-  await localSet('meta', items, PENDING_KEY)
-}
+// ── escrita local + sync imediata ───────────────────────────────
 
-// ── upload único ─────────────────────────────────────────────────
-const uploadKey = async (k, v) => {
+export const dbSet = async (key, value) => {
+
+  await localSet(key, value)
+
+  console.log('💾 LOCAL SAVE:', key)
+
+  if (!navigator.onLine) {
+    console.log('📴 offline — aguardando internet')
+    return
+  }
 
   const userId = await getUserId()
 
+  console.log('👤 USER ID:', userId)
+
   if (!userId) {
-    throw new Error('sem userId')
+    console.warn('❌ sem userId')
+    return
   }
 
-  console.log('☁️ sync:', k)
+  try {
 
-  const { error } = await supabaseClient
-    .from(DB_TABLE)
-    .upsert(
-      {
-        key: k,
-        value: v,
-        user_id: userId,
-        updated_at: new Date().toISOString()
-      },
-      {
-        onConflict: 'key,user_id'
-      }
-    )
+    console.log('☁️ ENVIANDO:', key)
 
-  if (error) throw error
-
-  console.log('✅ sync ok:', k)
-}
-
-// ── flush fila offline ───────────────────────────────────────────
-export const flushPendingSync = async () => {
-
-  if (!navigator.onLine) return
-
-  const pending = await getPending()
-
-  if (!pending.length) return
-
-  console.log('🔄 flush pending:', pending.length)
-
-  const next = []
-
-  for (const item of pending) {
-    try {
-      await uploadKey(item.key, item.value)
-    } catch(e) {
-      console.error('❌ pending error:', e)
-      next.push(item)
-    }
-  }
-
-  await setPending(next)
-}
-
-// ── load online first ────────────────────────────────────────────
-export const dbLoad = async (k) => {
-
-  // ONLINE → Supabase
-  if (navigator.onLine) {
-
-    try {
-
-      const userId = await getUserId()
-
-      if (userId) {
-
-        const { data, error } = await supabaseClient
-          .from(DB_TABLE)
-          .select('value')
-          .eq('key', k)
-          .eq('user_id', userId)
-          .maybeSingle()
-
-        if (!error && data?.value !== undefined) {
-
-          console.log('☁️ remoto:', k)
-
-          await localSet(k, data.value)
-
-          return data.value
+    const { error } = await supabaseClient
+      .from(DB_TABLE)
+      .upsert(
+        {
+          key,
+          value,
+          user_id: userId,
+          updated_at: new Date().toISOString()
+        },
+        {
+          onConflict: 'key,user_id'
         }
-      }
+      )
 
-    } catch(e) {
-      console.error('❌ remote load:', e)
+    if (error) {
+      console.error('❌ ERRO SUPABASE:', error)
+    } else {
+      console.log('✅ SYNC OK:', key)
     }
+
+  } catch (e) {
+    console.error('❌ EXCEPTION:', e)
   }
-
-  // OFFLINE → cache local
-  console.log('💾 cache:', k)
-
-  return await localGet(k)
 }
 
-// ── save online first ────────────────────────────────────────────
-export const dbSet = async (k, v) => {
+// ── bootstrap remoto ────────────────────────────────────────────
 
-  // salva local sempre
-  await localSet(k, v)
+export const syncFromSupabase = async (userId) => {
 
-  console.log('💾 local save:', k)
+  if (!userId) return false
 
-  // online → sync imediato
-  if (navigator.onLine) {
+  try {
 
-    try {
+    console.log('🚀 bootstrap remoto')
 
-      await uploadKey(k, v)
+    const { data, error } = await supabaseClient
+      .from(DB_TABLE)
+      .select('key,value')
+      .eq('user_id', userId)
+      .in('key', KEYS)
 
-      return
-
-    } catch(e) {
-
-      console.error('❌ sync error:', e)
+    if (error) {
+      console.error('❌ BOOTSTRAP ERROR:', error)
+      return false
     }
+
+    if (!data) return false
+
+    for (const row of data) {
+      await localSet(row.key, row.value)
+      console.log('✅ CACHE RESTAURADO:', row.key)
+    }
+
+    console.log('✅ bootstrap concluido')
+
+    return true
+
+  } catch (e) {
+
+    console.error('❌ bootstrap exception:', e)
+
+    return false
   }
-
-  // offline/falha → fila pendente
-  const pending = await getPending()
-
-  const filtered =
-    pending.filter(i => i.key !== k)
-
-  filtered.push({
-    key: k,
-    value: v,
-    ts: Date.now()
-  })
-
-  await setPending(filtered)
-
-  console.log('📦 pending sync:', k)
 }
 
-// ── reset ────────────────────────────────────────────────────────
+// ── reset ───────────────────────────────────────────────────────
+
 export const dbReset = async () => {
 
   await localClear()
@@ -196,28 +147,26 @@ export const dbReset = async () => {
 
   if (!userId) return
 
-  try {
-
-    await supabaseClient
-      .from(DB_TABLE)
-      .delete()
-      .in('key', KEYS)
-      .eq('user_id', userId)
-
-  } catch(e) {
-    console.error('❌ dbReset:', e)
-  }
+  await supabaseClient
+    .from(DB_TABLE)
+    .delete()
+    .eq('user_id', userId)
 }
 
-// ── entidades ────────────────────────────────────────────────────
-export const savePastos    = (v) => dbSet('pastos',    v)
-export const saveAnimais   = (v) => dbSet('animais',   v)
-export const saveFin       = (v) => dbSet('fin',       v)
-export const saveMovs      = (v) => dbSet('movs',      v)
-export const saveSal       = (v) => dbSet('sal',       v)
-export const saveManejos   = (v) => dbSet('manejos',   v)
-export const saveAdubacoes = (v) => dbSet('adubacoes', v)
-export const saveCfg       = (v) => dbSet('cfg',       v)
+// ── export backup ───────────────────────────────────────────────
+
+export const dbExport = async () => {
+
+  const out = {}
+
+  for (const key of KEYS) {
+    out[key] = await localGet(key)
+  }
+
+  return out
+}
+
+// ── aliases antigos ─────────────────────────────────────────────
 
 export const loadPastos    = () => dbLoad('pastos')
 export const loadAnimais   = () => dbLoad('animais')
@@ -227,4 +176,15 @@ export const loadSal       = () => dbLoad('sal')
 export const loadManejos   = () => dbLoad('manejos')
 export const loadAdubacoes = () => dbLoad('adubacoes')
 export const loadCfg       = () => dbLoad('cfg')
+
+export const savePastos    = (v) => dbSet('pastos', v)
+export const saveAnimais   = (v) => dbSet('animais', v)
+export const saveFin       = (v) => dbSet('fin', v)
+export const saveMovs      = (v) => dbSet('movs', v)
+export const saveSal       = (v) => dbSet('sal', v)
+export const saveManejos   = (v) => dbSet('manejos', v)
+export const saveAdubacoes = (v) => dbSet('adubacoes', v)
+export const saveCfg       = (v) => dbSet('cfg', v)
+
+export const bootstrapFromSupabase = syncFromSupabase
 

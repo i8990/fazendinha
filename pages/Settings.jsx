@@ -10,7 +10,7 @@ import { useState, useMemo }              from 'react'
 import { useT, MESES }                    from '../constants.js'
 import { TODAY, fmtD, fmtR }              from '../utils.js'
 import { Card, Btn }                      from '../ui.jsx'
-import { dbReset, dbExport, dbSet }       from '../storage.js'
+import { dbReset, dbSet }       from '../storage.js'
 import { signOut }                         from '../supabase.js'
 import { Ajuda }                          from './Ajuda.jsx'
 

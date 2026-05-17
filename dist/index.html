@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Fazendinha</title>
+
+  <!-- ── PWA: ícone e manifest ─────────────────────────────── -->
+  <link rel="icon"             type="image/png" href="/logo.png" />
+  <link rel="apple-touch-icon"                  href="/logo.png" />
+  <link rel="manifest"                          href="/manifest.json" />
+
+  <!-- ── PWA: comportamento iOS ───────────────────────────── -->
+  <meta name="apple-mobile-web-app-capable"          content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title"            content="Fazendinha" />
+
+  <!-- ── PWA: tema Android / Chrome ──────────────────────── -->
+  <meta name="theme-color" content="#0F4D2E" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <!-- ── Leaflet ──────────────────────────────────────────── -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { overscroll-behavior: none; font-family: 'SF Pro Text','SF Pro Display',-apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif; -webkit-font-smoothing: antialiased; }
+    ::-webkit-scrollbar { width: 0; height: 0; }
+    input, select, button, textarea { font-family: inherit; }
+    @keyframes su { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes slideUp { from { opacity:0; transform:translateY(100%); } to { opacity:1; transform:translateY(0); } }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.6; } }
+    .su { animation: su 0.22s cubic-bezier(0.34,1.1,0.64,1); }
+    .fi { animation: fadeIn 0.18s ease-out; }
+    .modal-enter { animation: slideUp 0.28s cubic-bezier(0.32,0.72,0,1); }
+    button:active { transform:scale(0.97); transition:transform 0.08s ease; }
+    input:focus, select:focus, textarea:focus { outline: none; }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  </style>
+  <script type="module" crossorigin src="/assets/index-BpNcgn49.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Remove service workers antigos
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        regs.forEach(r => r.unregister())
+      })
+    }
+  </script>
+</body>
+</html>
