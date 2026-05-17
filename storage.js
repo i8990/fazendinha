@@ -57,14 +57,12 @@ export const syncPendingToSupabase = async (userId) => {
 }
 
 export const syncFromSupabase = async (userId) => {
-  console.log("📡 syncFromSupabase chamado, userId:", userId)
   if (!userId) return null
   try {
     const { data, error } = await Promise.race([
       supabaseClient.from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS),
       new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 8000))
     ])
-    console.log("📦 resultado — error:", JSON.stringify(error), "rows:", data?.length)
     if (error || !data) return null
     // Grava no IndexedDB em background (cache offline)
     data.forEach(row => localSet(row.key, row.value))
