@@ -1,25 +1,21 @@
-// ═══ APP — raiz da aplicação ══════════════════════════════════════
-import { useState, useEffect, useRef }           from 'react'
-import { TC, LIGHT, DARK }               from './constants.js'
-import { calcIdade }                     from './utils.js'
+// ═══ APP — raiz da aplicacao ══════════════════════════════════════
+import { useState, useEffect }               from 'react'
+import { TC, LIGHT, DARK }                   from './constants.js'
+import { calcIdade }                         from './utils.js'
 import {
-  loadPastos, loadAnimais, loadFin,
-  loadMovs,   loadSal,    loadManejos,
-  loadAdubacoes, loadCfg,
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  syncFromSupabase, syncPendingToSupabase, setCurrentUserId
-}                                        from './storage.js'
-import { localGet }                      from './localdb.js'
-import { supabaseClient, getPerfil }     from './supabase.js'
-import { Dashboard }                     from './pages/Dashboard.jsx'
-import { Animais }                       from './pages/Animais.jsx'
-import { Financeiro }                    from './pages/Financeiro.jsx'
-import { Settings }                      from './pages/Settings.jsx'
-import { GlobalModals }                  from './pages/GlobalModals.jsx'
-import { Ferramentas }                   from './tools/Ferramentas.jsx'
-import Login                             from './pages/Login.jsx'
+  dbLoadAll, setCurrentUserId
+}                                            from './storage.js'
+import { supabaseClient, getPerfil }         from './supabase.js'
+import { Dashboard }                         from './pages/Dashboard.jsx'
+import { Animais }                           from './pages/Animais.jsx'
+import { Financeiro }                        from './pages/Financeiro.jsx'
+import { Settings }                          from './pages/Settings.jsx'
+import { GlobalModals }                      from './pages/GlobalModals.jsx'
+import { Ferramentas }                       from './tools/Ferramentas.jsx'
+import Login                                 from './pages/Login.jsx'
 
 function Splash() {
   return (
@@ -45,22 +41,14 @@ export function App() {
   const T = dark ? DARK : LIGHT
   useEffect(() => { document.body.style.background = T.bg }, [T.bg])
 
-  // ── Auth ──────────────────────────────────────────────────────
   const [user,      setUser]      = useState(null)
   const [authReady, setAuthReady] = useState(false)
   const [perfil,    setPerfil]    = useState(null)
 
-  // ── Conexão e sync ────────────────────────────────────────────
-  const [online,    setOnline]    = useState(navigator.onLine)
-  const [lastSync,  setLastSync]  = useState(null)
-  const [syncing,   setSyncing]   = useState(false)
-  const syncingRef = useRef(false)
-  const [showSyncBanner, setShowSyncBanner] = useState(false)
-
-  // ── Dados ─────────────────────────────────────────────────────
-  const [loading,   setLoading]   = useState(true)
-  const [page,      setPage]      = useState('home')
-  const [globalAction, setGA]     = useState(null)
+  const [loading,      setLoading]   = useState(true)
+  const [syncing,      setSyncing]   = useState(false)
+  const [page,         setPage]      = useState('home')
+  const [globalAction, setGA]        = useState(null)
 
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
@@ -70,6 +58,7 @@ export function App() {
   const [manejos,   setMj]  = useState([])
   const [adubacoes, setAdu] = useState([])
 
+  // Wrappers: toda mudança de estado salva no Supabase automaticamente
   const SAVERS = {
     pastos: savePastos, animais: saveAnimais,
     fin: saveFin, movs: saveMovs, sal: saveSal,
@@ -89,6 +78,26 @@ export function App() {
   const setManejos   = mk('manejos',   setMj)
   const setAdubacoes = mk('adubacoes', setAdu)
 
+  // Busca dados do Supabase e popula estado (usa setters RAW para nao re-salvar)
+  const loadFromSupabase = async (userId) => {
+    setSyncing(true)
+    try {
+      const snap = await dbLoadAll(userId)
+      if (snap) {
+        if (snap.pastos    != null) setP(  Array.isArray(snap.pastos)    ? snap.pastos    : [])
+        if (snap.animais   != null) setA(  Array.isArray(snap.animais)   ? snap.animais   : [])
+        if (snap.fin       != null) setF(  Array.isArray(snap.fin)       ? snap.fin       : [])
+        if (snap.movs      != null) setMv( Array.isArray(snap.movs)      ? snap.movs      : [])
+        if (snap.sal       != null) setSl( Array.isArray(snap.sal)       ? snap.sal       : [])
+        if (snap.manejos   != null) setMj( Array.isArray(snap.manejos)   ? snap.manejos   : [])
+        if (snap.adubacoes != null) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
+        if (snap.cfg?.dark != null) setDark(snap.cfg.dark)
+      }
+    } finally {
+      setSyncing(false)
+    }
+  }
+
   const handleReset = () => {
     setP([]); setA([]); setF([]); setMv([])
     setSl([]); setMj([]); setAdu([])
@@ -96,35 +105,7 @@ export function App() {
     setPage('home')
   }
 
-  // ── 1. Carrega dados locais imediatamente ─────────────────────
-  useEffect(() => {
-    ;(async () => {
-      const cfg = await loadCfg()
-      if (cfg?.dark !== undefined) setDark(cfg.dark)
-
-      const loaders = [
-        [loadPastos,    setP],
-        [loadAnimais,   setA],
-        [loadFin,       setF],
-        [loadMovs,      setMv],
-        [loadSal,       setSl],
-        [loadManejos,   setMj],
-        [loadAdubacoes, setAdu],
-      ]
-      await Promise.all(loaders.map(async ([loader, setter]) => {
-        const v = await loader()
-        if (v !== null) setter(Array.isArray(v) ? v : [])
-      }))
-
-      // Última sync
-      const meta = await localGet('meta', 'syncInfo')
-      if (meta?.lastSync) setLastSync(new Date(meta.lastSync))
-
-      setLoading(false)
-    })()
-  }, [])
-
-  // ── 2. Auth em background ─────────────────────────────────────
+  // Auth: resolve uma vez, carrega do Supabase logo apos
   useEffect(() => {
     let resolved = false
     const resolve = async (session) => {
@@ -138,8 +119,10 @@ export function App() {
           const p = await getPerfil(u.id)
           setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
         } catch { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
+        await loadFromSupabase(u.id)
       }
       setAuthReady(true)
+      setLoading(false)
     }
 
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
@@ -150,71 +133,17 @@ export function App() {
       .then(({ data: { session } }) => resolve(session))
       .catch(() => resolve(null))
 
-    setTimeout(() => { if (!resolved) { resolved = true; setAuthReady(true) } }, 5000)
+    setTimeout(() => {
+      if (!resolved) { resolved = true; setAuthReady(true); setLoading(false) }
+    }, 8000)
 
     return () => subscription.unsubscribe()
-  }, [])
-
-  // ── 3. Sync quando autenticar ─────────────────────────────────
-  useEffect(() => {
-    if (!user || !online) return
-    doSync(user.id)
-  }, [user, online])
-
-  const doSync = async (userId, fromReconnect = false) => {
-    console.log("🔄 doSync chamado, userId:", userId, "online:", navigator.onLine, "syncingRef:", syncingRef.current)
-    if (!userId || !navigator.onLine || syncingRef.current) return
-    syncingRef.current = true
-    setSyncing(true)
-    if (fromReconnect) { setShowSyncBanner(true); setTimeout(() => setShowSyncBanner(false), 4000) }
-    try {
-      const snap = await syncFromSupabase(userId)
-      if (snap) {
-        if (snap.pastos    != null) setP(Array.isArray(snap.pastos)    ? snap.pastos    : [])
-        if (snap.animais   != null) setA(Array.isArray(snap.animais)   ? snap.animais   : [])
-        if (snap.fin       != null) setF(Array.isArray(snap.fin)       ? snap.fin       : [])
-        if (snap.movs      != null) setMv(Array.isArray(snap.movs)     ? snap.movs      : [])
-        if (snap.sal       != null) setSl(Array.isArray(snap.sal)      ? snap.sal       : [])
-        if (snap.manejos   != null) setMj(Array.isArray(snap.manejos)  ? snap.manejos   : [])
-        if (snap.adubacoes != null) setAdu(Array.isArray(snap.adubacoes) ? snap.adubacoes : [])
-        setLastSync(new Date())
-      }
-    } finally {
-      syncingRef.current = false
-      setSyncing(false)
-    }
-  }
-
-  // ── 4. Detector de conexão ────────────────────────────────────
-  useEffect(() => {
-    const goOn  = () => {
-      setOnline(true)
-      setUser(u => {
-        if (u) {
-          syncPendingToSupabase(u.id).then(() => doSync(u.id, true))
-        }
-        return u
-      })
-    }
-    const goOff = () => setOnline(false)
-    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') setUser(u => { if (u) doSync(u.id, true); return u }) })
-    window.addEventListener('online',  goOn)
-    window.addEventListener('offline', goOff)
-    return () => { window.removeEventListener('online', goOn); window.removeEventListener('offline', goOff) }
   }, [])
 
   const bezNovos = (animais ?? []).filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
     a.dataNasc && calcIdade(a.dataNasc)?.dias < 7
   ).length
-
-  const fmtSync = (d) => {
-    if (!d) return 'Nunca'
-    const diff = Math.floor((Date.now() - d) / 1000)
-    if (diff < 60)   return 'agora'
-    if (diff < 3600) return `${Math.floor(diff/60)}min atrás`
-    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-  }
 
   const NAV = [
     { id: 'home',        icon: '🏠', label: 'Home'        },
@@ -224,8 +153,8 @@ export function App() {
     { id: 'settings',    icon: '⚙️',  label: 'Config.'     },
   ]
 
-  if (loading)               return <Splash />
-  if (authReady && !user)    return <Login onLogin={setUser} />
+  if (loading)            return <Splash />
+  if (authReady && !user) return <Login onLogin={setUser} />
 
   return (
     <TC.Provider value={T}>
@@ -237,39 +166,25 @@ export function App() {
         height: '100dvh', overflowY: 'auto'
       }}>
 
-        {/* ── Banner de status ── */}
-        {!online && (
+        {!navigator.onLine && (
           <div style={{
             background: '#FF9500', color: '#FFF',
             fontSize: 12, fontWeight: 700,
             textAlign: 'center', padding: '6px 0',
             position: 'sticky', top: 0, zIndex: 999
           }}>
-            ⚡ Modo offline — dados salvos localmente
+            ⚡ Sem conexao — dados nao serao salvos
           </div>
         )}
-        {online && showSyncBanner && (
+
+        {syncing && (
           <div style={{
-            background: LIGHT.green,
-            color: '#FFF',
-            fontSize: 12,
-            fontWeight: 700,
-            textAlign: 'center',
-            padding: '6px 0',
-            position: 'sticky',
-            top: 0,
-            zIndex: 999
+            background: LIGHT.green, color: '#FFF',
+            fontSize: 12, fontWeight: 700,
+            textAlign: 'center', padding: '6px 0',
+            position: 'sticky', top: 0, zIndex: 999
           }}>
-            🔄 Sincronizando dados...
-          </div>
-        )}
-        {online && !syncing && lastSync && (
-          <div style={{
-            background: 'rgba(0,0,0,0.04)', color: LIGHT.gray,
-            fontSize: 11, fontWeight: 500,
-            textAlign: 'center', padding: '4px 0'
-          }}>
-            ✅ Sincronizado {fmtSync(lastSync)}
+            🔄 Sincronizando...
           </div>
         )}
 
@@ -302,19 +217,7 @@ export function App() {
         {page === 'settings'    && <Settings
             dark={dark}
             syncing={syncing}
-            onSync={async () => {
-              if (!user?.id) return
-
-              console.log('🔄 sync manual')
-
-              setShowSyncBanner(true)
-
-              await doSync(user.id, true)
-
-              setTimeout(() => {
-                setShowSyncBanner(false)
-              }, 5000)
-            }}
+            onSync={async () => { if (user?.id) await loadFromSupabase(user.id) }}
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}

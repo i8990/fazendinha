@@ -1,6 +1,5 @@
-// ═══ STORAGE — IndexedDB local + sync Supabase ════════════════════
+// ═══ STORAGE — Supabase direto ═══════════════════════════════════
 import { supabaseClient } from './supabase.js'
-import { localGet, localSet, localClear } from './localdb.js'
 import { TODAY } from './utils.js'
 
 const DB_TABLE = 'app_state'
@@ -10,16 +9,28 @@ let _userId = null
 export const setCurrentUserId = (id) => { _userId = id }
 export const getUserId = () => _userId
 
-export const dbLoad = async (key) => await localGet(key)
-
-export const dbSet = async (key, value) => {
-  await localSet(key, value)
-  if (!_userId || !navigator.onLine) {
-    const pending = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
-    if (!pending.includes(key)) pending.push(key)
-    localStorage.setItem('fzd-pending', JSON.stringify(pending))
-    return
+// Carrega todos os dados do usuario no Supabase
+export const dbLoadAll = async (userId) => {
+  if (!userId) return null
+  try {
+    const { data, error } = await supabaseClient
+      .from(DB_TABLE)
+      .select('key,value')
+      .eq('user_id', userId)
+      .in('key', KEYS)
+    if (error || !data) return null
+    const valid = data.filter(r => r.value !== null && r.value !== undefined)
+    return Object.fromEntries(valid.map(r => [r.key, r.value]))
+  } catch (e) {
+    console.error('❌ dbLoadAll:', e)
+    return null
   }
+}
+
+// Salva uma chave direto no Supabase
+export const dbSet = async (key, value) => {
+  if (!_userId) { console.warn('⚠️ dbSet sem userId, ignorado'); return }
+  if (!navigator.onLine) { console.warn('⚠️ dbSet offline, ignorado'); return }
   try {
     const { error } = await supabaseClient
       .from(DB_TABLE)
@@ -33,50 +44,14 @@ export const dbSet = async (key, value) => {
   }
 }
 
-// Retorna { key: value } diretamente — sem passar por IndexedDB
-export const syncPendingToSupabase = async (userId) => {
-  if (!userId || !navigator.onLine) return
-  const pending = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
-  if (!pending.length) return
-  for (const key of pending) {
-    const value = await localGet(key)
-    if (value === null) continue
-    try {
-      const { error } = await supabaseClient
-        .from('app_state')
-        .upsert(
-          { key, value, user_id: userId, updated_at: new Date().toISOString() },
-          { onConflict: 'key,user_id' }
-        )
-      if (!error) {
-        const still = JSON.parse(localStorage.getItem('fzd-pending') || '[]')
-        localStorage.setItem('fzd-pending', JSON.stringify(still.filter(k => k !== key)))
-      }
-    } catch {}
-  }
-}
-
-export const syncFromSupabase = async (userId) => {
-  if (!userId) return null
-  try {
-    const { data, error } = await Promise.race([
-      supabaseClient.from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS),
-      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 8000))
-    ])
-    if (error || !data) return null
-    // Grava no IndexedDB em background (cache offline)
-    const valid = data.filter(r => r.value !== null && r.value !== undefined)
-    valid.forEach(row => localSet(row.key, row.value))
-    localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
-    // Retorna mapa direto
-    return Object.fromEntries(valid.map(r => [r.key, r.value]))
-  } catch { return null }
-}
-
+// Apaga todos os dados do usuario no Supabase
 export const dbReset = async () => {
-  await localClear()
   if (!_userId) return
-  supabaseClient.from(DB_TABLE).delete().eq('user_id', _userId).catch(() => {})
+  try {
+    await supabaseClient.from(DB_TABLE).delete().eq('user_id', _userId)
+  } catch (e) {
+    console.error('❌ dbReset:', e)
+  }
 }
 
 export const dbExport = (data) => {
@@ -89,15 +64,6 @@ export const dbExport = (data) => {
   a.download = `fazendinha-${TODAY}.json`
   a.click()
 }
-
-export const loadPastos    = () => dbLoad('pastos')
-export const loadAnimais   = () => dbLoad('animais')
-export const loadFin       = () => dbLoad('fin')
-export const loadMovs      = () => dbLoad('movs')
-export const loadSal       = () => dbLoad('sal')
-export const loadManejos   = () => dbLoad('manejos')
-export const loadAdubacoes = () => dbLoad('adubacoes')
-export const loadCfg       = () => dbLoad('cfg')
 
 export const savePastos    = (v) => dbSet('pastos', v)
 export const saveAnimais   = (v) => dbSet('animais', v)
