@@ -26,13 +26,44 @@ export const dbLoad = async (k) => {
 // ── Salva local + remoto em background ───────────────────────────
 export const dbSet = async (k, v) => {
   await localSet(k, v)
-  getUserId().then(userId => {
-    if (!userId) return
-    supabaseClient.from(DB_TABLE).upsert(
-      { key: k, value: v, user_id: userId, updated_at: new Date().toISOString() },
-      { onConflict: 'key,user_id' }
-    ).catch(() => {})
-  }).catch(() => {})
+
+  console.log('💾 LOCAL SAVE:', k)
+
+  getUserId().then(async userId => {
+    console.log('👤 USER ID:', userId)
+
+    if (!userId) {
+      console.warn('❌ sem userId — nao sincronizou')
+      return
+    }
+
+    try {
+      console.log('☁️ ENVIANDO:', k)
+
+      const { error } = await supabaseClient
+        .from(DB_TABLE)
+        .upsert(
+          {
+            key: k,
+            value: v,
+            user_id: userId,
+            updated_at: new Date().toISOString()
+          },
+          { onConflict: 'key,user_id' }
+        )
+
+      if (error) {
+        console.error('❌ ERRO SUPABASE:', error)
+      } else {
+        console.log('✅ SYNC OK:', k)
+      }
+
+    } catch(e) {
+      console.error('❌ EXCEPTION:', e)
+    }
+  }).catch(e => {
+    console.error('❌ USER ERROR:', e)
+  })
 }
 
 // ── Sincroniza Supabase → IndexedDB ──────────────────────────────
