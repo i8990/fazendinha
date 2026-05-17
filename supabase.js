@@ -7,7 +7,14 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL      = 'https://orrskyytignlneoftpft.supabase.co'
 const SUPABASE_ANON_KEY = 'sb_publishable_E11Kg5KjCQR6S_mo0gWt5g_9AGA2JWH'
 
-export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+    flowType: 'implicit'
+  }
+})
 
 console.log('Supabase conectado')
 
