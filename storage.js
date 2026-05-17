@@ -30,10 +30,12 @@ export const dbSet = async (key, value) => {
 
 // Retorna { key: value } diretamente — sem passar por IndexedDB
 export const syncFromSupabase = async (userId) => {
+  console.log("📡 syncFromSupabase chamado, userId:", userId)
   if (!userId) return null
   try {
     const { data, error } = await supabaseClient
       .from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS)
+    console.log("📦 resultado — error:", JSON.stringify(error), "rows:", data?.length)
     if (error || !data) return null
     // Grava no IndexedDB em background (cache offline)
     data.forEach(row => localSet(row.key, row.value))
