@@ -35,6 +35,7 @@ export function App() {
   const [online,    setOnline]    = useState(navigator.onLine)
   const [lastSync,  setLastSync]  = useState(null)
   const [syncing,   setSyncing]   = useState(false)
+  const [showSyncBanner, setShowSyncBanner] = useState(false)
 
   // ── Dados ─────────────────────────────────────────────────────
   const [loading,   setLoading]   = useState(true)
@@ -180,10 +181,21 @@ export function App() {
     doSync(user.id)
   }, [user, online])
 
-  const doSync = async (userId) => {
+  const doSync = async (userId, fromReconnect = false) => {
     if (!userId || !navigator.onLine) return
+
     setSyncing(true)
+
+    if (fromReconnect) {
+      setShowSyncBanner(true)
+
+      setTimeout(() => {
+        setShowSyncBanner(false)
+      }, 5000)
+    }
+
     const ok = await syncFromSupabase(userId)
+
     if (ok) {
       // Recarrega dados do IndexedDB após sync
       const loaders = [
@@ -206,7 +218,14 @@ export function App() {
 
   // ── 4. Detector de conexão ────────────────────────────────────
   useEffect(() => {
-    const goOn  = () => { setOnline(true);  if (user) doSync(user.id) }
+    const goOn  = () => {
+      setOnline(true)
+
+      if (user) {
+        console.log('🌐 internet reconectada — sincronizando')
+        doSync(user.id, true)
+      }
+    }
     const goOff = () => setOnline(false)
     window.addEventListener('online',  goOn)
     window.addEventListener('offline', goOff)
@@ -275,14 +294,19 @@ export function App() {
             ⚡ Modo offline — dados salvos localmente
           </div>
         )}
-        {online && syncing && (
+        {online && showSyncBanner && (
           <div style={{
-            background: LIGHT.green, color: '#FFF',
-            fontSize: 12, fontWeight: 700,
-            textAlign: 'center', padding: '6px 0',
-            position: 'sticky', top: 0, zIndex: 999
+            background: LIGHT.green,
+            color: '#FFF',
+            fontSize: 12,
+            fontWeight: 700,
+            textAlign: 'center',
+            padding: '6px 0',
+            position: 'sticky',
+            top: 0,
+            zIndex: 999
           }}>
-            🔄 Sincronizando...
+            🔄 Sincronizando dados...
           </div>
         )}
         {online && !syncing && lastSync && (
