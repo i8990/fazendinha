@@ -1,52 +1,66 @@
+// ═══ SUPABASE — cliente único da aplicação ════════════════════════
+// Importado por: storage.js (apenas)
+// Nenhuma outra camada acessa supabaseClient diretamente.
+
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnon = import.meta.env.VITE_SUPABASE_ANON_KEY
+const SUPABASE_URL      = 'https://orrskyytignlneoftpft.supabase.co'
+const SUPABASE_ANON_KEY = 'sb_publishable_E11Kg5KjCQR6S_mo0gWt5g_9AGA2JWH'
 
-export const supabaseClient = createClient(
-  supabaseUrl,
-  supabaseAnon,
-  {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: true
-    }
+export const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: false,
+    storage: window.localStorage,
+    storageKey: 'fzd-auth'
   }
-)
+})
 
-// ── LOGIN ───────────────────────────────────────────────
+console.log('Supabase conectado')
 
-export const signInGoogle = async () => {
-  return await supabaseClient.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin
-    }
-  })
+// ═══ AUTH ════════════════════════════════════════════════════════
+
+export async function signIn(email, senha) {
+  const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha })
+  if (error) throw error
+  return data.user
 }
 
-// ── LOGOUT ──────────────────────────────────────────────
-
-export const signOut = async () => {
-  return await supabaseClient.auth.signOut()
+export async function signUp(email, senha) {
+  const { data, error } = await supabaseClient.auth.signUp({ email, password: senha })
+  if (error) throw error
+  return data.user
 }
 
-// ── SESSION HELPERS ─────────────────────────────────────
+export async function signOut() {
+  const { error } = await supabaseClient.auth.signOut()
+  if (error) throw error
+}
 
-export const getSessionUser = async () => {
-  try {
-    const { data, error } = await supabaseClient.auth.getUser()
+export async function getUser() {
+  const { data: { user } } = await supabaseClient.auth.getUser()
+  return user
+}
 
-    if (error) {
-      console.error('❌ getUser error:', error)
-      return null
-    }
+// ═══ PERFIL (nome da fazenda) ═════════════════════════════════════
 
-    return data?.user ?? null
+export async function getPerfil(userId) {
+  const { data, error } = await supabaseClient
+    .from('perfis')
+    .select('*')
+    .eq('id', userId)
+    .single()
+  if (error && error.code !== 'PGRST116') throw error
+  return data ?? null
+}
 
-  } catch (e) {
-    console.error('❌ getUser exception:', e)
-    return null
-  }
+export async function savePerfil(userId, nomeFazenda) {
+  const { data, error } = await supabaseClient
+    .from('perfis')
+    .upsert({ id: userId, nome_fazenda: nomeFazenda })
+    .select()
+    .single()
+  if (error) throw error
+  return data
 }
