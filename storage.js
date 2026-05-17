@@ -43,13 +43,13 @@ export const dbSet = async (key, value) => {
 }
 
 export const syncFromSupabase = async (userId) => {
-  console.log("🔄 sync iniciado, userId:", userId)
+
   if (!userId) return false
   try {
     const { data, error } = await supabaseClient
       .from(DB_TABLE).select('key,value').eq('user_id', userId).in('key', KEYS)
-    console.log("📦 sync result — error:", JSON.stringify(error), "| rows:", data?.length)
-    if (error || !data) { console.error("❌ sync falhou:", JSON.stringify(error), "data:", data); return false }
+
+    if (error || !data) return false
     await Promise.all(data.map(row => localSet(row.key, row.value)))
     await localSet('meta', { lastSync: new Date().toISOString() }, 'syncInfo')
     return true
