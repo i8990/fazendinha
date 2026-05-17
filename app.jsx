@@ -169,6 +169,7 @@ export function App() {
     if (fromReconnect) { setShowSyncBanner(true); setTimeout(() => setShowSyncBanner(false), 4000) }
     try {
       const snap = await syncFromSupabase(userId)
+      console.log("✅ snap recebido:", JSON.stringify(Object.keys(snap)), "fin length:", snap.fin?.length)
       if (snap) {
         if (snap.pastos    !== undefined) setP(Array.isArray(snap.pastos)    ? snap.pastos    : [])
         if (snap.animais   !== undefined) setA(Array.isArray(snap.animais)   ? snap.animais   : [])
