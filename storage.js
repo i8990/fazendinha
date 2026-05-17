@@ -29,7 +29,10 @@ export const dbSet = async (k, v) => {
 
   console.log('💾 LOCAL SAVE:', k)
 
-  getUserId().then(async userId => {
+  enqueueSync(async () => {
+
+    const userId = await getUserId()
+
     console.log('👤 USER ID:', userId)
 
     if (!userId) {
@@ -40,7 +43,13 @@ export const dbSet = async (k, v) => {
     try {
       console.log('☁️ ENVIANDO:', k)
 
-      const { error } = await supabaseClient
+      const timeoutPromise = new Promise(resolve =>
+        setTimeout(() =>
+          resolve({ error: { message: 'timeout upload' } }),
+        8000)
+      )
+
+      const queryPromise = supabaseClient
         .from(DB_TABLE)
         .upsert(
           {
@@ -52,6 +61,9 @@ export const dbSet = async (k, v) => {
           { onConflict: 'key,user_id' }
         )
 
+      const { error } =
+        await Promise.race([queryPromise, timeoutPromise])
+
       if (error) {
         console.error('❌ ERRO SUPABASE:', error)
       } else {
@@ -61,8 +73,7 @@ export const dbSet = async (k, v) => {
     } catch(e) {
       console.error('❌ EXCEPTION:', e)
     }
-  }).catch(e => {
-    console.error('❌ USER ERROR:', e)
+
   })
 }
 
