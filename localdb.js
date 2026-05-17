@@ -1,50 +1,29 @@
-// ═══ LOCALDB — IndexedDB local para cache offline ═════════════════
+// ═══ LOCALDB — IndexedDB local ════════════════════════════════════
 import { openDB } from 'idb'
 
 const DB_NAME    = 'fazendinha-local'
 const DB_VERSION = 1
-const STORES     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
+const STORES     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg','meta']
 
-let dbPromise = null
-
-const getDB = () => {
-  if (!dbPromise) {
-    dbPromise = openDB(DB_NAME, DB_VERSION, {
+let _db = null
+const getDB = async () => {
+  if (!_db) {
+    _db = await openDB(DB_NAME, DB_VERSION, {
       upgrade(db) {
-        STORES.forEach(name => {
-          if (!db.objectStoreNames.contains(name))
-            db.createObjectStore(name)
-        })
+        STORES.forEach(s => { if (!db.objectStoreNames.contains(s)) db.createObjectStore(s) })
       }
     })
   }
-  return dbPromise
+  return _db
 }
 
-export const localGet = async (store) => {
+export const localGet    = async (store, key = 'data') => { try { return (await getDB()).get(store, key) ?? null } catch { return null } }
+export const localSet    = async (store, value, key = 'data') => { try { await (await getDB()).put(store, value, key) } catch {} }
+export const localClear  = async () => { try { const db = await getDB(); await Promise.all(STORES.map(s => db.clear(s))) } catch {} }
+export const localHasAny = async () => {
   try {
     const db = await getDB()
-    return await db.get(store, 'data') ?? null
-  } catch(e) {
-    console.warn('localGet erro:', e)
-    return null
-  }
-}
-
-export const localSet = async (store, value) => {
-  try {
-    const db = await getDB()
-    await db.put(store, value, 'data')
-  } catch(e) {
-    console.warn('localSet erro:', e)
-  }
-}
-
-export const localClear = async () => {
-  try {
-    const db = await getDB()
-    await Promise.all(STORES.map(s => db.clear(s)))
-  } catch(e) {
-    console.warn('localClear erro:', e)
-  }
+    const keys = await db.getAllKeys('animais')
+    return keys.length > 0
+  } catch { return false }
 }

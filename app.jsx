@@ -8,8 +8,10 @@ import {
   loadAdubacoes, loadCfg,
   savePastos, saveAnimais, saveFin,
   saveMovs,   saveSal,    saveManejos,
-  saveAdubacoes, saveCfg, dbReset
+  saveAdubacoes, saveCfg, dbReset,
+  syncFromSupabase, getUserId
 }                                        from './storage.js'
+import { localGet }                      from './localdb.js'
 import { supabaseClient, getPerfil }     from './supabase.js'
 import { Dashboard }                     from './pages/Dashboard.jsx'
 import { Animais }                       from './pages/Animais.jsx'
@@ -18,7 +20,6 @@ import { Settings }                      from './pages/Settings.jsx'
 import { GlobalModals }                  from './pages/GlobalModals.jsx'
 import { Ferramentas }                   from './tools/Ferramentas.jsx'
 import Login                             from './pages/Login.jsx'
-import NomeFazenda                       from './pages/NomeFazenda.jsx'
 
 export function App() {
   const [dark, setDark] = useState(false)
@@ -30,51 +31,15 @@ export function App() {
   const [authReady, setAuthReady] = useState(false)
   const [perfil,    setPerfil]    = useState(null)
 
-  useEffect(() => {
-    let resolved = false
+  // ── Conexão e sync ────────────────────────────────────────────
+  const [online,    setOnline]    = useState(navigator.onLine)
+  const [lastSync,  setLastSync]  = useState(null)
+  const [syncing,   setSyncing]   = useState(false)
 
-    const resolve = async (session) => {
-      if (resolved) return
-      resolved = true
-      const u = session?.user ?? null
-      setUser(u)
-      if (u) {
-        try {
-          const p = await getPerfil(u.id)
-          setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
-        } catch(e) { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
-      }
-      setAuthReady(true)
-    }
-
-    // 1. onAuthStateChange — dispara em login/logout
-    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
-      resolved = false // permite atualizar em mudanças reais
-      await resolve(session)
-    })
-
-    // 2. getSession — fallback para quando onAuthStateChange não dispara
-    supabaseClient.auth.getSession().then(({ data: { session } }) => {
-      resolve(session)
-    }).catch(() => {
-      resolve(null)
-    })
-
-    // 3. Timeout de segurança — nunca fica preso
-    setTimeout(() => {
-      if (!resolved) {
-        resolved = true
-        setAuthReady(true)
-        setLoading(false)
-      }
-    }, 6000)
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const [page,         setPage] = useState('home')
-  const [globalAction, setGA]   = useState(null)
-  const [loading,   setLoading] = useState(true)
+  // ── Dados ─────────────────────────────────────────────────────
+  const [loading,   setLoading]   = useState(true)
+  const [page,      setPage]      = useState('home')
+  const [globalAction, setGA]     = useState(null)
 
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
@@ -110,42 +75,116 @@ export function App() {
     setPage('home')
   }
 
-  // Carrega dados locais imediatamente — não depende de auth
+  // ── 1. Carrega dados locais imediatamente ─────────────────────
   useEffect(() => {
     ;(async () => {
-      setLoading(true)
-      try {
-        const cfg = await loadCfg()
-        if (cfg?.dark !== undefined) setDark(cfg.dark)
-        const loaders = [
-          [loadPastos,    setP,   'pastos'],
-          [loadAnimais,   setA,   'animais'],
-          [loadFin,       setF,   'fin'],
-          [loadMovs,      setMv,  'movs'],
-          [loadSal,       setSl,  'sal'],
-          [loadManejos,   setMj,  'manejos'],
-          [loadAdubacoes, setAdu, 'adubacoes'],
-        ]
-        for (const [loader, setter, name] of loaders) {
-          const v = await loader()
-          if (v !== null) {
-            setter(v)
-              } else {
-            console.warn(`⚠️ ${name}: vazio ou não encontrado no banco`)
-          }
-        }
-      } catch (e) {
-        console.error('❌ Erro crítico:', e.message, e)
-      } finally {
-        setLoading(false)
-      }
+      const cfg = await loadCfg()
+      if (cfg?.dark !== undefined) setDark(cfg.dark)
+
+      const loaders = [
+        [loadPastos,    setP],
+        [loadAnimais,   setA],
+        [loadFin,       setF],
+        [loadMovs,      setMv],
+        [loadSal,       setSl],
+        [loadManejos,   setMj],
+        [loadAdubacoes, setAdu],
+      ]
+      await Promise.all(loaders.map(async ([loader, setter]) => {
+        const v = await loader()
+        if (v !== null) setter(v)
+      }))
+
+      // Última sync
+      const meta = await localGet('meta', 'syncInfo')
+      if (meta?.lastSync) setLastSync(new Date(meta.lastSync))
+
+      setLoading(false)
     })()
   }, [])
+
+  // ── 2. Auth em background ─────────────────────────────────────
+  useEffect(() => {
+    let resolved = false
+    const resolve = async (session) => {
+      if (resolved) return
+      resolved = true
+      const u = session?.user ?? null
+      setUser(u)
+      if (u) {
+        try {
+          const p = await getPerfil(u.id)
+          setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
+        } catch { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
+      }
+      setAuthReady(true)
+    }
+
+    const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
+      resolved = false
+      await resolve(session)
+    })
+
+    supabaseClient.auth.getSession()
+      .then(({ data: { session } }) => resolve(session))
+      .catch(() => resolve(null))
+
+    setTimeout(() => { if (!resolved) { resolved = true; setAuthReady(true) } }, 5000)
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  // ── 3. Sync quando autenticar ─────────────────────────────────
+  useEffect(() => {
+    if (!user || !online) return
+    doSync(user.id)
+  }, [user, online])
+
+  const doSync = async (userId) => {
+    if (!userId || !navigator.onLine) return
+    setSyncing(true)
+    const ok = await syncFromSupabase(userId)
+    if (ok) {
+      // Recarrega dados do IndexedDB após sync
+      const loaders = [
+        [loadPastos,    setP],
+        [loadAnimais,   setA],
+        [loadFin,       setF],
+        [loadMovs,      setMv],
+        [loadSal,       setSl],
+        [loadManejos,   setMj],
+        [loadAdubacoes, setAdu],
+      ]
+      await Promise.all(loaders.map(async ([loader, setter]) => {
+        const v = await loader()
+        if (v !== null) setter(v)
+      }))
+      setLastSync(new Date())
+    }
+    setSyncing(false)
+  }
+
+  // ── 4. Detector de conexão ────────────────────────────────────
+  useEffect(() => {
+    const goOn  = () => { setOnline(true);  if (user) doSync(user.id) }
+    const goOff = () => setOnline(false)
+    window.addEventListener('online',  goOn)
+    window.addEventListener('offline', goOff)
+    return () => { window.removeEventListener('online', goOn); window.removeEventListener('offline', goOff) }
+  }, [user])
 
   const bezNovos = animais.filter(a =>
     a.status === 'ativo' && a.cat === 'Bezerro' &&
     a.dataNasc && calcIdade(a.dataNasc)?.dias < 7
   ).length
+
+  const fmtSync = (d) => {
+    if (!d) return 'Nunca'
+    const diff = Math.floor((Date.now() - d) / 1000)
+    if (diff < 60)   return 'agora'
+    if (diff < 3600) return `${Math.floor(diff/60)}min atrás`
+    return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+  }
 
   const NAV = [
     { id: 'home',        icon: '🏠', label: 'Home'        },
@@ -157,35 +196,23 @@ export function App() {
 
   const Splash = () => (
     <div style={{
-      minHeight: '100vh',
-      display: 'flex', flexDirection: 'column',
+      minHeight: '100vh', display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       background: `linear-gradient(160deg,${LIGHT.gDark} 0%,${LIGHT.green} 100%)`,
       gap: 20
     }}>
-      <img src="/logo.png" alt="Fazendinha" style={{
-        width: 110, height: 110, borderRadius: 28,
-        objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.35)',
-      }} />
+      <img src="/logo.png" alt="Fazendinha" style={{ width: 110, height: 110, borderRadius: 28, objectFit: 'cover', boxShadow: '0 12px 40px rgba(0,0,0,0.35)' }} />
       <div>
         <div style={{ color: '#FFF', fontSize: 26, fontWeight: 700, textAlign: 'center' }}>Fazendinha</div>
         <div style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, textAlign: 'center', marginTop: 4 }}>Carregando...</div>
       </div>
-      <div style={{
-        width: 36, height: 36,
-        border: '3px solid rgba(255,255,255,0.2)',
-        borderTop: '3px solid rgba(255,255,255,0.85)',
-        borderRadius: '50%',
-        animation: 'spin 0.75s linear infinite'
-      }} />
+      <div style={{ width: 36, height: 36, border: '3px solid rgba(255,255,255,0.2)', borderTop: '3px solid rgba(255,255,255,0.85)', borderRadius: '50%', animation: 'spin 0.75s linear infinite' }} />
       <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
     </div>
   )
 
-  // ── Guards ────────────────────────────────────────────────────
-  if (!authReady)        return <Splash />
-  if (!user)             return <Login onLogin={setUser} />
-  if (loading) return <Splash />
+  if (loading)               return <Splash />
+  if (authReady && !user)    return <Login onLogin={setUser} />
 
   return (
     <TC.Provider value={T}>
@@ -196,6 +223,37 @@ export function App() {
         position: 'relative', overflowX: 'hidden',
         height: '100dvh', overflowY: 'auto'
       }}>
+
+        {/* ── Banner de status ── */}
+        {!online && (
+          <div style={{
+            background: '#FF9500', color: '#FFF',
+            fontSize: 12, fontWeight: 700,
+            textAlign: 'center', padding: '6px 0',
+            position: 'sticky', top: 0, zIndex: 999
+          }}>
+            ⚡ Modo offline — dados salvos localmente
+          </div>
+        )}
+        {online && syncing && (
+          <div style={{
+            background: LIGHT.green, color: '#FFF',
+            fontSize: 12, fontWeight: 700,
+            textAlign: 'center', padding: '6px 0',
+            position: 'sticky', top: 0, zIndex: 999
+          }}>
+            🔄 Sincronizando...
+          </div>
+        )}
+        {online && !syncing && lastSync && (
+          <div style={{
+            background: 'rgba(0,0,0,0.04)', color: LIGHT.gray,
+            fontSize: 11, fontWeight: 500,
+            textAlign: 'center', padding: '4px 0'
+          }}>
+            ✅ Sincronizado {fmtSync(lastSync)}
+          </div>
+        )}
 
         {page === 'home'        && <Dashboard
             pastos={pastos} animais={animais} fin={fin} sal={sal}
@@ -269,8 +327,7 @@ export function App() {
                   flex: 1, border: 'none', background: 'none',
                   padding: '10px 0 12px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', gap: 3,
-                  position: 'relative'
+                  alignItems: 'center', gap: 3, position: 'relative'
                 }}
               >
                 {n.id === 'animais' && bezNovos > 0 && (
@@ -280,8 +337,7 @@ export function App() {
                     borderRadius: 20, minWidth: 16, height: 16,
                     fontSize: 9, fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '0 4px',
-                    border: '2px solid ' + T.bg
+                    padding: '0 4px', border: '2px solid ' + T.bg
                   }}>{bezNovos}</div>
                 )}
                 <span style={{ fontSize: 21, lineHeight: 1, filter: isActive ? 'none' : 'grayscale(40%) opacity(0.6)' }}>
@@ -292,20 +348,15 @@ export function App() {
                 </span>
                 {isActive && (
                   <div style={{
-                    position: 'absolute', bottom: 0,
-                    left: '30%', right: '30%',
-                    height: 2.5,
-                    background: T.green,
-                    borderRadius: '2px 2px 0 0'
+                    position: 'absolute', bottom: 0, left: '30%', right: '30%',
+                    height: 2.5, background: T.green, borderRadius: '2px 2px 0 0'
                   }} />
                 )}
               </button>
             )
           })}
         </div>
-
       </div>
     </TC.Provider>
   )
 }
-/* sáb 16 mai 2026 11:41:01 -03 */
