@@ -119,10 +119,13 @@ export function App() {
           const p = await getPerfil(u.id)
           setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
         } catch { setPerfil({ nome_fazenda: 'Minha Fazenda' }) }
-        await loadFromSupabase(u.id)
+        setAuthReady(true)
+        setLoading(false)
+        loadFromSupabase(u.id)
+      } else {
+        setAuthReady(true)
+        setLoading(false)
       }
-      setAuthReady(true)
-      setLoading(false)
     }
 
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_e, session) => {
