@@ -176,9 +176,9 @@ export function App() {
       }, 5000)
     }
 
-    const ok = await syncFromSupabase(userId)
-
-    if (ok) {
+    let ok = false
+    try {
+      ok = await syncFromSupabase(userId)
       // Recarrega dados do IndexedDB após sync
       const loaders = [
         [loadPastos,    setP],
@@ -194,9 +194,10 @@ export function App() {
         if (v !== null) setter(Array.isArray(v) ? v : [])
       }))
       setLastSync(new Date())
+    } finally {
+      syncingRef.current = false
+      setSyncing(false)
     }
-    syncingRef.current = false
-    setSyncing(false)
   }
 
   // ── 4. Detector de conexão ────────────────────────────────────
