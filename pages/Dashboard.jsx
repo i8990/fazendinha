@@ -99,29 +99,6 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
           />
         )}
 
-        {/* Financeiro do mês */}
-        <Card ch={
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 12 }}>
-              💰 Financeiro — {new Date().toLocaleDateString('pt-BR', { month: 'long' })}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-              <div style={{ background: T.gPale, borderRadius: 14, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, color: T.gray, fontWeight: 600 }}>Receita</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: T.green }}>{fmtR(receita)}</div>
-              </div>
-              <div style={{ background: T.pinkPale, borderRadius: 14, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, color: T.gray, fontWeight: 600 }}>Despesa</div>
-                <div style={{ fontSize: 18, fontWeight: 800, color: T.red }}>{fmtR(despesa)}</div>
-              </div>
-            </div>
-            <div
-              onClick={() => setPage('financeiro')}
-              style={{ textAlign: 'center', marginTop: 10, fontSize: 13, color: T.green, fontWeight: 600, cursor: 'pointer' }}
-            >Ver detalhes →</div>
-          </div>
-        } />
-
         {/* Quick Actions */}
         <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 10, paddingLeft: 2 }}>
           Ações Rápidas
@@ -149,6 +126,29 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
         <div style={{ marginBottom: 100 }}>
           <ClimaWidget />
         </div>
+
+        {/* Financeiro do mês */}
+        <Card ch={
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.gray, marginBottom: 12 }}>
+              💰 Financeiro — {new Date().toLocaleDateString('pt-BR', { month: 'long' })}
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div style={{ background: T.gPale, borderRadius: 14, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, color: T.gray, fontWeight: 600 }}>Receita</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: T.green }}>{fmtR(receita)}</div>
+              </div>
+              <div style={{ background: T.pinkPale, borderRadius: 14, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, color: T.gray, fontWeight: 600 }}>Despesa</div>
+                <div style={{ fontSize: 18, fontWeight: 800, color: T.red }}>{fmtR(despesa)}</div>
+              </div>
+            </div>
+            <div
+              onClick={() => setPage('financeiro')}
+              style={{ textAlign: 'center', marginTop: 10, fontSize: 13, color: T.green, fontWeight: 600, cursor: 'pointer' }}
+            >Ver detalhes →</div>
+          </div>
+        } />
 
       </div>
     </div>
