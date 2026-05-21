@@ -36,9 +36,17 @@ export function CurralTool({ animais, pastos, onSalvar, onFechar }) {
   const porPasto = pastoFiltro === 'todos'
     ? ativos
     : ativos.filter(a => String(a.pastoId) === pastoFiltro)
-  const filtrados = busca
+  const sortCurral = arr => [...arr].sort((a, b) => {
+    const isBezA = a.cat === 'Bezerro' ? 1 : 0, isBezB = b.cat === 'Bezerro' ? 1 : 0
+    if (isBezA !== isBezB) return isBezA - isBezB
+    const numA = /^\d+$/.test(a.ident), numB = /^\d+$/.test(b.ident)
+    if (numA !== numB) return numA ? 1 : -1
+    if (numA && numB) return +a.ident - +b.ident
+    return a.ident.localeCompare(b.ident)
+  })
+  const filtrados = sortCurral(busca
     ? porPasto.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase()))
-    : porPasto
+    : porPasto)
 
   const nChecked = filtrados.filter(a => checked[a.id]).length
 

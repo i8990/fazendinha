@@ -186,9 +186,15 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
   const rebanho  = ativos.filter(a => a.cat !== 'Bezerro')
   const bezerros = ativos.filter(a => a.cat === 'Bezerro')
 
-  const filtrR = busca ? rebanho.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase()) || a.lote.toLowerCase().includes(busca.toLowerCase())) : rebanho
+  const sortIdent = arr => [...arr].sort((a, b) => {
+    const numA = /^\d+$/.test(a.ident), numB = /^\d+$/.test(b.ident)
+    if (numA !== numB) return numA ? 1 : -1
+    if (numA && numB) return +a.ident - +b.ident
+    return a.ident.localeCompare(b.ident)
+  })
+  const filtrR = sortIdent(busca ? rebanho.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase()) || a.lote.toLowerCase().includes(busca.toLowerCase())) : rebanho)
   const filtrB = busca ? bezerros.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase())) : bezerros
-  const bezOrd = [...filtrB].sort((a, b) => { if (a.dataNasc && b.dataNasc) return b.dataNasc.localeCompare(a.dataNasc); if (a.dataNasc) return -1; return 1 })
+  const bezOrd = sortIdent(filtrB)
 
   const nomePasto = id => pastos.find(p => p.id === id)?.nome || '—'
   const cI = { Boi: '🐂', Vaca: '🐄', Novilha: '🐄', Bezerro: '🐮', Touro: '🐂' }
