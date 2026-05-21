@@ -211,9 +211,8 @@ export function Modal({ open, onClose, title, children }) {
     >
       <div
         onClick={e => e.stopPropagation()}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onTouchMove={dragging ? handleTouchMove : undefined}
+        onTouchEnd={dragging ? handleTouchEnd : undefined}
         className={dragging ? '' : 'modal-enter'}
         style={{
           background: T.card,
@@ -223,12 +222,16 @@ export function Modal({ open, onClose, title, children }) {
           maxHeight: '92vh', overflowY: dragY > 0 ? 'hidden' : 'auto',
           transform: `translateY(${dragY}px)`,
           transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(0.32,0.72,0,1)',
-          cursor: 'grab',
           userSelect: 'none'
         }}
       >
-        {/* Pull indicator */}
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 18px' }}>
+        {/* Pull indicator — unico lugar que ativa o drag */}
+        <div
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 18px', cursor: 'grab' }}
+        >
           <div style={{
             width: 36, height: 5, borderRadius: 3,
             background: T.bg === '#F5F5F7' ? 'rgba(60,60,67,0.18)' : 'rgba(255,255,255,0.18)',
