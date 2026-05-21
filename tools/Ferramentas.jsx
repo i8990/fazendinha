@@ -145,7 +145,7 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
       <ToolScreen
         title="Adubação"
         icon={<img src='/iconeSOLO.png' style={{ width: 28, height: 28, objectFit: 'contain' }} />}
-        color="linear-gradient(135deg,#1a3a1a,#2D6A4F)"
+        color="linear-gradient(135deg,#4E3B31,#8A6B55)"
         onBack={back}
       >
         <Adubacao

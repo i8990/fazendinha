@@ -109,7 +109,7 @@ export function Inp({ label, value, onChange, type = 'text', placeholder, style 
           fontSize: 16,
           outline: 'none',
           boxSizing: 'border-box',
-          background: focused ? T.card : (T.bg === '#F5F5F7' ? '#F2F2F7' : 'rgba(255,255,255,0.07)'),
+          background: focused ? T.card : (T.bg === '#ECE9E2' ? '#E4E0D8' : 'rgba(255,255,255,0.07)'),
           color: T.text,
           boxShadow: focused ? `0 0 0 2.5px ${T.green}` : `0 0 0 1px ${focused ? T.green : T.border}`,
           transition: 'box-shadow 0.18s ease, background 0.18s ease',
@@ -150,7 +150,7 @@ export function Sel({ label, value, onChange, opts }) {
             height: 50,
             fontSize: 16,
             outline: 'none',
-            background: focused ? T.card : (T.bg === '#F5F5F7' ? '#F2F2F7' : 'rgba(255,255,255,0.07)'),
+            background: focused ? T.card : (T.bg === '#ECE9E2' ? '#E4E0D8' : 'rgba(255,255,255,0.07)'),
             color: T.text,
             appearance: 'none',
             boxShadow: focused ? `0 0 0 2.5px ${T.green}` : `0 0 0 1px ${T.border}`,
@@ -234,7 +234,7 @@ export function Modal({ open, onClose, title, children }) {
         >
           <div style={{
             width: 36, height: 5, borderRadius: 3,
-            background: T.bg === '#F5F5F7' ? 'rgba(60,60,67,0.18)' : 'rgba(255,255,255,0.18)',
+            background: T.bg === '#ECE9E2' ? 'rgba(78,59,49,0.18)' : 'rgba(255,255,255,0.18)',
             transition: 'width 0.2s',
             ...(dragging && { width: 48 })
           }} />
@@ -244,7 +244,7 @@ export function Modal({ open, onClose, title, children }) {
           <button
             onClick={onClose}
             style={{
-              background: T.bg === '#F5F5F7' ? 'rgba(120,120,128,0.12)' : 'rgba(255,255,255,0.1)',
+              background: T.bg === '#ECE9E2' ? 'rgba(78,59,49,0.10)' : 'rgba(255,255,255,0.1)',
               border: 'none', borderRadius: 50,
               width: 32, height: 32, fontSize: 13, cursor: 'pointer', color: T.gray,
               display: 'flex', alignItems: 'center', justifyContent: 'center',

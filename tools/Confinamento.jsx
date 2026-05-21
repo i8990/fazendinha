@@ -10,7 +10,7 @@ import { Inp }        from '../ui.jsx'
 // ── Dieta padrão confinamento ─────────────────────────────────────
 // Proporções fixas, embasadas em literatura zootécnica brasileira
 export const DIETA = [
-  { id: 1, nome: 'Silagem de capim', pct: 55, cor: '#2D6A4F', sacosKg: null, unid: 'tonelada'   },
+  { id: 1, nome: 'Silagem de capim', pct: 55, cor: '#55604D', sacosKg: null, unid: 'tonelada'   },
   { id: 2, nome: 'Fubá de milho',    pct: 22, cor: '#F4A261', sacosKg: 30,   unid: 'saco 30 kg' },
   { id: 3, nome: 'Farelo de soja',   pct: 13, cor: '#5390D9', sacosKg: 30,   unid: 'saco 30 kg' },
   { id: 4, nome: 'Sal proteínado',   pct:  7, cor: '#E63946', sacosKg: 25,   unid: 'saco 25 kg' },
@@ -218,7 +218,7 @@ export function Confinamento() {
             <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 10, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 10 }}>📋 Resumo do Confinamento</div>
             <Row l="🐄 Animais"              v={`${n(nAnim)} cabeças`} />
             <Row l="⚖️ Arrobas na entrada"   v={`${f1(arrEnt)} @`} />
-            <Row l="📈 Arrobas na saída"     v={`${f1(arrSaida)} @`}                                    hl="#52B788" />
+            <Row l="📈 Arrobas na saída"     v={`${f1(arrSaida)} @`}                                    hl="#55604D" />
             <Row l="🏆 Ganho total em @"     v={`${f1(arrGanho)} @`}                                    hl="#FFD166" />
             <Row l="⚡ Eficiência alimentar" v={`${efic}% (${gmd} kg ganho / ${f1(consDia)} kg ingerido)`} />
             <Row l="🌾 Consumo total do lote" v={fmtKg(totalAlim)} />

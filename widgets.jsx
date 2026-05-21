@@ -87,10 +87,10 @@ export function MapaMedicao({ onAplicar, onFechar }) {
     if (polyR.current) map.removeLayer(polyR.current)
     if (pts.length >= 3)
       polyR.current = L.polygon(pts.map(p => [p.lat, p.lng]),
-        { color: '#52B788', fillColor: '#52B788', fillOpacity: 0.2, weight: 2 }).addTo(map)
+        { color: '#55604D', fillColor: '#55604D', fillOpacity: 0.2, weight: 2 }).addTo(map)
     else if (pts.length >= 2)
       polyR.current = L.polyline(pts.map(p => [p.lat, p.lng]),
-        { color: '#52B788', weight: 2, dashArray: '6,4' }).addTo(map)
+        { color: '#55604D', weight: 2, dashArray: '6,4' }).addTo(map)
     setArea(calcAreaHa(pts))
     setNPts(pts.length)
   }
@@ -118,7 +118,7 @@ export function MapaMedicao({ onAplicar, onFechar }) {
     <div style={{ position: 'fixed', inset: 0, zIndex: 2000, display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
       <div style={{
-        background: '#1B4332', color: '#FFF',
+        background: '#4E3B31', color: '#FFF',
         padding: '12px 16px',
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         flexShrink: 0
@@ -141,7 +141,7 @@ export function MapaMedicao({ onAplicar, onFechar }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
           <div style={{ background: '#D8F3DC', borderRadius: 12, padding: '10px 14px', textAlign: 'center' }}>
             <div style={{ fontSize: 10, color: '#6B7280', fontWeight: 700, textTransform: 'uppercase' }}>Área</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: '#1B4332', lineHeight: 1.2 }}>
+            <div style={{ fontSize: 26, fontWeight: 800, color: '#4E3B31', lineHeight: 1.2 }}>
               {area.toFixed(2)}<span style={{ fontSize: 13 }}> ha</span>
             </div>
           </div>
@@ -165,7 +165,7 @@ export function MapaMedicao({ onAplicar, onFechar }) {
           onClick={() => onAplicar(area)}
           disabled={nPts < 3}
           style={{
-            background: nPts < 3 ? '#CCC' : '#2D6A4F',
+            background: nPts < 3 ? '#CCC' : '#55604D',
             color: '#FFF', border: 'none', borderRadius: 12,
             padding: '13px', fontSize: 15, fontWeight: 700,
             width: '100%', cursor: nPts < 3 ? 'not-allowed' : 'pointer'
@@ -193,7 +193,7 @@ export function ClimaWidget() {
   }, [])
 
   const base = {
-    background: 'linear-gradient(160deg,#0a1628,#0d2b4e)',
+    background: 'linear-gradient(160deg,#1A1410,#2E2418)',
     color: '#e8f4fd', border: 'none', borderRadius: 20, padding: 18
   }
 
@@ -267,7 +267,7 @@ export function ClimaWidget() {
         {rainSoFar} mm acumulados de ~{rainMonth} mm estimados
       </div>
       <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 6, overflow: 'hidden' }}>
-        <div style={{ background: 'linear-gradient(90deg,#3b82f6,#7dd3fc)', borderRadius: 8, height: '100%', width: `${pct}%` }} />
+        <div style={{ background: 'linear-gradient(90deg,#5B7B8A,#8AAAB8)', borderRadius: 8, height: '100%', width: `${pct}%` }} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginTop: 4, opacity: 0.65 }}>
         <span>0 mm</span><span>{pct}% do mês</span><span>~{rainMonth} mm</span>

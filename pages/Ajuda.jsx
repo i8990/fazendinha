@@ -43,7 +43,7 @@ function ManualViewer({ src, title, onClose }) {
       <iframe
         src={src}
         title={title}
-        style={{ flex: 1, border: 'none', width: '100%', background: '#F5F5F7' }}
+        style={{ flex: 1, border: 'none', width: '100%', background: '#ECE9E2' }}
         loading="lazy"
       />
     </div>

@@ -8,73 +8,73 @@ import { createContext, useContext } from 'react'
 export const TC   = createContext({})
 export const useT = () => useContext(TC)
 
-// ── Paleta Light ──────────────────────────────────────────────────
+// ── Paleta Light — Apple Rural / Fazenda Premium ──────────────────
 export const LIGHT = {
-  // Brand greens (farm identity)
-  green:'#1A7A4A', gDark:'#0F4D2E', gLight:'#30A86A', gPale:'#EAF7F0',
-  // System colors (Apple-inspired)
-  orange:'#FF9F0A', yellow:'#FFD60A', red:'#FF3B30',
-  blue:'#007AFF', bLight:'#5AC8FA',
+  // Brand (terra, oliva, argila)
+  green:'#55604D', gDark:'#4E3B31', gLight:'#8A6B55', gPale:'#EDE8DF',
+  // System colors — dessaturados
+  orange:'#B87333', yellow:'#C8A84B', red:'#9B4C3C',
+  blue:'#5B7B8A', bLight:'#8AAAB8',
   // Surfaces
-  bg:'#F5F5F7', card:'#FFFFFF',
+  bg:'#ECE9E2', card:'#F9F7F3',
   // Typography
-  text:'#1D1D1F', gray:'#6E6E73',
+  text:'#2E2D2A', gray:'#7A6F65',
   // Structural
-  border:'#E5E5EA',
+  border:'#D7C7AE',
   // Accents
-  pink:'#FF2D55', pinkPale:'#FFF0F4', pinkDark:'#C7002C',
-  bluePale:'#EBF5FF', blueMid:'#007AFF',
-  purple:'#BF5AF2', purplePale:'#F5EEFF',
+  pink:'#9B4C3C', pinkPale:'#F5EDE9', pinkDark:'#7A3228',
+  bluePale:'#E8EFF2', blueMid:'#5B7B8A',
+  purple:'#7A6B8A', purplePale:'#EDE9F2',
   // Shadow
-  shadow:'rgba(0,0,0,0.06)'
+  shadow:'rgba(78,59,49,0.08)'
 }
 
 // ── Paleta Dark ───────────────────────────────────────────────────
 export const DARK = {
-  // Brand greens
-  green:'#30D158', gDark:'#1A3A28', gLight:'#30D158', gPale:'#0D2B1A',
+  // Brand
+  green:'#8A9A7A', gDark:'#3A2D25', gLight:'#A0906C', gPale:'#2A2018',
   // System colors
-  orange:'#FF9F0A', yellow:'#FFD60A', red:'#FF453A',
-  blue:'#0A84FF', bLight:'#5AC8FA',
+  orange:'#C89050', yellow:'#C8A84B', red:'#C46A58',
+  blue:'#7A9BAA', bLight:'#8AAAB8',
   // Surfaces
-  bg:'#000000', card:'#1C1C1E',
+  bg:'#1A1512', card:'#252018',
   // Typography
-  text:'#FFFFFF', gray:'#8E8E93',
+  text:'#F0EBE3', gray:'#9A8A7A',
   // Structural
-  border:'#38383A',
+  border:'#3A3028',
   // Accents
-  pink:'#FF375F', pinkPale:'#2D0A14', pinkDark:'#FF375F',
-  bluePale:'#001A3A', blueMid:'#0A84FF',
-  purple:'#BF5AF2', purplePale:'#2A0D3C',
+  pink:'#C46A58', pinkPale:'#2D1A16', pinkDark:'#C46A58',
+  bluePale:'#0F1E24', blueMid:'#7A9BAA',
+  purple:'#9A8AAA', purplePale:'#1E1828',
   // Shadow
   shadow:'rgba(0,0,0,0.4)'
 }
 
 // ── Status de pasto ───────────────────────────────────────────────
 export const PS = {
-  ocupado:     { l:'Ocupado',     c:'#F4A261', bg:'#FFF3E0' },
-  vazio:       { l:'Vazio',       c:'#52B788', bg:'#D8F3DC' },
-  descanso:    { l:'Descanso',    c:'#7B61FF', bg:'#EDE9FE' },
-  degradado:   { l:'Degradado',   c:'#E63946', bg:'#FFE4E6' },
-  recuperando: { l:'Recuperando', c:'#E9C46A', bg:'#FEFCE8' }
+  ocupado:     { l:'Ocupado',     c:'#8A6B55', bg:'#EDE8DF' },
+  vazio:       { l:'Vazio',       c:'#55604D', bg:'#E4E8DF' },
+  descanso:    { l:'Descanso',    c:'#7A6B8A', bg:'#EDE9F2' },
+  degradado:   { l:'Degradado',   c:'#9B4C3C', bg:'#F5EDE9' },
+  recuperando: { l:'Recuperando', c:'#C8A84B', bg:'#F5F0E0' }
 }
 
 // ── Estado do pasto ───────────────────────────────────────────────
 export const PE = {
-  bom:       { l:'Bom',       c:'#52B788' },
-  medio:     { l:'Médio',     c:'#E9C46A' },
-  ruim:      { l:'Ruim',      c:'#F4A261' },
-  muito_ruim:{ l:'Muito Ruim',c:'#E63946' }
+  bom:       { l:'Bom',       c:'#55604D' },
+  medio:     { l:'Médio',     c:'#C8A84B' },
+  ruim:      { l:'Ruim',      c:'#B87333' },
+  muito_ruim:{ l:'Muito Ruim',c:'#9B4C3C' }
 }
 
 // ── Tipos de manejo ───────────────────────────────────────────────
 export const TM = [
-  { v:'ivermectina', l:'Ivermectina',  icon:'💉', c:'#7B61FF' },
-  { v:'fio_do_lombo',l:'Fio do Lombo', icon:'🩺', c:'#E63946' },
-  { v:'antibiotico', l:'Antibiótico',  icon:'💊', c:'#F4A261' },
-  { v:'vacina',      l:'Vacina',       icon:'🩹', c:'#52B788' },
-  { v:'vermifugo',   l:'Vermífugo',    icon:'🔬', c:'#0077B6' },
-  { v:'outro',       l:'Outro',        icon:'✚',  c:'#6B7280' }
+  { v:'ivermectina', l:'Ivermectina',  icon:'💉', c:'#7A6B8A' },
+  { v:'fio_do_lombo',l:'Fio do Lombo', icon:'🩺', c:'#9B4C3C' },
+  { v:'antibiotico', l:'Antibiótico',  icon:'💊', c:'#B87333' },
+  { v:'vacina',      l:'Vacina',       icon:'🩹', c:'#55604D' },
+  { v:'vermifugo',   l:'Vermífugo',    icon:'🔬', c:'#5B7B8A' },
+  { v:'outro',       l:'Outro',        icon:'✚',  c:'#7A6F65' }
 ]
 
 // ── Meses ─────────────────────────────────────────────────────────

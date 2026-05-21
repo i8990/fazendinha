@@ -192,7 +192,7 @@ export function Adubacao({ adubacoes, setAdubacoes, pastos }) {
               </div>
             </div>
           </>}
-          {!r.needsCalc && <div style={{ background: '#D8F3DC', borderRadius: 12, padding: 12, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 20 }}>✅</span><div style={{ fontSize: 13, color: '#1B4332', fontWeight: 600 }}>pH e V% adequados — sem necessidade de calcário</div></div>}
+          {!r.needsCalc && <div style={{ background: '#E4E8DF', borderRadius: 12, padding: 12, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}><span style={{ fontSize: 20 }}>✅</span><div style={{ fontSize: 13, color: '#4E3B31', fontWeight: 600 }}>pH e V% adequados — sem necessidade de calcário</div></div>}
 
           <div style={{ fontWeight: 800, color: T.text, fontSize: 13, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '.5px' }}>🌿 Adubação de Plantio</div>
           <div style={greenBox}>

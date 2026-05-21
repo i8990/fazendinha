@@ -39,7 +39,7 @@ export function calcIdade(dn) {
   else if (dias < 7)  { label = `${dias} dia${dias > 1 ? 's' : ''}`;     cor = '#F48FB1' }
   else if (dias < 30) { label = `${dias} dias`;                           cor = '#F4A261' }
   else if (meses < 12){ const d = dias % 30; label = `${meses}m${d ? ` ${d}d` : ''}`; cor = '#E9C46A' }
-  else                { const m = meses % 12; label = `${anos}a${m ? ` ${m}m` : ''}`; cor = '#52B788' }
+  else                { const m = meses % 12; label = `${anos}a${m ? ` ${m}m` : ''}`; cor = '#55604D' }
 
   return { label, dias, meses, anos, cor }
 }

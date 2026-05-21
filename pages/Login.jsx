@@ -68,7 +68,7 @@ export default function Login({ onLogin }) {
 
       {/* Topo */}
       <div style={{
-        background: 'linear-gradient(160deg,#1a3a1a 0%,#2D6A4F 100%)',
+        background: 'linear-gradient(160deg,#4E3B31 0%,#8A6B55 100%)',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 60px)',
         paddingBottom: 48, paddingLeft: 28, paddingRight: 28,
         textAlign: 'center', borderRadius: '0 0 36px 36px'
@@ -94,7 +94,7 @@ export default function Login({ onLogin }) {
               flex: 1, border: 'none', borderRadius: 11, padding: '10px 0',
               fontSize: 14, fontWeight: 700, cursor: 'pointer',
               background: modo === id ? '#FFF' : 'transparent',
-              color: modo === id ? '#1a3a1a' : 'rgba(255,255,255,0.7)',
+              color: modo === id ? '#4E3B31' : 'rgba(255,255,255,0.7)',
               boxShadow: modo === id ? '0 2px 8px rgba(0,0,0,0.15)' : 'none',
               transition: 'all 0.2s'
             }}>{label}</button>
@@ -116,7 +116,7 @@ export default function Login({ onLogin }) {
           <div style={{
             background: '#E8F5E9', border: '1.5px solid #A5D6A7',
             borderRadius: 14, padding: '12px 16px', marginBottom: 18,
-            fontSize: 13, color: '#1a3a1a', fontWeight: 600, lineHeight: 1.5
+            fontSize: 13, color: '#4E3B31', fontWeight: 600, lineHeight: 1.5
           }}>✅ {sucesso}</div>
         )}
 
@@ -128,7 +128,7 @@ export default function Login({ onLogin }) {
           disabled={loading || !email.trim() || !senha}
           style={{
             width: '100%', height: 52, border: 'none', borderRadius: 16,
-            background: loading || !email.trim() || !senha ? '#C7C7CC' : '#2D6A4F',
+            background: loading || !email.trim() || !senha ? '#C7C7CC' : '#55604D',
             color: '#FFF', fontSize: 16, fontWeight: 700,
             cursor: loading || !email.trim() || !senha ? 'not-allowed' : 'pointer',
             marginTop: 8, transition: 'background 0.2s'
