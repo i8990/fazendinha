@@ -187,7 +187,7 @@ export function ClimaWidget() {
     fetch(
       'https://api.open-meteo.com/v1/forecast?latitude=-21.9569&longitude=-44.8881' +
       '&daily=precipitation_sum,temperature_2m_max,weathercode' +
-      '&current_weather=true&hourly=relativehumidity_2m&timezone=America%2FSao_Paulo&forecast_days=7'
+      '&current_weather=true&timezone=America%2FSao_Paulo&forecast_days=7'
     )
       .then(r => { if (!r.ok) throw 0; return r.json() })
       .then(v => { setD(v); setLoad(false) })
