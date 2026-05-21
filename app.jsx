@@ -134,8 +134,9 @@ export function App() {
       finish()
     }).catch(() => finish())
 
-    // Listener para login/logout em tempo real
+    // Listener para login/logout em tempo real (ignora evento inicial, ja tratado pelo getSession)
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+      if (!initialDone) return
       const u = session?.user ?? null
       setUser(u)
       if (u) {
@@ -146,7 +147,7 @@ export function App() {
         } catch {
           setPerfil({ nome_fazenda: 'Minha Fazenda' })
         }
-        loadFromSupabase(u.id)
+        await loadFromSupabase(u.id)
       } else {
         setP([]); setA([]); setF([]); setMv([])
         setSl([]); setMj([]); setAdu([])
