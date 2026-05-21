@@ -179,7 +179,6 @@ export function MapaMedicao({ onAplicar, onFechar }) {
 // ═══ CLIMA WIDGET ═════════════════════════════════════════════════
 // Previsão 7 dias via Open-Meteo (Baependi-MG, sem chave de API).
 export function ClimaWidget() {
-  const T = useT()
   const [d, setD]       = useState(null)
   const [load, setLoad] = useState(true)
   const [err, setErr]   = useState(false)
@@ -188,56 +187,92 @@ export function ClimaWidget() {
     fetch(
       'https://api.open-meteo.com/v1/forecast?latitude=-21.9569&longitude=-44.8881' +
       '&daily=precipitation_sum,temperature_2m_max,weathercode' +
-      '&current_weather=true&timezone=America%2FSao_Paulo&forecast_days=7'
+      '&current_weather=true&hourly=relativehumidity_2m&timezone=America%2FSao_Paulo&forecast_days=7'
     )
       .then(r => { if (!r.ok) throw 0; return r.json() })
       .then(v => { setD(v); setLoad(false) })
       .catch(() => { setErr(true); setLoad(false) })
   }, [])
 
-  const base = { background: 'linear-gradient(145deg,#0077b6,#48cae4)', color: '#FFF', border: 'none' }
+  const base = {
+    background: 'linear-gradient(160deg,#0a1628,#0d2b4e)',
+    color: '#e8f4fd', border: 'none', borderRadius: 20, padding: 18
+  }
 
   if (load) return (
-    <Card ch={<div style={{ textAlign: 'center', padding: 12, fontSize: 13 }}>⏳ Carregando clima...</div>} style={base} />
+    <Card ch={<div style={{ textAlign: 'center', padding: 12, fontSize: 13, color: '#e8f4fd' }}>⏳ Carregando clima...</div>} style={base} />
   )
   if (err) return (
-    <Card ch={<div style={{ fontSize: 12 }}>⚠️ Clima offline</div>} style={{ background: T.gray, color: '#FFF' }} />
+    <Card ch={<div style={{ fontSize: 12, color: '#e8f4fd' }}>⚠️ Clima offline</div>} style={base} />
   )
 
-  const cw = d.current_weather
-  const dl = d.daily
-  const ct = dl.precipitation_sum.reduce((s, v) => s + (v || 0), 0)
+  const cw  = d.current_weather
+  const dl  = d.daily
+  const now = new Date()
+  const hum = d.hourly?.relativehumidity_2m?.[now.getHours()] ?? '—'
+  const rain7 = dl.precipitation_sum.reduce((s, v) => s + (v || 0), 0)
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+  const rainMonth   = Math.round(rain7 / 7 * daysInMonth)
+  const rainSoFar   = Math.round(rain7 / 7 * now.getDate())
+  const pct         = Math.min(100, Math.round(rainSoFar / rainMonth * 100))
+  const DAYS        = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+
+  const stat = (val, lbl) => (
+    <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 10, padding: 10, textAlign: 'center', flex: 1 }}>
+      <div style={{ fontSize: 17, fontWeight: 700, color: '#7dd3fc' }}>{val}</div>
+      <div style={{ fontSize: 10, opacity: 0.55, marginTop: 2 }}>{lbl}</div>
+    </div>
+  )
 
   return (
     <Card ch={<>
-      <div style={{ fontWeight: 800, fontSize: 13, marginBottom: 10, opacity: 0.9 }}>🌦️ Baependi — MG</div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <div>
-          <div style={{ fontSize: 44, fontWeight: 800, lineHeight: 1 }}>{Math.round(cw.temperature)}°C</div>
-          <div style={{ fontSize: 12, opacity: 0.8, marginTop: 3 }}>💨 {Math.round(cw.windspeed)} km/h</div>
-        </div>
-        <div style={{ textAlign: 'right' }}>
-          <div style={{ fontSize: 40 }}>{WMO[cw.weathercode] || '🌡️'}</div>
-          <div style={{ fontSize: 11, opacity: 0.75 }}>Chuva 7 dias</div>
-          <div style={{ fontWeight: 700, fontSize: 17 }}>{ct.toFixed(0)} mm</div>
-        </div>
+      <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.55, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>
+        🌱 Baependi — MG
       </div>
-      <div style={{ display: 'flex', gap: 5, overflowX: 'auto', paddingBottom: 2 }}>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div>
+          <div style={{ fontSize: 52, fontWeight: 800, lineHeight: 1, color: '#fff' }}>{Math.round(cw.temperature)}°</div>
+          <div style={{ fontSize: 12, opacity: 0.55, marginTop: 4 }}>💨 {Math.round(cw.windspeed)} km/h</div>
+        </div>
+        <div style={{ fontSize: 48 }}>{WMO[cw.weathercode] || '🌡️'}</div>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {stat(`${hum}%`, 'Humidade')}
+        {stat(`${rain7.toFixed(0)} mm`, 'Chuva 7 dias')}
+        {stat(`~${rainMonth} mm`, 'Est. mês')}
+      </div>
+
+      <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.4, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>
+        Previsão 7 dias
+      </div>
+      <div style={{ display: 'flex', gap: 6, overflowX: 'auto', paddingBottom: 2 }}>
         {dl.time.map((t, i) => (
-          <div key={t} style={{
-            flex: '0 0 50px', background: 'rgba(255,255,255,0.2)',
-            borderRadius: 10, padding: '6px 3px', textAlign: 'center'
-          }}>
-            <div style={{ fontSize: 10, opacity: 0.85 }}>
-              {i === 0 ? 'Hoje' : ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][new Date(t + 'T12:00').getDay()]}
+          <div key={t} style={{ flex: '0 0 46px', background: 'rgba(255,255,255,0.07)', borderRadius: 10, padding: '8px 4px', textAlign: 'center' }}>
+            <div style={{ fontSize: 10, opacity: 0.55 }}>
+              {i === 0 ? 'Hoje' : DAYS[new Date(t + 'T12:00').getDay()]}
             </div>
-            <div style={{ fontSize: 16, margin: '2px 0' }}>{WMO[dl.weathercode[i]] || '🌡️'}</div>
-            <div style={{ fontSize: 11, fontWeight: 700 }}>{Math.round(dl.temperature_2m_max[i])}°</div>
-            <div style={{ fontSize: 10, opacity: 0.8 }}>
+            <div style={{ fontSize: 18, margin: '3px 0' }}>{WMO[dl.weathercode[i]] || '🌡️'}</div>
+            <div style={{ fontSize: 12, fontWeight: 700 }}>{Math.round(dl.temperature_2m_max[i])}°</div>
+            <div style={{ fontSize: 10, color: '#7dd3fc', marginTop: 1 }}>
               {(dl.precipitation_sum[i] || 0) > 0 ? `${(dl.precipitation_sum[i]).toFixed(0)}mm` : '—'}
             </div>
           </div>
         ))}
+      </div>
+
+      <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.4, letterSpacing: 1, textTransform: 'uppercase', margin: '14px 0 6px' }}>
+        Acúmulo estimado no mês
+      </div>
+      <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 6 }}>
+        {rainSoFar} mm acumulados de ~{rainMonth} mm estimados
+      </div>
+      <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 6, overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(90deg,#3b82f6,#7dd3fc)', borderRadius: 8, height: '100%', width: `${pct}%` }} />
+      </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginTop: 4, opacity: 0.65 }}>
+        <span>0 mm</span><span>{pct}% do mês</span><span>~{rainMonth} mm</span>
       </div>
     </>} style={base} />
   )
