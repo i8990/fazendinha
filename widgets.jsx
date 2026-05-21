@@ -191,7 +191,7 @@ export function ClimaWidget() {
     )
       .then(r => { if (!r.ok) throw 0; return r.json() })
       .then(v => { setD(v); setLoad(false) })
-      .catch(() => { setErr(true); setLoad(false) })
+      .catch((e) => { console.error("❌ clima:", e); setErr(true); setLoad(false) })
   }, [])
 
   const base = {
