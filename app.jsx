@@ -117,6 +117,24 @@ export function App() {
       setLoading(false)
     }
 
+    // Carrega sessao imediatamente no boot (nao espera o listener)
+    supabaseClient.auth.getSession().then(async ({ data: { session } }) => {
+      const u = session?.user ?? null
+      if (u) {
+        setUser(u)
+        setCurrentUserId(u.id)
+        try {
+          const p = await getPerfil(u.id)
+          setPerfil(p ?? { nome_fazenda: 'Minha Fazenda' })
+        } catch {
+          setPerfil({ nome_fazenda: 'Minha Fazenda' })
+        }
+        await loadFromSupabase(u.id)
+      }
+      finish()
+    }).catch(() => finish())
+
+    // Listener para login/logout em tempo real
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(async (_event, session) => {
       const u = session?.user ?? null
       setUser(u)
@@ -128,16 +146,15 @@ export function App() {
         } catch {
           setPerfil({ nome_fazenda: 'Minha Fazenda' })
         }
-        await loadFromSupabase(u.id)
+        loadFromSupabase(u.id)
       } else {
-        // logout ou sem sessao: limpa estado
         setP([]); setA([]); setF([]); setMv([])
         setSl([]); setMj([]); setAdu([])
       }
       finish()
     })
 
-    // Fallback: se onAuthStateChange nao disparar em 8s
+    // Fallback: se tudo falhar em 8s
     setTimeout(finish, 8000)
 
     return () => subscription.unsubscribe()
