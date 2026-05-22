@@ -209,9 +209,9 @@ export function ClimaWidget() {
   const now = new Date()
   const hum = d.hourly?.relativehumidity_2m?.[now.getHours()] ?? '—'
   const rain7 = dl.precipitation_sum.reduce((s, v) => s + (v || 0), 0)
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-  const rainMonth   = Math.round(rain7 / 7 * daysInMonth)
-  const rainSoFar   = Math.round(rain7 / 7 * now.getDate())
+  const RAIN_HIST   = [231,121,120,48,40,23,19,20,64,101,156,214]
+  const rainMonth   = RAIN_HIST[now.getMonth()]
+  const rainSoFar   = d.rainMonthSoFar ?? 0
   const pct         = Math.min(100, Math.round(rainSoFar / rainMonth * 100))
   const DAYS        = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
 
