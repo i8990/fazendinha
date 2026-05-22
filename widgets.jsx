@@ -264,7 +264,7 @@ export function ClimaWidget() {
         Acúmulo estimado no mês
       </div>
       <div style={{ fontSize: 12, opacity: 0.7, marginBottom: 6 }}>
-        {rainSoFar} mm acumulados de ~{rainMonth} mm estimados
+        Previsto: ~{rainMonth} mm · Choveu até hoje: {rainSoFar} mm
       </div>
       <div style={{ background: 'rgba(255,255,255,0.08)', borderRadius: 8, height: 6, overflow: 'hidden' }}>
         <div style={{ background: 'linear-gradient(90deg,#5B7B8A,#8AAAB8)', borderRadius: 8, height: '100%', width: `${pct}%` }} />
