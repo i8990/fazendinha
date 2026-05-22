@@ -10,7 +10,8 @@ import {
   CalcUA,
   CalcLotacao,
   CalcSalMineral,
-  CalcPesoFita
+  CalcPesoFita,
+  CalcPopPlanta
 }                                          from './Calculadoras.jsx'
 
 export function ToolScreen({ title, icon, color, onBack, children }) {
@@ -183,6 +184,19 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
     )
   }
 
+  if (open === 'pop') {
+    return (
+      <ToolScreen
+        title="Pop. de Plantas"
+        icon="🌱"
+        color="linear-gradient(135deg,#1B5E20,#43A047)"
+        onBack={back}
+      >
+        <CalcPopPlanta />
+      </ToolScreen>
+    )
+  }
+
   if (open === 'curral') {
     return (
       <CurralTool
@@ -233,6 +247,12 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
       icon: '📏',
       label: 'Peso Fita',
       bg: 'rgba(230,81,0,0.12)'
+    },
+    {
+      id: 'pop',
+      icon: '🌱',
+      label: 'Pop. Plantas',
+      bg: 'rgba(67,160,71,0.14)'
     },
     {
       id: 'curral',

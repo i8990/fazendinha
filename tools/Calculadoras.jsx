@@ -320,3 +320,261 @@ export function CalcPesoFita() {
     </div>
   )
 }
+
+// ═══ POPULAÇÃO DE PLANTAS ═════════════════════════════════════════
+// Milho: metros lineares, pop/ha, plantas/m, adubo por metro.
+// Capim: sementes necessárias e plantas esperadas pelo VC%.
+export function CalcPopPlanta() {
+  const T = useT()
+  const [cultura, setCultura] = useState('milho')
+
+  // ── estado milho ──
+  const [area,     setArea]     = useState('')
+  const [eLinhas,  setELinhas]  = useState('0.90')
+  const [ePlantas, setEPlantas] = useState('')
+  const [popAlvo,  setPopAlvo]  = useState('')
+  const [adubDisp, setAdubDisp] = useState('')
+
+  // ── estado capim ──
+  const [areaC,    setAreaC]    = useState('')
+  const [semKg,    setSemKg]    = useState('')
+  const [vc,       setVc]       = useState('60')
+  const [txSem,    setTxSem]    = useState('')
+  const [eLinhasC, setELinhasC] = useState('0.50')
+
+  // ── cálculos milho ──
+  const mlPHa = +eLinhas > 0 ? Math.round(10000 / +eLinhas) : 0
+  const mlTot = area && mlPHa ? Math.round(+area * mlPHa) : null
+
+  let pop = null, pxm = null, epl = null
+  if (popAlvo && +popAlvo > 0 && +eLinhas > 0) {
+    pop = +popAlvo
+    epl = (10000 / (pop * +eLinhas)).toFixed(2)
+    pxm = (1 / +epl).toFixed(1)
+  } else if (ePlantas && +ePlantas > 0 && +eLinhas > 0) {
+    epl = +ePlantas
+    pxm  = (1 / +ePlantas).toFixed(1)
+    pop  = Math.round(10000 / (+eLinhas * +ePlantas))
+  }
+
+  const adubGm  = adubDisp && mlTot  ? Math.round(+adubDisp * 1000 / mlTot) : null
+  const adubKha = adubDisp && area   ? Math.round(+adubDisp / +area)        : null
+
+  // ── cálculos capim ──
+  const mlPHaC = eLinhasC !== 'broadcast' && +eLinhasC > 0
+    ? Math.round(10000 / +eLinhasC) : null
+  const mlTotC = areaC && mlPHaC ? Math.round(+areaC * mlPHaC) : null
+  const kgSem  = areaC && txSem  ? (+areaC * +txSem).toFixed(1) : null
+
+  let planHaC = null, planMC = null
+  if (semKg && vc && txSem) {
+    planHaC = Math.round(+txSem * +semKg * (+vc / 100))
+    planMC  = mlPHaC ? (planHaC / mlPHaC).toFixed(1) : null
+  }
+
+  const GRD = 'linear-gradient(135deg,#2E7D32,#43A047)'
+  const hasMilho = mlTot || pop
+  const hasCapim = kgSem  || planHaC
+
+  const btnPreset = (active) => ({
+    border: `2px solid ${active ? T.green : T.border}`,
+    borderRadius: 12, padding: '10px 4px', cursor: 'pointer',
+    background: active ? T.gPale : T.card, textAlign: 'center'
+  })
+
+  return (
+    <div>
+      {/* seletor cultura */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 20 }}>
+        {[['milho','🌽','Milho'],['capim','🌾','Capim']].map(([id, ic, lb]) => (
+          <button key={id} onClick={() => setCultura(id)} style={btnPreset(cultura === id)}>
+            <div style={{ fontSize: 26 }}>{ic}</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: cultura === id ? T.green : T.text, marginTop: 4 }}>{lb}</div>
+          </button>
+        ))}
+      </div>
+
+      {/* ─── MILHO ─────────────────────────────────────── */}
+      {cultura === 'milho' && (
+        <>
+          <div style={{ background: T.gPale, borderRadius: 14, padding: 14, marginBottom: 18, border: `1.5px solid ${T.gLight}30` }}>
+            <div style={{ fontWeight: 800, color: T.gDark, fontSize: 13, marginBottom: 4 }}>🌽 Milho — População de Plantas</div>
+            <div style={{ fontSize: 13, color: T.gray, lineHeight: 1.6 }}>
+              Informe a <b>área</b> e o <b>espaçamento</b> — ou a <b>pop. recomendada pelo fabricante</b> — para calcular metros lineares e plantas por metro.
+            </div>
+          </div>
+
+          <Inp label="Área (ha)" value={area} onChange={setArea} type="number" placeholder="Ex: 10" />
+
+          {/* espaçamento linhas */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.gray, marginBottom: 9, textTransform: 'uppercase', letterSpacing: '.5px' }}>
+              Espaçamento entre linhas
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+              {[['0.50','50 cm'],['0.75','75 cm'],['0.90','90 cm']].map(([v,l]) => (
+                <button key={v} onClick={() => setELinhas(v)} style={btnPreset(eLinhas === v)}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: eLinhas === v ? T.green : T.text }}>{l}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* pop alvo OU espaçamento plantas */}
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: T.gray, textTransform: 'uppercase', letterSpacing: '.5px', marginBottom: 8 }}>
+              Informe um dos dois
+            </div>
+            <Inp
+              label="Pop. alvo fabricante (plantas/ha)"
+              value={popAlvo}
+              onChange={v => { setPopAlvo(v); setEPlantas('') }}
+              type="number"
+              placeholder="Ex: 65000"
+            />
+            <div style={{ textAlign: 'center', fontSize: 12, color: T.gray, margin: '2px 0 10px' }}>— ou —</div>
+            <Inp
+              label="Espaçamento entre plantas (m)"
+              value={ePlantas}
+              onChange={v => { setEPlantas(v); setPopAlvo('') }}
+              type="number"
+              placeholder="Ex: 0.25"
+            />
+          </div>
+
+          <Inp label="Adubo disponível (kg) — opcional" value={adubDisp} onChange={setAdubDisp} type="number" placeholder="Ex: 2000" />
+
+          {hasMilho && (
+            <>
+              <div style={{ background: GRD, borderRadius: 16, padding: 22, textAlign: 'center', marginTop: 12 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                  <div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 700, marginBottom: 4 }}>METROS LINEARES</div>
+                    <div style={{ color: '#FFF', fontSize: 32, fontWeight: 800, lineHeight: 1 }}>{mlTot?.toLocaleString('pt-BR') ?? '—'}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, marginTop: 2 }}>{mlPHa.toLocaleString('pt-BR')} m/ha</div>
+                  </div>
+                  <div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 700, marginBottom: 4 }}>POPULAÇÃO/ha</div>
+                    <div style={{ color: '#FFF', fontSize: 32, fontWeight: 800, lineHeight: 1 }}>
+                      {pop ? `${Math.round(pop / 1000)}k` : '—'}
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, marginTop: 2 }}>{pxm ? `${pxm} plantas/m` : '—'}</div>
+                  </div>
+                </div>
+                {epl && (
+                  <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 13, fontWeight: 600, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
+                    1 planta a cada {Math.round(+epl * 100)} cm na linha
+                  </div>
+                )}
+              </div>
+
+              {adubGm && (
+                <div style={{ background: '#FFF8E1', borderRadius: 14, padding: 16, marginTop: 12, border: '1.5px solid #FFD54F60' }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: '#E65100', marginBottom: 10 }}>🧪 Distribuição de adubo</div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                    <div style={{ textAlign: 'center', background: 'rgba(230,81,0,0.07)', borderRadius: 10, padding: '10px 6px' }}>
+                      <div style={{ fontSize: 28, fontWeight: 800, color: '#E65100', lineHeight: 1 }}>{adubGm}<span style={{ fontSize: 14 }}> g</span></div>
+                      <div style={{ fontSize: 11, color: T.gray, marginTop: 4 }}>por metro linear</div>
+                    </div>
+                    <div style={{ textAlign: 'center', background: 'rgba(230,81,0,0.07)', borderRadius: 10, padding: '10px 6px' }}>
+                      <div style={{ fontSize: 28, fontWeight: 800, color: '#E65100', lineHeight: 1 }}>{adubKha}<span style={{ fontSize: 14 }}> kg</span></div>
+                      <div style={{ fontSize: 11, color: T.gray, marginTop: 4 }}>por hectare</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {(area || popAlvo || ePlantas || adubDisp) && (
+            <button
+              onClick={() => { setArea(''); setPopAlvo(''); setEPlantas(''); setAdubDisp('') }}
+              style={{ marginTop: 16, width: '100%', padding: '14px', borderRadius: 12, border: `1.5px solid ${T.border}`, background: 'transparent', color: T.gray, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+            >Limpar</button>
+          )}
+        </>
+      )}
+
+      {/* ─── CAPIM ─────────────────────────────────────── */}
+      {cultura === 'capim' && (
+        <>
+          <div style={{ background: T.gPale, borderRadius: 14, padding: 14, marginBottom: 18, border: `1.5px solid ${T.gLight}30` }}>
+            <div style={{ fontWeight: 800, color: T.gDark, fontSize: 13, marginBottom: 4 }}>🌾 Capim — Semeadura</div>
+            <div style={{ fontSize: 13, color: T.gray, lineHeight: 1.6 }}>
+              Use os dados da embalagem (<b>sementes/kg</b> e <b>VC%</b>) para calcular o total de sementes e a população esperada.
+            </div>
+          </div>
+
+          <Inp label="Área (ha)" value={areaC} onChange={setAreaC} type="number" placeholder="Ex: 50" />
+          <Inp label="Sementes por kg (embalagem)" value={semKg} onChange={setSemKg} type="number" placeholder="Ex: 200000" />
+
+          {/* VC% */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.gray, marginBottom: 9, textTransform: 'uppercase', letterSpacing: '.5px' }}>
+              VC% — Valor Cultural (embalagem)
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, marginBottom: 10 }}>
+              {['40','50','60','70'].map(v => (
+                <button key={v} onClick={() => setVc(v)} style={btnPreset(vc === v)}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: vc === v ? T.green : T.text }}>{v}%</div>
+                </button>
+              ))}
+            </div>
+            <Inp label="Ou digite o VC%" value={vc} onChange={setVc} type="number" placeholder="Ex: 60" />
+          </div>
+
+          <Inp label="Taxa de semeadura (kg/ha)" value={txSem} onChange={setTxSem} type="number" placeholder="Ex: 8" />
+
+          {/* espaçamento */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ display: 'block', fontSize: 11, fontWeight: 700, color: T.gray, marginBottom: 9, textTransform: 'uppercase', letterSpacing: '.5px' }}>
+              Espaçamento entre linhas
+            </label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+              {[['0.50','50 cm'],['0.75','75 cm'],['broadcast','Lanço']].map(([v,l]) => (
+                <button key={v} onClick={() => setELinhasC(v)} style={btnPreset(eLinhasC === v)}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: eLinhasC === v ? T.green : T.text }}>{l}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {hasCapim && (
+            <div style={{ background: GRD, borderRadius: 16, padding: 22, marginTop: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: kgSem && planHaC ? '1fr 1fr' : '1fr', gap: 12, textAlign: 'center' }}>
+                {kgSem && (
+                  <div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 700, marginBottom: 4 }}>SEMENTES NECESSÁRIAS</div>
+                    <div style={{ color: '#FFF', fontSize: 36, fontWeight: 800, lineHeight: 1 }}>{kgSem} <span style={{ fontSize: 16 }}>kg</span></div>
+                    <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, marginTop: 2 }}>{txSem} kg/ha × {areaC} ha</div>
+                  </div>
+                )}
+                {planHaC && (
+                  <div>
+                    <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: 700, marginBottom: 4 }}>PLANTAS/ha (esperadas)</div>
+                    <div style={{ color: '#FFF', fontSize: 36, fontWeight: 800, lineHeight: 1 }}>{(planHaC / 1000).toFixed(0)}k</div>
+                    {planMC && eLinhasC !== 'broadcast' && (
+                      <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: 11, marginTop: 2 }}>{planMC} plantas/m</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {mlTotC && eLinhasC !== 'broadcast' && (
+                <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: 600, marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.2)', textAlign: 'center' }}>
+                  {mlTotC.toLocaleString('pt-BR')} metros lineares
+                </div>
+              )}
+            </div>
+          )}
+
+          {(areaC || semKg || txSem) && (
+            <button
+              onClick={() => { setAreaC(''); setSemKg(''); setTxSem('') }}
+              style={{ marginTop: 16, width: '100%', padding: '14px', borderRadius: 12, border: `1.5px solid ${T.border}`, background: 'transparent', color: T.gray, fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+            >Limpar</button>
+          )}
+        </>
+      )}
+    </div>
+  )
+}
