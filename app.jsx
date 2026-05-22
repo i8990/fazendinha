@@ -297,7 +297,7 @@ export function App() {
                   }}>{bezNovos}</div>
                 )}
                 <span style={{ fontSize: 21, lineHeight: 1, filter: isActive ? 'none' : 'grayscale(40%) opacity(0.6)' }}>
-                  {n.icon.startsWith('/') ? <img src={n.icon} alt={n.label} style={{ width: 24, height: 24, objectFit: 'contain' }} /> : n.icon}
+                  {n.icon.startsWith('/') ? <img src={n.icon} alt={n.label} style={{ width: 24, height: 24, objectFit: 'contain', display: 'block' }} /> : n.icon}
                 </span>
                 <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400, color: isActive ? T.green : T.gray, letterSpacing: '-0.1px', lineHeight: 1 }}>
                   {n.label}
