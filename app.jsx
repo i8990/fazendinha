@@ -3,7 +3,7 @@ import { useState, useEffect }               from 'react'
 import { TC, LIGHT, DARK }                   from './constants.js'
 import { calcIdade }                         from './utils.js'
 import {
-  savePastos, saveAnimais, saveFin,
+  savePastos, saveAnimais, saveVendidos, saveFin,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
   dbLoadAll, setCurrentUserId
@@ -53,6 +53,7 @@ export function App() {
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
   const [fin,       setF]   = useState([])
+  const [vendidos,  setV]   = useState([])
   const [movs,      setMv]  = useState([])
   const [sal,       setSl]  = useState([])
   const [manejos,   setMj]  = useState([])
@@ -60,7 +61,7 @@ export function App() {
 
   // Wrappers: toda mudanca de estado salva no Supabase automaticamente
   const SAVERS = {
-    pastos: savePastos, animais: saveAnimais,
+    pastos: savePastos, animais: saveAnimais, vendidos: saveVendidos,
     fin: saveFin, movs: saveMovs, sal: saveSal,
     manejos: saveManejos, adubacoes: saveAdubacoes
   }
@@ -73,6 +74,7 @@ export function App() {
   const setPastos    = mk('pastos',    setP)
   const setAnimais   = mk('animais',   setA)
   const setFin       = mk('fin',       setF)
+  const setVendidos  = mk('vendidos',  setV)
   const setMovs      = mk('movs',      setMv)
   const setSal       = mk('sal',       setSl)
   const setManejos   = mk('manejos',   setMj)
@@ -87,6 +89,7 @@ export function App() {
         if (snap.pastos    != null) setP(  Array.isArray(snap.pastos)    ? snap.pastos    : [])
         if (snap.animais   != null) setA(  Array.isArray(snap.animais)   ? snap.animais   : [])
         if (snap.fin       != null) setF(  Array.isArray(snap.fin)       ? snap.fin       : [])
+        if (snap.vendidos  != null) setV(  Array.isArray(snap.vendidos)  ? snap.vendidos  : [])
         if (snap.movs      != null) setMv( Array.isArray(snap.movs)      ? snap.movs      : [])
         if (snap.sal       != null) setSl( Array.isArray(snap.sal)       ? snap.sal       : [])
         if (snap.manejos   != null) setMj( Array.isArray(snap.manejos)   ? snap.manejos   : [])
@@ -225,6 +228,7 @@ export function App() {
             sal={sal}           setSal={setSal}
             manejos={manejos}   setManejos={setManejos}
             fin={fin}           setFin={setFin}
+            vendidos={vendidos} setVendidos={setVendidos}
           />}
 
         {page === 'financeiro'  && <Financeiro fin={fin} setFin={setFin} />}

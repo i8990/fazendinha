@@ -1,7 +1,7 @@
 // ═══ ANIMAIS — rebanho, bezerros e pastos ══════════════════════════
 import { useState }                          from 'react'
 import { useT, PS, TM }                      from '../constants.js'
-import { TODAY, fmtD, calcIdade }            from '../utils.js'
+import { TODAY, fmtD, fmtR, calcIdade }      from '../utils.js'
 import { Card, Badge, Btn, Inp, Sel, Modal,
          DetailPage, Section, InfoRow,
          DeleteBtn, PgH }                    from '../ui.jsx'
@@ -9,7 +9,7 @@ import { Pastos }                            from './Pastos.jsx'
 import { HistoricoManejo }                   from './Historico.jsx'
 
 // ═══ ANIMAL DETAIL PAGE ═══════════════════════════════════════════
-export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejos, setAnimais, setMovs }) {
+export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejos, setAnimais, setMovs, setVendidos, setFin }) {
   const T = useT()
   const id          = calcIdade(animal.dataNasc)
   const mae         = animal.maeId ? animais.find(a => a.id === animal.maeId) : null
@@ -24,6 +24,8 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
   const [obsM,  setObsM]  = useState('')
   const [editM, setEditM] = useState(false)
   const [ef,    setEf]    = useState({ ...animal })
+  const [vendaM, setVendaM] = useState(false)
+  const [venda,  setVenda]  = useState({ preco: '', data: TODAY, obs: '' })
 
   const nomePasto = id2 => pastos.find(p => p.id === id2)?.nome || '—'
 
@@ -42,6 +44,34 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
       ? { ...ef, peso: +ef.peso || 0, pastoId: ef.pastoId ? +ef.pastoId : null, maeId: ef.maeId ? +ef.maeId : null }
       : x))
     setEditM(false); onBack()
+  }
+
+  const vender = () => {
+    if (!venda.preco) return
+    const preco = +venda.preco
+    const anoVenda = new Date(venda.data).getFullYear()
+    const valorMes = +(preco / 12).toFixed(2)
+    // Gera 12 transações mensais distribuídas no ano da venda
+    const transacoes = Array.from({ length: 12 }, (_, i) => ({
+      id: Date.now() + i,
+      tipo: 'receita',
+      cat: 'Venda de gado',
+      valor: i === 11 ? +(preco - valorMes * 11).toFixed(2) : valorMes,
+      data: `${anoVenda}-${String(i + 1).padStart(2, '0')}-01`,
+      desc: `Venda ${animal.ident}${venda.obs ? ' · ' + venda.obs : ''}`,
+      vendaId: animal.id,
+    }))
+    setFin(f => [...transacoes, ...f])
+    setVendidos(v => [...(v || []), {
+      ...animal,
+      vendaPreco: preco,
+      vendaData:  venda.data,
+      vendaObs:   venda.obs,
+      vendaId:    animal.id,
+    }])
+    setAnimais(a => a.filter(x => x.id !== animal.id))
+    setVendaM(false)
+    onBack()
   }
 
   const corTopo = animal.sexo === 'M'
@@ -123,8 +153,20 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
 
       <Btn l="✏️ Editar Animal"  color={T.blue}  onClick={() => { setEf({ ...animal, peso: animal.peso || '', pastoId: animal.pastoId ? String(animal.pastoId) : '', maeId: animal.maeId ? String(animal.maeId) : '' }); setEditM(true) }} style={{ marginBottom: 10 }} />
       <Btn l="🌿 Mover de Pasto" color={T.green} onClick={() => setMoveM(true)} style={{ marginBottom: 10 }} />
+      <Btn l="💰 Vender Animal" color={T.orange} onClick={() => setVendaM(true)} style={{ marginBottom: 10 }} />
       <DeleteBtn label={animal.ident} onConfirm={deleteAnimal} />
       <div style={{ height: 20 }} />
+
+      <Modal open={vendaM} onClose={() => setVendaM(false)} title={`💰 Vender ${animal.ident}`}>
+        <div style={{ background: T.gPale, borderRadius: 12, padding: 11, marginBottom: 12 }}>
+          <div style={{ fontWeight: 700, color: T.text }}>{animal.ident} · {animal.cat}</div>
+          <div style={{ fontSize: 12, color: T.gray }}>O valor será distribuído em 12 meses no financeiro</div>
+        </div>
+        <Inp label="Preço de Venda (R$) *" value={venda.preco} onChange={v => setVenda(e => ({ ...e, preco: v }))} type="number" placeholder="0,00" />
+        <Inp label="Data da Venda" value={venda.data} onChange={v => setVenda(e => ({ ...e, data: v }))} type="date" />
+        <Inp label="Observação" value={venda.obs} onChange={v => setVenda(e => ({ ...e, obs: v }))} placeholder="Comprador, motivo..." />
+        <Btn l="✅ Confirmar Venda" color={T.orange} onClick={vender} dis={!venda.preco} />
+      </Modal>
 
       <Modal open={moveM} onClose={() => setMoveM(false)} title={`Mover ${animal.ident}`}>
         <div style={{ background: T.gPale, borderRadius: 12, padding: 11, marginBottom: 12 }}>
@@ -171,7 +213,7 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
 }
 
 // ═══ ANIMAIS (lista rebanho, bezerros e pastos) ════════════════════
-export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs, sal, setSal, manejos, setManejos, fin, setFin }) {
+export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs, sal, setSal, manejos, setManejos, fin, setFin, vendidos, setVendidos }) {
   const T = useT()
   const [aba,          setAba]         = useState('rebanho')
   const [addM,         setAddM]        = useState(false)
@@ -208,7 +250,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
   if (detailAnimal) {
     const fresh = animais.find(a => a.id === detailAnimal.id)
     if (!fresh) return null
-    return <AnimalDetailPage animal={fresh} onBack={() => setDetailAnimal(null)} animais={animais} pastos={pastos} movs={movs} manejos={manejos} setAnimais={setAnimais} setMovs={setMovs} />
+    return <AnimalDetailPage animal={fresh} onBack={() => setDetailAnimal(null)} animais={animais} pastos={pastos} movs={movs} manejos={manejos} setAnimais={setAnimais} setMovs={setMovs} setVendidos={setVendidos} setFin={setFin} />
   }
 
   const TABS = [
@@ -216,6 +258,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
     { id: 'bezerros', label: `🐮 Bezerros (${bezerros.length})`  },
     { id: 'pastos',   label: `🌿 Pastos (${pastos.length})`      },
     { id: 'manejo',   label: '📋 Manejo'                        },
+    { id: 'vendidos', label: `💰 Vendidos (${(vendidos||[]).length})` },
   ]
 
   return (
@@ -260,8 +303,40 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
         />
       )}
 
+      {/* Aba Vendidos */}
+      {aba === 'vendidos' && (
+        <div style={{ padding: '12px 14px 0' }}>
+          {(vendidos || []).length === 0 && (
+            <div style={{ textAlign: 'center', padding: 32, color: T.gray }}>Nenhum animal vendido ainda</div>
+          )}
+          {(vendidos || []).map(a => (
+            <div key={a.vendaId} style={{ background: T.card, borderRadius: 12, padding: '12px 14px', marginBottom: 8, boxShadow: `0 1px 4px ${T.shadow}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <div style={{ fontSize: 28 }}>{cI[a.cat] || '🐄'}</div>
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: 14, color: T.text }}>{a.ident}</div>
+                    <div style={{ fontSize: 12, color: T.gray }}>{a.cat}{a.raca ? ` · ${a.raca}` : ''}</div>
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ fontWeight: 700, color: T.green, fontSize: 15 }}>{fmtR(a.vendaPreco)}</div>
+                  <div style={{ fontSize: 11, color: T.gray }}>{fmtD(a.vendaData)}</div>
+                </div>
+              </div>
+              {a.vendaObs && <div style={{ fontSize: 12, color: T.orange }}>📝 {a.vendaObs}</div>}
+              <Btn l="↩️ Reativar Animal" color={T.blue} onClick={() => {
+                setAnimais(an => [...an, { ...a, vendaPreco: undefined, vendaData: undefined, vendaObs: undefined, vendaId: undefined }])
+                setFin(f => f.filter(x => x.vendaId !== a.vendaId))
+                setVendidos(v => v.filter(x => x.vendaId !== a.vendaId))
+              }} style={{ marginTop: 8 }} />
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Abas Rebanho e Bezerros */}
-      {aba !== 'pastos' && (
+      {aba !== 'pastos' && aba !== 'vendidos' && (
         <div style={{ padding: '12px 14px 0' }}>
           <input value={busca} onChange={e => setBusca(e.target.value)} placeholder="🔍 Buscar..."
             style={{ width: '100%', border: `1.5px solid ${T.border}`, borderRadius: 12, padding: '11px 13px', fontSize: 14, outline: 'none', background: T.card, color: T.text, marginBottom: 11 }}

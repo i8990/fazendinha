@@ -3,7 +3,7 @@ import { supabaseClient } from './supabase.js'
 import { TODAY } from './utils.js'
 
 const DB_TABLE = 'app_state'
-const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg']
+const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg','vendidos']
 
 let _userId = null
 export const setCurrentUserId = (id) => { _userId = id }
@@ -67,6 +67,7 @@ export const dbExport = (data) => {
 
 export const savePastos    = (v) => dbSet('pastos', v)
 export const saveAnimais   = (v) => dbSet('animais', v)
+export const saveVendidos  = (v) => dbSet('vendidos', v)
 export const saveFin       = (v) => dbSet('fin', v)
 export const saveMovs      = (v) => dbSet('movs', v)
 export const saveSal       = (v) => dbSet('sal', v)
