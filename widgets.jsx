@@ -222,7 +222,15 @@ export function ClimaWidget() {
   const dl  = d.daily
   const now = new Date()
   const hum = d.hourly?.relativehumidity_2m?.[now.getHours()] ?? '—'
-  const rain7 = dl.precipitation_sum.slice(0,7).reduce((s, v) => s + (v || 0), 0)
+  const todayStr = now.toISOString().slice(0,10)
+  const todayIdx = dl.time.findIndex(t => t >= todayStr)
+  const dlFrom   = {
+    time:              dl.time.slice(todayIdx, todayIdx + 15),
+    weathercode:       dl.weathercode.slice(todayIdx, todayIdx + 15),
+    temperature_2m_max:dl.temperature_2m_max.slice(todayIdx, todayIdx + 15),
+    precipitation_sum: dl.precipitation_sum.slice(todayIdx, todayIdx + 15),
+  }
+  const rain7 = dlFrom.precipitation_sum.slice(0,7).reduce((s, v) => s + (v || 0), 0)
   const RAIN_HIST   = [231,121,120,48,40,23,19,20,64,101,156,214]
   const rainMonth   = RAIN_HIST[now.getMonth()]
   const rainSoFar   = d.rainMonthSoFar ?? 0
@@ -257,18 +265,18 @@ export function ClimaWidget() {
       </div>
 
       <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.4, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 8 }}>
-        Previsão 7 dias
+        Previsão 15 dias
       </div>
       <div style={{ display: 'flex', gap: 5, overflowX: 'auto', paddingBottom: 2 }}>
-        {dl.time.map((t, i) => (
+        {dlFrom.time.map((t, i) => (
           <div key={t} style={{ flex: '0 0 38px', background: 'rgba(255,255,255,0.07)', borderRadius: 10, padding: '6px 3px', textAlign: 'center' }}>
             <div style={{ fontSize: 10, opacity: 0.55 }}>
               {new Date(t + 'T12:00').toDateString() === now.toDateString() ? 'Hoje' : DAYS[new Date(t + 'T12:00').getDay()]}
             </div>
-            <div style={{ fontSize: 15, margin: '3px 0' }}>{WMO[dl.weathercode[i]] || '🌡️'}</div>
-            <div style={{ fontSize: 10, fontWeight: 700 }}>{Math.round(dl.temperature_2m_max[i])}°</div>
+            <div style={{ fontSize: 15, margin: '3px 0' }}>{WMO[dlFrom.weathercode[i]] || '🌡️'}</div>
+            <div style={{ fontSize: 10, fontWeight: 700 }}>{Math.round(dlFrom.temperature_2m_max[i])}°</div>
             <div style={{ fontSize: 10, color: '#7dd3fc', marginTop: 1 }}>
-              {(dl.precipitation_sum[i] || 0) > 0 ? `${(dl.precipitation_sum[i]).toFixed(0)}mm` : '—'}
+              {(dlFrom.precipitation_sum[i] || 0) > 0 ? `${(dlFrom.precipitation_sum[i]).toFixed(0)}mm` : '—'}
             </div>
           </div>
         ))}
