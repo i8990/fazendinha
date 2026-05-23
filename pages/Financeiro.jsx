@@ -1,9 +1,4 @@
 // ═══ FINANCEIRO — controle financeiro mensal ══════════════════════
-// Exporta: Financeiro
-// Props:
-//   fin    : array de transações
-//   setFin : setter instrumentado
-
 import { useState }                    from 'react'
 import { useT }                        from '../constants.js'
 import { TODAY, fmtD, fmtR }           from '../utils.js'
@@ -11,25 +6,27 @@ import { Btn, Inp, Sel, Modal,
          DetailPage, Section, Card,
          InfoRow, DeleteBtn, PgH }     from '../ui.jsx'
 
-// Categorias por tipo
 const catR = ['Venda de gado', 'Leite', 'Arrendamento', 'Outros']
 const catD = ['Alimentação', 'Manutenção', 'Animal', 'Pasto', 'Combustível', 'Mão de obra', 'Outros']
+
+const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
 export function Financeiro({ fin, setFin }) {
   const T = useT()
 
+  const hoje = new Date()
   const [aba,      setAba]      = useState('tudo')
   const [modal,    setM]        = useState(false)
   const [detail,   setDetail]   = useState(null)
   const [editFinM, setEditFinM] = useState(false)
   const [efin,     setEfin]     = useState({})
+  const [mesIdx,   setMesIdx]   = useState(hoje.getMonth())
+  const [ano,      setAno]      = useState(hoje.getFullYear())
 
   const eF = { tipo: 'despesa', valor: '', cat: 'Alimentação', desc: '', data: TODAY }
   const [form, setForm] = useState(eF)
 
-  // KPIs do mês atual
-  const hoje = new Date()
-  const mes  = `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, '0')}`
+  const mes  = `${ano}-${String(mesIdx + 1).padStart(2, '0')}`
   const tM   = fin.filter(t => t.data.startsWith(mes))
   const rec  = tM.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0)
   const desp = tM.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0)
@@ -46,7 +43,14 @@ export function Financeiro({ fin, setFin }) {
 
   const del = id => { setFin(f => f.filter(x => x.id !== id)); setDetail(null) }
 
-  // ── Tela de detalhe da transação ──────────────────────────────────
+  const navMes = (dir) => {
+    let m = mesIdx + dir, a = ano
+    if (m < 0)  { m = 11; a-- }
+    if (m > 11) { m = 0;  a++ }
+    setMesIdx(m); setAno(a)
+  }
+
+  // ── Tela de detalhe ──────────────────────────────────────────────
   if (detail) {
     const isR = detail.tipo === 'receita'
     const cor  = isR ? T.green : T.red
@@ -101,12 +105,22 @@ export function Financeiro({ fin, setFin }) {
     )
   }
 
-  // ── Tela principal ────────────────────────────────────────────────
+  // ── Tela principal ───────────────────────────────────────────────
   return (
     <div style={{ paddingBottom: 100 }}>
       <PgH sub="Controle" title="Financeiro 💰" />
 
       <div style={{ padding: '12px 14px 0' }}>
+
+        {/* Navegação mês/ano */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, background: T.card, borderRadius: 14, padding: '10px 14px', boxShadow: `0 1px 4px ${T.shadow}` }}>
+          <button onClick={() => navMes(-1)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.green, padding: '0 8px' }}>‹</button>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontWeight: 700, fontSize: 15, color: T.text }}>{MESES[mesIdx]}</div>
+            <div style={{ fontSize: 12, color: T.gray }}>{ano}</div>
+          </div>
+          <button onClick={() => navMes(+1)} style={{ background: 'none', border: 'none', fontSize: 20, cursor: 'pointer', color: T.green, padding: '0 8px' }}>›</button>
+        </div>
 
         {/* Card de saldo */}
         <div style={{
@@ -115,7 +129,7 @@ export function Financeiro({ fin, setFin }) {
             : `linear-gradient(135deg,#7B1D1D,${T.red})`,
           borderRadius: 16, padding: 18, marginBottom: 12, color: '#FFF'
         }}>
-          <div style={{ fontSize: 11, opacity: 0.75, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Saldo do mês</div>
+          <div style={{ fontSize: 11, opacity: 0.75, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Saldo — {MESES[mesIdx]} {ano}</div>
           <div style={{ fontSize: 34, fontWeight: 800 }}>{fmtR(saldo)}</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginTop: 12 }}>
             <div>
@@ -141,9 +155,9 @@ export function Financeiro({ fin, setFin }) {
           ))}
         </div>
 
-        {/* Lista de transações */}
+        {/* Lista */}
         {lista.length === 0 && (
-          <div style={{ textAlign: 'center', padding: 22, color: T.gray }}>Nenhum lançamento</div>
+          <div style={{ textAlign: 'center', padding: 22, color: T.gray }}>Nenhum lançamento em {MESES[mesIdx]}</div>
         )}
         {lista.map(t => (
           <div key={t.id} onClick={() => setDetail(t)} style={{
