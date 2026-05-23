@@ -1,5 +1,6 @@
 // ═══ FINANCEIRO — controle financeiro mensal ══════════════════════
 import { useState }                    from 'react'
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { useT }                        from '../constants.js'
 import { TODAY, fmtD, fmtR }           from '../utils.js'
 import { Btn, Inp, Sel, Modal,
@@ -49,6 +50,19 @@ export function Financeiro({ fin, setFin }) {
     if (m > 11) { m = 0;  a++ }
     setMesIdx(m); setAno(a)
   }
+
+  // ── Dados gráfico 6 meses ────────────────────────────────────────
+  const graf = Array.from({ length: 6 }, (_, i) => {
+    let m = mesIdx - 5 + i, a = ano
+    if (m < 0) { m += 12; a-- }
+    const key = `${a}-${String(m + 1).padStart(2, '0')}`
+    const tMs = fin.filter(t => t.data.startsWith(key))
+    return {
+      name: MESES[m].slice(0, 3),
+      Entradas: tMs.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0),
+      Saídas:   tMs.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0),
+    }
+  })
 
   // ── Tela de detalhe ──────────────────────────────────────────────
   if (detail) {
@@ -141,6 +155,26 @@ export function Financeiro({ fin, setFin }) {
               <div style={{ fontWeight: 700, fontSize: 15 }}>{fmtR(desp)}</div>
             </div>
           </div>
+        </div>
+
+        {/* Gráfico 6 meses */}
+        <div style={{ background: T.card, borderRadius: 14, padding: '14px 8px 8px', marginBottom: 12, boxShadow: `0 1px 4px ${T.shadow}` }}>
+          <div style={{ fontSize: 11, fontWeight: 600, opacity: 0.5, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 10, paddingLeft: 8 }}>
+            Últimos 6 meses
+          </div>
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={graf} barCategoryGap="30%" barGap={3}>
+              <XAxis dataKey="name" tick={{ fontSize: 11, fill: '#888' }} axisLine={false} tickLine={false} />
+              <YAxis hide />
+              <Tooltip
+                formatter={(v) => `R$ ${v.toLocaleString('pt-BR', { minimumFractionDigits: 0 })}`}
+                contentStyle={{ borderRadius: 10, fontSize: 12 }}
+              />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="Entradas" fill="#4ade80" radius={[4,4,0,0]} />
+              <Bar dataKey="Saídas"   fill="#f87171" radius={[4,4,0,0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
 
         {/* Filtros */}
