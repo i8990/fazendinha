@@ -184,11 +184,22 @@ export function ClimaWidget() {
   const [err, setErr]   = useState(false)
 
   useEffect(() => {
-    fetch(
-      '/api/clima'
-    )
+    const coords = 'latitude=-21.9569&longitude=-44.8881'
+    const tz = 'timezone=America%2FSao_Paulo'
+    const url = `https://api.open-meteo.com/v1/forecast?${coords}&daily=precipitation_sum,temperature_2m_max,weathercode&current_weather=true&hourly=relativehumidity_2m&${tz}&past_days=31&forecast_days=7`
+    fetch(url)
       .then(r => { if (!r.ok) throw 0; return r.json() })
-      .then(v => { setD(v); setLoad(false) })
+      .then(v => {
+        const now = new Date()
+        const rainMonthSoFar = v.daily.time.reduce((sum, dateStr, i) => {
+          const d = new Date(dateStr)
+          if (d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d <= now)
+            return sum + (v.daily.precipitation_sum[i] || 0)
+          return sum
+        }, 0)
+        setD({ ...v, rainMonthSoFar: Math.round(rainMonthSoFar) })
+        setLoad(false)
+      })
       .catch((e) => { console.error("❌ clima:", e); setErr(true); setLoad(false) })
   }, [])
 
