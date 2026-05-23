@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   const coords = 'latitude=-21.9569&longitude=-44.8881'
   const tz = 'timezone=America%2FSao_Paulo'
 
-  const url = `https://api.open-meteo.com/v1/forecast?${coords}&daily=precipitation_sum,temperature_2m_max,weathercode&current_weather=true&hourly=relativehumidity_2m&${tz}&past_days=31&forecast_days=7`
+  const url = `https://api.open-meteo.com/v1/forecast?${coords}&daily=precipitation_sum,temperature_2m_max,weathercode&current_weather=true&hourly=relativehumidity_2m&${tz}&past_days=31&forecast_days=15`
 
   try {
     const r = await fetch(url)
