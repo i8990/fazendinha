@@ -67,16 +67,6 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
       data: TODAY,
       obs: fG.obs
     }])
-    setManejos(m => [{
-      id: agora + 1,
-      tipoManejo: 'deslocamento',
-      nomeManejo: 'Deslocamento',
-      animaisIds: [],
-      animaisIdents: [],
-      dose: '',
-      data: TODAY,
-      obs: fG.obs || 'Ida à fazenda'
-    }, ...m])
     onClose()
   }
 
