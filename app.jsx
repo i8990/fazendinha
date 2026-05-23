@@ -169,9 +169,9 @@ export function App() {
   const NAV = [
     { id: 'home',        icon: '/abaHome.png',   label: 'Home'    },
     { id: 'animais',     icon: '/iconeVACA.png', label: 'Animais' },
-    { id: 'financeiro',  icon: '💰', label: 'Caixa'       },
-    { id: 'ferramentas', icon: '🧮', label: 'Ferramentas' },
-    { id: 'settings',    icon: '⚙️',  label: 'Config.'     },
+    { id: 'financeiro',  icon: '/abaCAIXA.png',         label: 'Caixa'       },
+    { id: 'ferramentas', icon: '/abaFERRAMENTAS.png',    label: 'Ferramentas' },
+    { id: 'settings',    icon: '/abaCONFIGURACOES.png', label: 'Config.'     },
   ]
 
   if (loading)            return <Splash />
