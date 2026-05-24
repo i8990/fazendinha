@@ -13,9 +13,10 @@
 //   setSal      : setter instrumentado
 //   setMovs     : setter instrumentado
 
-import { useState }                           from 'react'
+import { useState, useMemo }                  from 'react'
 import { useT }                               from '../constants.js'
 import { TODAY, calcIdade }                   from '../utils.js'
+import { saveCfg, dbGet }                      from '../storage.js'
 import { Modal, Btn, Inp, Sel }               from '../ui.jsx'
 
 export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs, fin, setFin, setManejos }) {
@@ -54,18 +55,30 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
   const CATS_DESP = ['Alimentação','Medicamento','Sal Mineral','Manutenção','Combustível','Mão de Obra','Outros']
 
   // ── Estado: gasolina ──────────────────────────────────────────
-  const [fG, setFG] = useState({ obs: '' })
+  const cfgV = useMemo(() => { try { return JSON.parse(localStorage.getItem('cfgVeiculo') || '{}') } catch { return {} } }, [action])
+  const [gDistancia, setGDistancia] = useState(() => String(cfgV.distancia || ''))
+  const [gConsumo,   setGConsumo]   = useState(() => String(cfgV.consumo   || ''))
+  const [gPreco,     setGPreco]     = useState(() => String(cfgV.preco     || ''))
+  const [gObs,       setGObs]       = useState('')
+  const [gEditando,  setGEditando]  = useState(false)
+
+  const gValorCalc = (gDistancia && gConsumo && gPreco)
+    ? +((+gDistancia * 2) / +gConsumo * +gPreco).toFixed(2)
+    : 0
+  const [gValorEdit, setGValorEdit] = useState('')
+  const gValorFinal = gEditando && gValorEdit ? +gValorEdit : gValorCalc
 
   const saveGasolina = () => {
-    const agora = Date.now()
+    if (!gValorFinal) return
+    localStorage.setItem('cfgVeiculo', JSON.stringify({ distancia: +gDistancia, consumo: +gConsumo, preco: +gPreco }))
     setFin(f => [...f, {
-      id: agora,
+      id: Date.now(),
       tipo: 'despesa',
       desc: 'Combustível — Ida à fazenda',
-      valor: 22,
+      valor: gValorFinal,
       cat: 'Combustível',
       data: TODAY,
-      obs: fG.obs
+      obs: gObs
     }])
     onClose()
   }
@@ -233,26 +246,34 @@ export function GlobalModals({ action, onClose, pastos, animais, setAnimais, set
   // ── Render: gasolina ──────────────────────────────────────────
   if (action === 'gasolina') return (
     <Modal open title="⛽ Ida à Fazenda" onClose={onClose}>
-      <div style={{
-        background: T.gPale, borderRadius: 14,
-        padding: '14px 16px', marginBottom: 18,
-        border: `1.5px solid ${T.gLight}30`
-      }}>
-        <div style={{ fontWeight: 800, color: T.gDark, fontSize: 13, marginBottom: 4 }}>
-          Registro automático
-        </div>
-        <div style={{ fontSize: 13, color: T.gray, lineHeight: 1.6 }}>
-          💸 Saída de <b>R$ 22,00</b> no caixa<br />
-          📋 Entrada no histórico como <b>Deslocamento</b>
-        </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 10 }}>
+        <Inp label="Distância (km ida)" value={gDistancia} onChange={setGDistancia} type="number" placeholder="Ex: 45" />
+        <Inp label="Consumo (km/l)" value={gConsumo} onChange={setGConsumo} type="number" placeholder="Ex: 10" />
       </div>
-      <Inp
-        label="Observações (opcional)"
-        value={fG.obs}
-        onChange={v => setFG(f => ({ ...f, obs: v }))}
-        placeholder="Ex: Visita semanal, urgência..."
-      />
-      <Btn l="⛽ Registrar Ida" onClick={saveGasolina} />
+      <Inp label="Preço do combustível (R$/l)" value={gPreco} onChange={setGPreco} type="number" placeholder="Ex: 6.50" />
+
+      {gValorCalc > 0 && (
+        <div style={{ background: T.gPale, borderRadius: 14, padding: '12px 16px', marginBottom: 12, border: `1.5px solid ${T.gLight}30` }}>
+          <div style={{ fontSize: 11, color: T.gray, marginBottom: 4 }}>
+            ({gDistancia} km × 2) ÷ {gConsumo} km/l × R$ {gPreco}/l
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ fontWeight: 800, fontSize: 20, color: T.gDark }}>
+              R$ {gValorFinal.toFixed(2).replace('.', ',')}
+            </div>
+            <button onClick={() => { setGEditando(e => !e); setGValorEdit(String(gValorCalc)) }}
+              style={{ fontSize: 12, color: T.blue, background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>
+              {gEditando ? '↩ Usar cálculo' : '✏️ Editar valor'}
+            </button>
+          </div>
+          {gEditando && (
+            <Inp label="Valor final (R$)" value={gValorEdit} onChange={setGValorEdit} type="number" placeholder="0,00" />
+          )}
+        </div>
+      )}
+
+      <Inp label="Observações (opcional)" value={gObs} onChange={setGObs} placeholder="Ex: Visita semanal, urgência..." />
+      <Btn l="⛽ Registrar Ida" onClick={saveGasolina} dis={!gValorFinal} />
     </Modal>
   )
 
