@@ -19,10 +19,10 @@ import {
 const TS_SIZE = 1024, TS_COLS = 3, TS_ROWS = 3
 const TS_CW = TS_SIZE / TS_COLS, TS_CH = TS_SIZE / TS_ROWS
 
-function ToolSprite({ col, row, size = 54 }) {
+function ToolSprite({ col, row, size = 78, borderRadius = 22 }) {
   const scale = size / TS_CW
   return (
-    <div style={{ width: size, height: size, overflow: 'hidden', flexShrink: 0 }}>
+    <div style={{ width: size, height: size, overflow: 'hidden', flexShrink: 0, borderRadius }}>
       <img
         src="/tools-sprites.png"
         style={{
@@ -164,7 +164,6 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
     )
   }
 
-
   if (open === 'adub') {
     return (
       <ToolScreen
@@ -233,14 +232,14 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
   }
 
   const MENU = [
-    { id: 'uab',    label: 'UA',          sprite: [0,0] },
-    { id: 'lot',    label: 'Lotação',     sprite: [1,0] },
-    { id: 'sal',    label: 'Sal Mineral', sprite: [2,0] },
-    { id: 'adub',   label: 'Adubação',    sprite: [0,1] },
-    { id: 'conf',   label: 'Confin.',     sprite: [1,1] },
-    { id: 'fita',   label: 'Peso Fita',   sprite: [2,1] },
-    { id: 'curral', label: 'Curral',      sprite: [0,2] },
-    { id: 'pop',    label: 'Pop. Plantas',sprite: [1,2] },
+    { id: 'uab',    label: 'UA',           sprite: [0,0] },
+    { id: 'lot',    label: 'Lotação',      sprite: [1,0] },
+    { id: 'sal',    label: 'Sal Mineral',  sprite: [2,0] },
+    { id: 'adub',   label: 'Adubação',     sprite: [0,1] },
+    { id: 'conf',   label: 'Confin.',      sprite: [1,1] },
+    { id: 'fita',   label: 'Peso Fita',    sprite: [2,1] },
+    { id: 'curral', label: 'Curral',       sprite: [0,2] },
+    { id: 'pop',    label: 'Pop. Plantas', sprite: [1,2] },
   ]
 
   return (
@@ -271,38 +270,13 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
                 flexDirection: 'column',
                 alignItems: 'center',
                 gap: 8,
-                WebkitTapHighlightColor: 'transparent'
+                WebkitTapHighlightColor: 'transparent',
+                transition: 'transform .16s ease'
               }}
-              onTouchStart={e => {
-                e.currentTarget.style.transform = 'scale(0.92)'
-              }}
-              onTouchEnd={e => {
-                e.currentTarget.style.transform = 'scale(1)'
-              }}
+              onTouchStart={e => { e.currentTarget.style.transform = 'scale(0.92)' }}
+              onTouchEnd={e =>   { e.currentTarget.style.transform = 'scale(1)' }}
             >
-              <div
-                style={{
-                  width: 78,
-                  height: 78,
-                  borderRadius: 22,
-                  background: m.raw ? 'transparent' : T.card,
-                  border: m.raw ? 'none' : `1px solid ${T.border}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: 34,
-                  boxShadow: `
-                    0 4px 18px ${T.shadow},
-                    inset 0 1px 0 rgba(255,255,255,0.05)
-                  `,
-                  backdropFilter: 'blur(10px)',
-                  transition: 'all .16s ease'
-                }}
-              >
-                <div style={{ width: 54, height: 54, borderRadius: 18, overflow: 'hidden' }}>
-                  <ToolSprite col={m.sprite[0]} row={m.sprite[1]} size={54} />
-                </div>
-              </div>
+              <ToolSprite col={m.sprite[0]} row={m.sprite[1]} size={78} borderRadius={22} />
 
               <div
                 style={{
