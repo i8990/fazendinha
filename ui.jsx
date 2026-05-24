@@ -6,6 +6,50 @@ import { useState, useRef } from 'react'
 import { useT }          from './constants.js'
 
 // ── Card ──────────────────────────────────────────────────────────
+
+// ═══ SPRITE — ícones da spritesheet ══════════════════════════════
+const SPRITES = {
+  vacaBezerro:  { col: 0, row: 0 },
+  bezerro:      { col: 1, row: 0 },
+  rebanho:      { col: 2, row: 0 },
+  curral:       { col: 0, row: 1 },
+  cartaoMoeda:  { col: 1, row: 1 },
+  celularCheck: { col: 2, row: 1 },
+  caminhonete:  { col: 0, row: 2 },
+  pins:         { col: 1, row: 2 },
+  salMineral:   { col: 2, row: 2 },
+}
+const SW = 1536, SH = 1024, COLS = 3, ROWS = 3
+const CW = SW / COLS, CH = SH / ROWS
+
+export function Sprite({ name, size = 40, style = {} }) {
+  const s = SPRITES[name]
+  if (!s) return null
+  const scale = size / CW
+  return (
+    <div style={{
+      width: size,
+      height: size * (CH / CW),
+      overflow: 'hidden',
+      flexShrink: 0,
+      ...style
+    }}>
+      <img
+        src="/spritesheet1.png"
+        style={{
+          width: SW * scale,
+          height: SH * scale,
+          marginLeft: -(s.col * CW * scale),
+          marginTop:  -(s.row * CH * scale),
+          display: 'block',
+          imageRendering: 'auto',
+        }}
+        alt={name}
+      />
+    </div>
+  )
+}
+
 export function Card({ ch, style, onClick }) {
   const T = useT()
   return (

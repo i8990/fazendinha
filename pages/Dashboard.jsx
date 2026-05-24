@@ -2,6 +2,7 @@
 import { useT }           from '../constants.js'
 import { TODAY, calcSal, calcIdade, fmtR } from '../utils.js'
 import { Card, Badge }    from '../ui.jsx'
+import { Sprite } from '../ui.jsx'
 import { ClimaWidget }    from '../widgets.jsx'
 
 export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }) {
@@ -34,10 +35,10 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
   if (degradados.length) alertas.push({ icon: '🌱', msg: `${degradados.length} pasto(s) degradado(s)`, cor: T.orange, page: 'pastos' })
 
   const QA = [
-    { icon: '🐮', l: 'Nascimento',   action: 'nascimento' },
-    { icon: '🧂', l: 'Sal Mineral',  action: 'sal'        },
-    { icon: '💸', l: 'Despesa',      action: 'despesa'    },
-    { icon: '⛽', l: 'Ida à Fazenda', action: 'gasolina'   },
+    { icon: '🐮', l: 'Nascimento',   action: 'nascimento', sprite: 'bezerro'     },
+    { icon: '🧂', l: 'Sal Mineral',  action: 'sal',        sprite: 'salMineral'  },
+    { icon: '💸', l: 'Despesa',      action: 'despesa',    sprite: 'cartaoMoeda' },
+    { icon: '⛽', l: 'Ida à Fazenda', action: 'gasolina',  sprite: 'caminhonete' },
   ]
 
   return (
@@ -116,7 +117,9 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
                 boxShadow: `0 1px 6px ${T.shadow}`
               }}
             >
-              <div style={{ fontSize: 26, marginBottom: 6 }}>{q.icon}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
+                {q.sprite ? <Sprite name={q.sprite} size={48} /> : <span style={{ fontSize: 26 }}>{q.icon}</span>}
+              </div>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.text, lineHeight: 1.2 }}>{q.l}</div>
             </button>
           ))}

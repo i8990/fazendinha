@@ -9,6 +9,7 @@ import {
   dbLoadAll, setCurrentUserId
 }                                            from './storage.js'
 import { supabaseClient, getPerfil }         from './supabase.js'
+import { Sprite } from './ui.jsx'
 import { Dashboard }                         from './pages/Dashboard.jsx'
 import { Animais }                           from './pages/Animais.jsx'
 import { Financeiro }                        from './pages/Financeiro.jsx'
@@ -171,7 +172,7 @@ export function App() {
 
   const NAV = [
     { id: 'home',        icon: '/abaHome.png',   label: 'Home'    },
-    { id: 'animais',     icon: '/iconeVACA.png', label: 'Animais' },
+    { id: 'animais',     icon: '/spritesheet1.png', spriteCol: 2, spriteRow: 0, label: 'Animais' },
     { id: 'financeiro',  icon: '/abaCAIXA.png',         label: 'Caixa'       },
     { id: 'ferramentas', icon: '/abaFERRAMENTAS.png',    label: 'Ferramentas' },
     { id: 'settings',    icon: '/abaCONFIGURACOES.png', label: 'Config.'     },
@@ -301,7 +302,14 @@ export function App() {
                   }}>{bezNovos}</div>
                 )}
                 <span style={{ fontSize: 21, lineHeight: 1, filter: isActive ? 'none' : 'grayscale(40%) opacity(0.6)' }}>
-                  {n.icon.startsWith('/') ? <img src={n.icon} alt={n.label} style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} /> : n.icon}
+                  {n.spriteCol !== undefined
+                    ? (() => { const CW=512, CH=341, size=36, scale=size/CW; return (
+                        <div style={{ width: size, height: size*(CH/CW), overflow:'hidden' }}>
+                          <img src="/spritesheet1.png" style={{ width: 1536*scale, height: 1024*scale, marginLeft: -(n.spriteCol*CW*scale), marginTop: -(n.spriteRow*CH*scale), display:'block' }} alt={n.label} />
+                        </div>
+                      )})()
+                    : n.icon.startsWith('/') ? <img src={n.icon} alt={n.label} style={{ width: 36, height: 36, objectFit: 'contain', display: 'block' }} />
+                    : n.icon}
                 </span>
                 <span style={{ fontSize: 10, fontWeight: isActive ? 600 : 400, color: isActive ? T.green : T.gray, letterSpacing: '-0.1px', lineHeight: 1 }}>
                   {n.label}
