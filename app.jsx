@@ -172,7 +172,7 @@ export function App() {
 
   const NAV = [
     { id: 'home',        icon: '/abaHome.png',   label: 'Home'    },
-    { id: 'animais',     icon: '/spritesheet1.png', spriteCol: 2, spriteRow: 0, label: 'Animais' },
+    { id: 'animais',     icon: '/iconeVACA.png', label: 'Animais' },
     { id: 'financeiro',  icon: '/abaCAIXA.png',         label: 'Caixa'       },
     { id: 'ferramentas', icon: '/abaFERRAMENTAS.png',    label: 'Ferramentas' },
     { id: 'settings',    icon: '/abaCONFIGURACOES.png', label: 'Config.'     },
