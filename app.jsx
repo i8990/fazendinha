@@ -286,7 +286,7 @@ export function App() {
                 onClick={() => setPage(n.id)}
                 style={{
                   flex: 1, border: 'none', background: 'none',
-                  padding: '10px 0 12px', cursor: 'pointer',
+                  padding: '6px 0 8px', cursor: 'pointer',
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', gap: 3, position: 'relative'
                 }}
