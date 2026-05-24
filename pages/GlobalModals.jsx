@@ -16,7 +16,7 @@
 import { useState, useMemo }                  from 'react'
 import { useT }                               from '../constants.js'
 import { TODAY, calcIdade }                   from '../utils.js'
-import { saveCfg, dbGet }                      from '../storage.js'
+import { saveCfg, dbSet }                      from '../storage.js'
 import { Modal, Btn, Inp, Sel }               from '../ui.jsx'
 
 export function GlobalModals({ action, onClose, pastos, animais, setAnimais, setSal, setMovs, fin, setFin, setManejos }) {

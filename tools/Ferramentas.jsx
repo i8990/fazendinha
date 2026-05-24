@@ -14,6 +14,30 @@ import {
   CalcPopPlanta
 }                                          from './Calculadoras.jsx'
 
+
+// ── Sprite das ferramentas ────────────────────────────────────────
+const TS_SIZE = 1024, TS_COLS = 3, TS_ROWS = 3
+const TS_CW = TS_SIZE / TS_COLS, TS_CH = TS_SIZE / TS_ROWS
+
+function ToolSprite({ col, row, size = 54 }) {
+  const scale = size / TS_CW
+  return (
+    <div style={{ width: size, height: size, overflow: 'hidden', flexShrink: 0 }}>
+      <img
+        src="/tools-sprites.png"
+        style={{
+          width: TS_SIZE * scale,
+          height: TS_SIZE * scale,
+          marginLeft: -(col * TS_CW * scale),
+          marginTop:  -(row * TS_CH * scale),
+          display: 'block'
+        }}
+        alt=""
+      />
+    </div>
+  )
+}
+
 export function ToolScreen({ title, icon, color, onBack, children }) {
   const T = useT()
 
@@ -209,57 +233,14 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
   }
 
   const MENU = [
-    {
-      id: 'uab',
-      icon: '⚖️',
-      label: 'UA',
-      bg: T.gPale
-    },
-    {
-      id: 'lot',
-      icon: '🌿',
-      label: 'Lotação',
-      bg: 'rgba(48,209,88,0.12)'
-    },
-    {
-      id: 'sal',
-      raw: true,
-      icon: <img src='/iconeSAL.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
-      label: 'Sal',
-      bg: 'rgba(255,159,10,0.12)'
-    },
-    {
-      id: 'adub',
-      raw: true,
-      icon: <img src='/iconeSOLO.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
-      label: 'Adubação',
-      bg: 'rgba(48,209,88,0.12)'
-    },
-    {
-      id: 'conf',
-      raw: true,
-      icon: <img src='/iconeCONFIN.png' style={{ width: 30, height: 30, objectFit: 'contain' }} />,
-      label: 'Confin.',
-      bg: 'rgba(90,200,250,0.14)'
-    },
-    {
-      id: 'fita',
-      icon: '📏',
-      label: 'Peso Fita',
-      bg: 'rgba(230,81,0,0.12)'
-    },
-    {
-      id: 'pop',
-      icon: '🌱',
-      label: 'Pop. Plantas',
-      bg: 'rgba(67,160,71,0.14)'
-    },
-    {
-      id: 'curral',
-      icon: '🏚️',
-      label: 'Curral',
-      bg: 'rgba(90,200,250,0.14)'
-    }
+    { id: 'uab',    label: 'UA',          sprite: [0,0] },
+    { id: 'lot',    label: 'Lotação',     sprite: [1,0] },
+    { id: 'sal',    label: 'Sal Mineral', sprite: [2,0] },
+    { id: 'adub',   label: 'Adubação',    sprite: [0,1] },
+    { id: 'conf',   label: 'Confin.',     sprite: [1,1] },
+    { id: 'fita',   label: 'Peso Fita',   sprite: [2,1] },
+    { id: 'curral', label: 'Curral',      sprite: [0,2] },
+    { id: 'pop',    label: 'Pop. Plantas',sprite: [1,2] },
   ]
 
   return (
@@ -318,18 +299,8 @@ export function Ferramentas({ adubacoes, setAdubacoes, pastos, animais, setManej
                   transition: 'all .16s ease'
                 }}
               >
-                <div
-                  style={{
-                    width: 54,
-                    height: 54,
-                    borderRadius: 18,
-                    background: m.bg,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  {m.icon}
+                <div style={{ width: 54, height: 54, borderRadius: 18, overflow: 'hidden' }}>
+                  <ToolSprite col={m.sprite[0]} row={m.sprite[1]} size={54} />
                 </div>
               </div>
 
