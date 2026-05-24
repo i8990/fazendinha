@@ -54,8 +54,8 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
               Fazendinha 🌾{cfg?.nomeFazenda ? ` · ${cfg.nomeFazenda}` : ''}
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 4 }}>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>🐄 {adultos.length} adultos</span>
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>🐣 {bezerros.length} bezerros</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500, display:'flex', alignItems:'center', gap:4 }}><Sprite name="rebanho" size={22} /> {adultos.length} adultos</span>
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', fontWeight: 500, display:'flex', alignItems:'center', gap:4 }}><Sprite name="bezerro" size={22} /> {bezerros.length} bezerros</span>
             </div>
           </div>
 
@@ -70,7 +70,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
             ch={
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: T.green, marginBottom: 10 }}>
-                  🐣 Bezerros recentes — últimos 30 dias
+                  <span style={{display:"flex",alignItems:"center",gap:6}}><Sprite name="bezerro" size={22}/>Bezerros recentes — últimos 30 dias</span>
                 </div>
                 {bezRecent.map((b, i) => {
                   const id = calcIdade(b.dataNasc)
@@ -118,7 +118,7 @@ export function Dashboard({ pastos, animais, sal, fin, cfg, setPage, setAction }
               }}
             >
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 6 }}>
-                {q.sprite ? <Sprite name={q.sprite} size={48} /> : <span style={{ fontSize: 26 }}>{q.icon}</span>}
+{q.sprite ? <Sprite name={q.sprite} size={96} /> : <span style={{ fontSize: 26 }}>{q.icon}</span>}
               </div>
               <div style={{ fontSize: 12, fontWeight: 600, color: T.text, lineHeight: 1.2 }}>{q.l}</div>
             </button>

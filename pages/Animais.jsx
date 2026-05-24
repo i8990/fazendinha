@@ -5,6 +5,7 @@ import { TODAY, fmtD, fmtR, calcIdade }      from '../utils.js'
 import { Card, Badge, Btn, Inp, Sel, Modal,
          DetailPage, Section, InfoRow,
          DeleteBtn, PgH }                    from '../ui.jsx'
+import { Sprite } from '../ui.jsx'
 import { Pastos }                            from './Pastos.jsx'
 import { HistoricoManejo }                   from './Historico.jsx'
 
@@ -240,6 +241,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
 
   const nomePasto = id => pastos.find(p => p.id === id)?.nome || '—'
   const cI = { Boi: '🐂', Vaca: '🐄', Novilha: '🐄', Bezerro: '🐮', Touro: '🐂' }
+  const cSprite = { Boi: 'vacaBezerro', Vaca: 'vacaBezerro', Novilha: 'vacaBezerro', Bezerro: 'bezerro', Touro: 'vacaBezerro' }
 
   const addAnimal = () => {
     if (!form.ident.trim()) return
@@ -254,8 +256,8 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
   }
 
   const TABS = [
-    { id: 'rebanho',  label: `🐄 Rebanho (${rebanho.length})`   },
-    { id: 'bezerros', label: `🐮 Bezerros (${bezerros.length})`  },
+    { id: 'rebanho',  label: rebanho.length,  labelSprite: 'rebanho',  labelTxt: 'Rebanho'  },
+    { id: 'bezerros', label: bezerros.length, labelSprite: 'bezerro', labelTxt: 'Bezerros' },
     { id: 'pastos',   label: `🌿 Pastos (${pastos.length})`      },
     { id: 'manejo',   label: '📋 Manejo'                        },
     { id: 'vendidos', label: `💰 Vendidos (${(vendidos||[]).length})` },
@@ -280,7 +282,9 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
             padding: '13px 8px', cursor: 'pointer',
             borderBottom: aba === id ? '2.5px solid #FFF' : '2.5px solid transparent',
             whiteSpace: 'nowrap'
-          }}>{label}</button>
+          }}>{typeof label === 'number'
+              ? <span style={{display:'flex',alignItems:'center',gap:4}}><Sprite name={id==='rebanho'?'rebanho':'bezerro'} size={22}/>{label}</span>
+              : label}</button>
         ))}
       </div>
 
@@ -313,7 +317,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
             <div key={a.vendaId} style={{ background: T.card, borderRadius: 12, padding: '12px 14px', marginBottom: 8, boxShadow: `0 1px 4px ${T.shadow}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <div style={{ fontSize: 28 }}>{cI[a.cat] || '🐄'}</div>
+                  <Sprite name={cSprite[a.cat] || 'vacaBezerro'} size={44} />
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14, color: T.text }}>{a.ident}</div>
                     <div style={{ fontSize: 12, color: T.gray }}>{a.cat}{a.raca ? ` · ${a.raca}` : ''}</div>
@@ -347,7 +351,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
               <Card key={a.id} onClick={() => setDetailAnimal(a)} ch={<>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', gap: 11, alignItems: 'center' }}>
-                    <div style={{ fontSize: 32, flexShrink: 0 }}>{cI[a.cat] || '🐄'}</div>
+                    <Sprite name={cSprite[a.cat] || 'bezerro'} size={44} />
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15, color: T.text }}>{a.ident}</div>
                       <div style={{ fontSize: 12, color: T.gray }}>{a.cat}{a.raca ? ` · ${a.raca}` : ''} · Lote {a.lote}</div>
@@ -376,7 +380,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
             )}
             {bezOrd.length === 0 && (
               <div style={{ textAlign: 'center', padding: '36px 20px', color: T.gray }}>
-                <div style={{ fontSize: 44 }}>🐮</div>
+    <Sprite name="bezerro" size={60} />
                 <div style={{ fontSize: 15, fontWeight: 600, marginTop: 10 }}>Nenhum bezerro</div>
               </div>
             )}
@@ -388,7 +392,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
                 <div key={b.id} onClick={() => setDetailAnimal(b)} style={{ background: T.card, borderRadius: 16, marginBottom: 11, boxShadow: `0 2px 8px ${T.shadow}`, overflow: 'hidden', cursor: 'pointer' }}>
                   <div style={{ background: b.sexo === 'M' ? `linear-gradient(135deg,${T.blueMid},${T.bLight})` : `linear-gradient(135deg,${T.pinkDark},${T.pink})`, padding: '7px 13px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                      <span style={{ fontSize: 20 }}>🐮</span>
+<Sprite name="bezerro" size={28} />
                       <span style={{ color: '#FFF', fontWeight: 800, fontSize: 14 }}>{b.ident}</span>
                       <span style={{ background: 'rgba(255,255,255,0.25)', color: '#FFF', borderRadius: 20, padding: '1px 8px', fontSize: 11, fontWeight: 700 }}>{b.sexo === 'M' ? '♂' : '♀'}</span>
                     </div>
