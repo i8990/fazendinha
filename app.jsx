@@ -6,7 +6,7 @@ import {
   savePastos, saveAnimais, saveVendidos, saveFin, saveFinP,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
-  dbLoadAll, setCurrentUserId
+  dbLoadAll, dbSync, setCurrentUserId
 }                                            from './storage.js'
 import { supabaseClient, getPerfil }         from './supabase.js'
 import { Sprite } from './ui.jsx'
@@ -102,6 +102,38 @@ export function App() {
       }
     } catch (e) {
       console.error('❌ loadFromSupabase:', e)
+    } finally {
+      setSyncing(false)
+    }
+  }
+
+  const syncAll = async (userId) => {
+    setSyncing(true)
+    try {
+      // Arrays — merge bidirecional por id + updatedAt
+      const [p, a, f, fp, v, mv, sl, mj, adu] = await Promise.all([
+        dbSync('pastos',    pastos),
+        dbSync('animais',   animais),
+        dbSync('fin',       fin),
+        dbSync('finP',      finP),
+        dbSync('vendidos',  vendidos),
+        dbSync('movs',      movs),
+        dbSync('sal',       sal),
+        dbSync('manejos',   manejos),
+        dbSync('adubacoes', adubacoes),
+      ])
+      setP(p); setA(a); setF(f); setFP(fp); setV(v)
+      setMv(mv); setSl(sl); setMj(mj); setAdu(adu)
+      // cfg — Supabase vence (objeto simples, sem id)
+      const { data: cfgRow } = await supabaseClient
+        .from('app_state')
+        .select('value')
+        .eq('user_id', userId)
+        .eq('key', 'cfg')
+        .single()
+      if (cfgRow?.value?.dark != null) setDark(cfgRow.value.dark)
+    } catch (e) {
+      console.error('❌ syncAll:', e)
     } finally {
       setSyncing(false)
     }
@@ -246,7 +278,7 @@ export function App() {
         {page === 'settings'    && <Settings
             dark={dark}
             syncing={syncing}
-            onSync={async () => { if (user?.id) await loadFromSupabase(user.id) }}
+            onSync={async () => { if (user?.id) await syncAll(user.id) }}
             setDark={v => { setDark(v); saveCfg({ dark: v }) }}
             onReset={handleReset}
             onClose={() => setPage('home')}

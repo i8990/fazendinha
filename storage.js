@@ -54,6 +54,39 @@ export const dbReset = async () => {
   }
 }
 
+// Merge bidirecional de arrays por id — vence updatedAt mais recente
+export const mergeArrays = (local, remote) => {
+  const map = {}
+  for (const item of (remote || [])) map[item.id] = item
+  for (const item of (local  || [])) {
+    if (!map[item.id]) { map[item.id] = item; continue }
+    const rAt = map[item.id].updatedAt ?? 0
+    const lAt = item.updatedAt ?? 0
+    if (lAt > rAt) map[item.id] = item
+  }
+  return Object.values(map)
+}
+
+// Sync bidirecional de uma chave de array
+export const dbSync = async (key, localArray) => {
+  if (!_userId) return localArray
+  try {
+    const { data, error } = await supabaseClient
+      .from(DB_TABLE)
+      .select('value')
+      .eq('user_id', _userId)
+      .eq('key', key)
+      .single()
+    const remote = (!error && data?.value) ? data.value : []
+    const merged = mergeArrays(localArray, remote)
+    await dbSet(key, merged)
+    return merged
+  } catch (e) {
+    console.error('❌ dbSync:', e)
+    return localArray
+  }
+}
+
 export const dbExport = (data) => {
   const blob = new Blob(
     [JSON.stringify({ v: '9', ts: new Date().toISOString(), data }, null, 2)],
