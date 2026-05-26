@@ -3,7 +3,7 @@ import { useState, useEffect }               from 'react'
 import { TC, LIGHT, DARK }                   from './constants.js'
 import { calcIdade }                         from './utils.js'
 import {
-  savePastos, saveAnimais, saveVendidos, saveFin,
+  savePastos, saveAnimais, saveVendidos, saveFin, saveFinP,
   saveMovs,   saveSal,    saveManejos,
   saveAdubacoes, saveCfg, dbReset,
   dbLoadAll, setCurrentUserId
@@ -54,6 +54,7 @@ export function App() {
   const [pastos,    setP]   = useState([])
   const [animais,   setA]   = useState([])
   const [fin,       setF]   = useState([])
+  const [finP,      setFP]  = useState([])
   const [vendidos,  setV]   = useState([])
   const [movs,      setMv]  = useState([])
   const [sal,       setSl]  = useState([])
@@ -63,7 +64,7 @@ export function App() {
   // Wrappers: toda mudanca de estado salva no Supabase automaticamente
   const SAVERS = {
     pastos: savePastos, animais: saveAnimais, vendidos: saveVendidos,
-    fin: saveFin, movs: saveMovs, sal: saveSal,
+    fin: saveFin, finP: saveFinP, movs: saveMovs, sal: saveSal,
     manejos: saveManejos, adubacoes: saveAdubacoes
   }
   const mk = (k, s) => fn => s(prev => {
@@ -75,6 +76,7 @@ export function App() {
   const setPastos    = mk('pastos',    setP)
   const setAnimais   = mk('animais',   setA)
   const setFin       = mk('fin',       setF)
+  const setFinP      = mk('finP',      setFP)
   const setVendidos  = mk('vendidos',  setV)
   const setMovs      = mk('movs',      setMv)
   const setSal       = mk('sal',       setSl)
@@ -90,6 +92,7 @@ export function App() {
         if (snap.pastos    != null) setP(  Array.isArray(snap.pastos)    ? snap.pastos    : [])
         if (snap.animais   != null) setA(  Array.isArray(snap.animais)   ? snap.animais   : [])
         if (snap.fin       != null) setF(  Array.isArray(snap.fin)       ? snap.fin       : [])
+        if (snap.finP      != null) setFP( Array.isArray(snap.finP)      ? snap.finP      : [])
         if (snap.vendidos  != null) setV(  Array.isArray(snap.vendidos)  ? snap.vendidos  : [])
         if (snap.movs      != null) setMv( Array.isArray(snap.movs)      ? snap.movs      : [])
         if (snap.sal       != null) setSl( Array.isArray(snap.sal)       ? snap.sal       : [])
@@ -232,7 +235,7 @@ export function App() {
             vendidos={vendidos} setVendidos={setVendidos}
           />}
 
-        {page === 'financeiro'  && <Financeiro fin={fin} setFin={setFin} />}
+        {page === 'financeiro'  && <Financeiro fin={fin} setFin={setFin} finP={finP} setFinP={setFinP} />}
 
         {page === 'ferramentas' && <Ferramentas
             adubacoes={adubacoes} setAdubacoes={setAdubacoes}

@@ -6,13 +6,14 @@ import { TODAY, fmtD, fmtR }           from '../utils.js'
 import { Btn, Inp, Sel, Modal,
          DetailPage, Section, Card,
          InfoRow, DeleteBtn, PgH }     from '../ui.jsx'
+import { FinanceiroPessoal }           from './FinanceiroPessoal.jsx'
 
 const catR = ['Venda de gado', 'Leite', 'Arrendamento', 'Outros']
 const catD = ['Alimentação', 'Manutenção', 'Animal', 'Pasto', 'Combustível', 'Mão de obra', 'Outros']
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
-export function Financeiro({ fin, setFin }) {
+export function Financeiro({ fin, setFin, finP, setFinP }) {
   const T = useT()
 
   const hoje = new Date()
@@ -23,6 +24,7 @@ export function Financeiro({ fin, setFin }) {
   const [efin,     setEfin]     = useState({})
   const [mesIdx,   setMesIdx]   = useState(hoje.getMonth())
   const [ano,      setAno]      = useState(hoje.getFullYear())
+  const [abaGeral, setAbaGeral] = useState('fazenda')
 
   const eF = { tipo: 'despesa', valor: '', cat: 'Alimentação', desc: '', data: TODAY }
   const [form, setForm] = useState(eF)
@@ -124,6 +126,23 @@ export function Financeiro({ fin, setFin }) {
     <div style={{ paddingBottom: 100 }}>
       <PgH sub="Controle" title="Financeiro 💰" />
 
+
+      {/* Abas Fazenda / Pessoal */}
+      <div style={{ display: 'flex', margin: '10px 14px 0', background: T.bg, borderRadius: 12, padding: 3 }}>
+        {[['fazenda','🌾 Fazenda'],['pessoal','👤 Pessoal']].map(([id, lbl]) => (
+          <button key={id} onClick={() => setAbaGeral(id)} style={{
+            flex: 1, border: 'none', borderRadius: 10, padding: '9px 0',
+            fontWeight: 600, fontSize: 13, cursor: 'pointer',
+            background: abaGeral === id ? T.card : 'none',
+            color: abaGeral === id ? T.green : T.gray,
+            boxShadow: abaGeral === id ? `0 1px 4px ${T.shadow}` : 'none',
+            transition: 'all 0.18s ease'
+          }}>{lbl}</button>
+        ))}
+      </div>
+
+      {abaGeral === 'pessoal' && <FinanceiroPessoal finP={finP} setFinP={setFinP} />}
+      {abaGeral === 'fazenda' && <>
       <div style={{ padding: '12px 14px 0' }}>
 
         {/* Navegação mês/ano */}
@@ -237,6 +256,7 @@ export function Financeiro({ fin, setFin }) {
         <Inp label="Data" value={form.data} onChange={v => setForm(f => ({ ...f, data: v }))} type="date" />
         <Btn l="💾 Salvar" onClick={add} dis={!form.valor} />
       </Modal>
+      </>}
     </div>
   )
 }

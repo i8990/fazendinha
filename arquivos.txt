@@ -1,0 +1,14 @@
+pages/Pastos.jsx
+pages/Animais.jsx
+pages/GlobalModals.jsx
+pages/Dashboard.jsx
+pages/Login.jsx
+pages/Historico.jsx
+pages/Settings.jsx
+pages/Financeiro.jsx
+pages/Ajuda.jsx
+tools/CurralTool.jsx
+tools/Calculadoras.jsx
+tools/Adubacao.jsx
+tools/Confinamento.jsx
+tools/Ferramentas.jsx
