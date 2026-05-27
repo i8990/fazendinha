@@ -1,4 +1,4 @@
-// ═══ ICON — spritesheet11.png (1024x1024, grid 5x5, 4 linhas usadas) ═══
+// ═══ ICON — spritesheet11.png (1024x1024, grid 5x5) ═══
 const ICONS = {
   touro:         [0, 0],
   vaca:          [1, 0],
@@ -22,7 +22,6 @@ const ICONS = {
   calendario:    [4, 3],
 }
 
-// 1024px ÷ 5 colunas = 204.8px por célula
 const CELL = 204.8
 
 export function Icon({ name, size = 24, style = {} }) {
@@ -30,21 +29,28 @@ export function Icon({ name, size = 24, style = {} }) {
   if (!entry) return null
   const [col, row] = entry
   const scale  = size / CELL
-  const bgSize = 1024 * scale
-  const x      = col * CELL * scale
-  const y      = row * CELL * scale
+  const bgSize = Math.round(1024 * scale)
+  const x      = Math.round(col * CELL * scale)
+  const y      = Math.round(row * CELL * scale)
   return (
     <span style={{
       display: 'inline-block',
       width: size,
       height: size,
-      backgroundImage: 'url(/spritesheet11.png)',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: `${bgSize}px ${bgSize}px`,
-      backgroundPosition: `-${x}px -${y}px`,
-      mixBlendMode: 'multiply',
+      overflow: 'hidden',
       flexShrink: 0,
       ...style
-    }} />
+    }}>
+      <span style={{
+        display: 'block',
+        width: size,
+        height: size,
+        backgroundImage: 'url(/spritesheet11.png)',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: `${bgSize}px ${bgSize}px`,
+        backgroundPosition: `-${x}px -${y}px`,
+        mixBlendMode: 'multiply',
+      }} />
+    </span>
   )
 }
