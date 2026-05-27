@@ -262,15 +262,6 @@ export function App() {
         )}
 
 
-        {/* TESTE ÍCONES — remover depois */}
-        <div style={{display:'flex',flexWrap:'wrap',gap:8,padding:12,background:'#f0f0f0'}}>
-          {['touro','vaca','bovino','galpao','fechar','engrenagem','busca','check','localizacao','checkCirculo','balanca','folha','sal','grafico','atencao','alerta','milho','frasco','broto','calendario'].map(n => (
-            <div key={n} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
-              <Icon name={n} size={32} />
-              <span style={{fontSize:9}}>{n}</span>
-            </div>
-          ))}
-        </div>
         {page === 'home'        && <Dashboard
             pastos={pastos} animais={animais} fin={fin} sal={sal}
             setPage={setPage}
