@@ -233,7 +233,7 @@ export function App() {
             textAlign: 'center', padding: '6px 0',
             position: 'sticky', top: 0, zIndex: 999
           }}>
-            ⚡ Sem conexao — dados nao serao salvos
+            ⚡ Sem conexão — dados salvos localmente, sincronizará ao reconectar
           </div>
         )}
 

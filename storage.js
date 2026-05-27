@@ -1,36 +1,33 @@
-// ═══ STORAGE — Supabase direto ═══════════════════════════════════
+// ═══ STORAGE — offline-first com sync automático ══════════════════
 import { supabaseClient } from './supabase.js'
+import { localGet, localSet, localClear } from './localdb.js'
 import { TODAY } from './utils.js'
 
 const DB_TABLE = 'app_state'
-const KEYS     = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg','vendidos','finP']
+const KEYS = ['pastos','animais','fin','movs','sal','manejos','adubacoes','cfg','vendidos','finP']
+const QUEUE_KEY = 'sync_queue'
 
 let _userId = null
 export const setCurrentUserId = (id) => { _userId = id }
 export const getUserId = () => _userId
 
-// Carrega todos os dados do usuario no Supabase
-export const dbLoadAll = async (userId) => {
-  if (!userId) return null
-  try {
-    const { data, error } = await supabaseClient
-      .from(DB_TABLE)
-      .select('key,value')
-      .eq('user_id', userId)
-      .in('key', KEYS)
-    if (error || !data) return null
-    const valid = data.filter(r => r.value !== null && r.value !== undefined)
-    return Object.fromEntries(valid.map(r => [r.key, r.value]))
-  } catch (e) {
-    console.error('❌ dbLoadAll:', e)
-    return null
-  }
+const getQueue = async () => (await localGet('meta', QUEUE_KEY)) ?? []
+const setQueue = async (q) => localSet('meta', q, QUEUE_KEY)
+
+const addToQueue = async (key, value) => {
+  const q = await getQueue()
+  const filtered = q.filter(item => item.key !== key)
+  filtered.push({ key, value, ts: Date.now() })
+  await setQueue(filtered)
 }
 
-// Salva uma chave direto no Supabase
-export const dbSet = async (key, value) => {
-  if (!_userId) { console.warn('⚠️ dbSet sem userId, ignorado'); return }
-  if (!navigator.onLine) { console.warn('⚠️ dbSet offline, ignorado'); return }
+const removeFromQueue = async (key) => {
+  const q = await getQueue()
+  await setQueue(q.filter(item => item.key !== key))
+}
+
+const pushToSupabase = async (key, value) => {
+  if (!_userId) return false
   try {
     const { error } = await supabaseClient
       .from(DB_TABLE)
@@ -38,23 +35,92 @@ export const dbSet = async (key, value) => {
         { key, value, user_id: _userId, updated_at: new Date().toISOString() },
         { onConflict: 'key,user_id' }
       )
-    if (error) console.error('❌ dbSet:', error.message)
+    if (error) { console.error('❌ pushToSupabase:', error.message); return false }
+    return true
   } catch (e) {
-    console.error('❌ dbSet exception:', e)
+    console.error('❌ pushToSupabase:', e)
+    return false
   }
 }
 
-// Apaga todos os dados do usuario no Supabase
-export const dbReset = async () => {
-  if (!_userId) return
+export const processQueue = async () => {
+  if (!_userId || !navigator.onLine) return
+  const q = await getQueue()
+  if (!q.length) return
+  console.log(`🔄 Processando fila: ${q.length} item(s) pendente(s)`)
+  for (const item of q) {
+    const ok = await pushToSupabase(item.key, item.value)
+    if (ok) await removeFromQueue(item.key)
+  }
+  console.log('✅ Fila sincronizada')
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log('🌐 Internet voltou — sincronizando fila...')
+    processQueue()
+  })
+}
+
+export const dbSet = async (key, value) => {
+  if (!_userId) { console.warn('⚠️ dbSet sem userId'); return }
+  await localSet(key, value)
+  if (navigator.onLine) {
+    const ok = await pushToSupabase(key, value)
+    if (ok) await removeFromQueue(key)
+  } else {
+    await addToQueue(key, value)
+    console.warn(`📦 Offline — "${key}" salvo localmente, aguardando conexão`)
+  }
+}
+
+// Online → Supabase primeiro (iOS apaga IndexedDB entre sessões)
+// Offline → IndexedDB local
+export const dbLoadAll = async (userId) => {
+  if (!userId) return null
+
+  if (navigator.onLine) {
+    try {
+      const data = await fetchFromSupabase(userId)
+      if (data) {
+        await processQueue()
+        return data
+      }
+    } catch (e) {
+      console.error('❌ dbLoadAll Supabase falhou, tentando local:', e)
+    }
+  }
+
+  // Fallback: IndexedDB local (offline ou Supabase falhou)
+  const localData = {}
+  for (const key of KEYS) {
+    const val = await localGet(key)
+    if (val != null) localData[key] = val
+  }
+  return Object.keys(localData).length > 0 ? localData : null
+}
+
+const fetchFromSupabase = async (userId) => {
   try {
-    await supabaseClient.from(DB_TABLE).delete().eq('user_id', _userId)
+    const { data, error } = await supabaseClient
+      .from(DB_TABLE)
+      .select('key,value')
+      .eq('user_id', userId)
+      .in('key', KEYS)
+    if (error || !data) return null
+    const result = Object.fromEntries(
+      data.filter(r => r.value != null).map(r => [r.key, r.value])
+    )
+    for (const [key, value] of Object.entries(result)) {
+      await localSet(key, value)
+    }
+    return result
   } catch (e) {
-    console.error('❌ dbReset:', e)
+    console.error('❌ fetchFromSupabase:', e)
+    return null
   }
 }
 
-// Merge bidirecional de arrays por id — vence updatedAt mais recente
 export const mergeArrays = (local, remote) => {
   const map = {}
   for (const item of (remote || [])) map[item.id] = item
@@ -67,16 +133,12 @@ export const mergeArrays = (local, remote) => {
   return Object.values(map)
 }
 
-// Sync bidirecional de uma chave de array
 export const dbSync = async (key, localArray) => {
   if (!_userId) return localArray
   try {
     const { data, error } = await supabaseClient
-      .from(DB_TABLE)
-      .select('value')
-      .eq('user_id', _userId)
-      .eq('key', key)
-      .single()
+      .from(DB_TABLE).select('value')
+      .eq('user_id', _userId).eq('key', key).single()
     const remote = (!error && data?.value) ? data.value : []
     const merged = mergeArrays(localArray, remote)
     await dbSet(key, merged)
@@ -84,6 +146,16 @@ export const dbSync = async (key, localArray) => {
   } catch (e) {
     console.error('❌ dbSync:', e)
     return localArray
+  }
+}
+
+export const dbReset = async () => {
+  await localClear()
+  if (!_userId) return
+  try {
+    await supabaseClient.from(DB_TABLE).delete().eq('user_id', _userId)
+  } catch (e) {
+    console.error('❌ dbReset:', e)
   }
 }
 
