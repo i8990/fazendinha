@@ -1,3 +1,4 @@
+import { Icon } from "./Icon.jsx"
 // ═══ APP — raiz da aplicacao ══════════════════════════════════════
 import { useState, useEffect }               from 'react'
 import { TC, LIGHT, DARK }                   from './constants.js'
@@ -226,7 +227,7 @@ export function App() {
         height: '100dvh', overflowY: 'auto'
       }}>
 
-        {!navigator.onLine && (
+        {!isOnline && (
           <div style={{
             background: '#FF9500', color: '#FFF',
             fontSize: 12, fontWeight: 700,
