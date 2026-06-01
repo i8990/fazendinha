@@ -29,8 +29,8 @@ self.addEventListener('fetch', e => {
   // Só faz cache de imagens e manifest — nunca JS/HTML
   const isStaticAsset = url.pathname.endsWith('.png') ||
                         url.pathname.endsWith('.jpg') ||
-                        url.pathname.endsWith('.json') &&
-                        url.pathname.includes('manifest')
+                        (url.pathname.endsWith('.json') &&
+                         url.pathname.includes('manifest'))
 
   if (!isStaticAsset) return
 

@@ -126,8 +126,8 @@ export const mergeArrays = (local, remote) => {
   for (const item of (remote || [])) map[item.id] = item
   for (const item of (local  || [])) {
     if (!map[item.id]) { map[item.id] = item; continue }
-    const rAt = map[item.id].updatedAt ?? 0
-    const lAt = item.updatedAt ?? 0
+    const rAt = typeof map[item.id].updatedAt === 'string' ? map[item.id].updatedAt : '0'
+    const lAt = typeof item.updatedAt === 'string' ? item.updatedAt : '0'
     if (lAt > rAt) map[item.id] = item
   }
   return Object.values(map)

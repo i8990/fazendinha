@@ -144,6 +144,7 @@ export function App() {
   const handleReset = () => {
     setP([]); setA([]); setF([]); setMv([])
     setSl([]); setMj([]); setAdu([])
+    setFP([]); setV([])
     dbReset()
     setPage('home')
   }

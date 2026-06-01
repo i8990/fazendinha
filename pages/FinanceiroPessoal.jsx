@@ -32,8 +32,8 @@ export function FinanceiroPessoal({ finP, setFinP }) {
 
   const mes  = `${ano}-${String(mesIdx + 1).padStart(2, '0')}`
   const tM   = finP.filter(t => t.data.startsWith(mes))
-  const rec  = tM.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0)
-  const desp = tM.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0)
+  const rec  = tM.filter(t => t.tipo === 'receita').reduce((s, t) => s + (+t.valor || 0), 0)
+  const desp = tM.filter(t => t.tipo === 'despesa').reduce((s, t) => s + (+t.valor || 0), 0)
   const saldo = rec - desp
 
   const lista = (aba === 'tudo' ? tM : tM.filter(t => t.tipo === (aba === 'rec' ? 'receita' : 'despesa')))
@@ -66,8 +66,8 @@ export function FinanceiroPessoal({ finP, setFinP }) {
     const tMs  = finP.filter(t => t.data.startsWith(key))
     return {
       name:     MESES[m].slice(0, 3),
-      Entradas: tMs.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0),
-      'Saídas': tMs.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0),
+      Entradas: tMs.filter(t => t.tipo === 'receita').reduce((s, t) => s + (+t.valor || 0), 0),
+      'Saídas': tMs.filter(t => t.tipo === 'despesa').reduce((s, t) => s + (+t.valor || 0), 0),
     }
   })
 

@@ -39,7 +39,7 @@ export function Icon({ name, size = 24, color, style = {} }) {
         backgroundRepeat: 'no-repeat',
         backgroundSize: `${bgSize}px ${bgSize}px`,
         backgroundPosition: `-${x}px -${y}px`,
-        mixBlendMode: 'multiply',
+        filter: 'brightness(0.95)',
       }} />
     </span>
   )

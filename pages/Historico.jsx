@@ -6,9 +6,10 @@
 import { useState, useMemo }               from 'react'
 import { useT, TM, MESES }                 from '../constants.js'
 import { TODAY, fmtD, fmtR, calcIdade }    from '../utils.js'
-import { Card, Badge, Btn, Modal,
+import { Card, Badge, Btn, Inp, Sel, Modal,
          DetailPage, Section, InfoRow,
          DeleteBtn, PgH }                  from '../ui.jsx'
+import { CalendarView }                    from '../widgets.jsx'
 import { CurralTool }                      from '../tools/CurralTool.jsx'
 
 // ═══ MANEJO DETAIL PAGE ═══════════════════════════════════════════
@@ -92,108 +93,6 @@ export function MovDetailPage({ mov, onBack, setMovs }) {
   )
 }
 
-// ═══ CALENDÁRIO ═══════════════════════════════════════════════════
-function CalendarView({ movs, manejos, animais, fin }) {
-  const T = useT()
-  const [cur, setCur] = useState(() => new Date())
-  const [sel, setSel] = useState(null)
-
-  const y = cur.getFullYear(), m = cur.getMonth()
-  const firstDow  = new Date(y, m, 1).getDay()
-  const daysInM   = new Date(y, m + 1, 0).getDate()
-  const isoP      = `${y}-${String(m + 1).padStart(2, '0')}`
-
-  const allEv = useMemo(() => {
-    const e = []
-    movs.forEach(x    => e.push({ ...x, _tipo: 'mov' }))
-    manejos.forEach(x => e.push({ ...x, _tipo: 'manejo' }))
-    animais.filter(a  => a.cat === 'Bezerro' && a.dataNasc).forEach(b =>
-      e.push({ id: `n${b.id}`, data: b.dataNasc, ident: b.ident, _tipo: 'nasc' }))
-    fin.forEach(f => e.push({ ...f, _tipo: 'fin' }))
-    return e
-  }, [movs, manejos, animais, fin])
-
-  const byDate = useMemo(() => {
-    const map = {}
-    allEv.forEach(e => {
-      if (!e.data) return
-      if (!map[e.data]) map[e.data] = []
-      map[e.data].push(e)
-    })
-    return map
-  }, [allEv])
-
-  const selKey = sel ? `${isoP}-${String(sel).padStart(2, '0')}` : null
-  const selEvs = selKey ? (byDate[selKey] || []) : []
-  const tipoCor  = { mov: T.orange, manejo: T.purple, nasc: T.pink, fin: T.blue }
-  const tipoIcon = { mov: '🔄', manejo: '💉', nasc: '🐮', fin: '💰' }
-
-  return (
-    <div>
-      {/* Navegação mês */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <button onClick={() => setCur(d => new Date(d.getFullYear(), d.getMonth() - 1))} style={{ background: T.bg, border: 'none', borderRadius: 9, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>‹</button>
-        <div style={{ fontWeight: 800, color: T.text, fontSize: 15 }}>{MESES[m]} {y}</div>
-        <button onClick={() => setCur(d => new Date(d.getFullYear(), d.getMonth() + 1))} style={{ background: T.bg, border: 'none', borderRadius: 9, width: 36, height: 36, fontSize: 18, cursor: 'pointer', color: T.text, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>›</button>
-      </div>
-
-      {/* Header dias da semana */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', textAlign: 'center', marginBottom: 6 }}>
-        {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((d, i) => (
-          <div key={i} style={{ fontSize: 10, fontWeight: 700, color: T.gray, paddingBottom: 4 }}>{d}</div>
-        ))}
-      </div>
-
-      {/* Grid de dias */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 2 }}>
-        {Array.from({ length: firstDow }).map((_, i) => <div key={`e${i}`} />)}
-        {Array.from({ length: daysInM }).map((_, i) => {
-          const day = i + 1
-          const key = `${isoP}-${String(day).padStart(2, '0')}`
-          const evs = byDate[key] || []
-          const isToday = key === TODAY
-          const isSel   = sel === day
-          return (
-            <div key={day} onClick={() => setSel(isSel ? null : day)} style={{
-              borderRadius: 9, padding: '5px 2px', textAlign: 'center', cursor: 'pointer',
-              background: isSel ? T.green : isToday ? T.gPale : 'transparent',
-              border: `1.5px solid ${isSel ? T.green : isToday ? T.gLight : 'transparent'}`,
-              minHeight: 42
-            }}>
-              <div style={{ fontSize: 12, fontWeight: isToday ? 800 : 400, color: isSel ? '#FFF' : T.text }}>{day}</div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 2, marginTop: 2, flexWrap: 'wrap' }}>
-                {[...new Set(evs.map(e => e._tipo))].slice(0, 3).map(t => (
-                  <div key={t} style={{ width: 5, height: 5, borderRadius: '50%', background: tipoCor[t] || T.gray }} />
-                ))}
-              </div>
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Eventos do dia selecionado */}
-      {sel && (
-        <div style={{ marginTop: 14 }}>
-          <div style={{ fontWeight: 700, color: T.text, marginBottom: 9 }}>
-            📅 {String(sel).padStart(2, '0')}/{String(m + 1).padStart(2, '0')}/{y}
-          </div>
-          {selEvs.length === 0 && <div style={{ color: T.gray, fontSize: 12, textAlign: 'center', padding: 14 }}>Nenhum evento</div>}
-          {selEvs.map((e, i) => (
-            <div key={i} style={{ background: T.bg, borderRadius: 11, padding: '9px 13px', marginBottom: 7, display: 'flex', gap: 9, alignItems: 'center' }}>
-              <div style={{ width: 30, height: 30, borderRadius: 7, background: (tipoCor[e._tipo] || T.gray) + '1a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>{tipoIcon[e._tipo] || '•'}</div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, color: T.text, fontSize: 13 }}>{e.ident || e.nomeManejo || e.cat || e._tipo}</div>
-                <div style={{ fontSize: 11, color: T.gray }}>{e.de && e.para ? `${e.de} → ${e.para}` : e.desc || e.dose || ''}</div>
-              </div>
-              {e.valor && <div style={{ fontWeight: 700, color: e.tipo === 'receita' ? T.gLight : T.red, fontSize: 13 }}>{e.tipo === 'receita' ? '+' : '-'}{fmtR(e.valor)}</div>}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 // ═══ HISTÓRICO MANEJO (tela principal) ════════════════════════════
 export function HistoricoManejo({ movs, setMovs, manejos, setManejos, animais, fin, setFin, pastos }) {
   const T = useT()
@@ -202,6 +101,8 @@ export function HistoricoManejo({ movs, setMovs, manejos, setManejos, animais, f
   const [detailManejo, setDetailManejo] = useState(null)
   const [detailMov,    setDetailMov]    = useState(null)
   const [detailFin,    setDetailFin]    = useState(null)
+  const [editFinM,     setEditFinM]     = useState(false)
+  const [efin,         setEfin]         = useState({})
 
   const mes = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}`
 
@@ -232,6 +133,13 @@ export function HistoricoManejo({ movs, setMovs, manejos, setManejos, animais, f
   if (detailFin) {
     const isR = detailFin.tipo === 'receita', cor = isR ? T.green : T.red
     const del = () => { setFin(f => f.filter(x => x.id !== detailFin.id)); setDetailFin(null) }
+    const catR = ['Venda de gado', 'Leite', 'Arrendamento', 'Outros']
+    const catD = ['Alimentação', 'Medicamento', 'Sal Mineral', 'Manutenção', 'Combustível', 'Mão de Obra', 'Animal', 'Pasto', 'Outros']
+    const salvarEditFin = () => {
+      if (!efin.valor) return
+      setFin(f => f.map(x => x.id === detailFin.id ? { ...efin, valor: +efin.valor } : x))
+      setEditFinM(false); setDetailFin(null)
+    }
     return (
       <DetailPage onBack={() => setDetailFin(null)} title={isR ? 'Receita' : 'Despesa'} icon={isR ? '▲' : '▼'} color={`linear-gradient(135deg,${isR ? T.gDark : '#7B1D1D'},${isR ? T.green : T.red})`}>
         <Section title="Detalhes">
@@ -245,8 +153,25 @@ export function HistoricoManejo({ movs, setMovs, manejos, setManejos, animais, f
             <InfoRow label="Tipo"       value={isR ? 'Receita' : 'Despesa'} color={cor} />
           </>} />
         </Section>
+        <Btn l="✏️ Editar" color={T.blue} onClick={() => { setEfin({ ...detailFin, valor: String(detailFin.valor || '') }); setEditFinM(true) }} style={{ marginBottom: 10 }} />
         <DeleteBtn label="esta transação" onConfirm={del} />
         <div style={{ height: 20 }} />
+        <Modal open={editFinM} onClose={() => setEditFinM(false)} title="✏️ Editar Lançamento">
+          <div style={{ display: 'flex', gap: 7, marginBottom: 13 }}>
+            {[['receita', '▲ Entrada'], ['despesa', '▼ Saída']].map(([tp, lbl]) => (
+              <button key={tp} onClick={() => setEfin(e => ({ ...e, tipo: tp, cat: tp === 'receita' ? catR[0] : catD[0] }))} style={{
+                flex: 1, border: 'none', borderRadius: 11, padding: 13, fontWeight: 700, fontSize: 14, cursor: 'pointer',
+                background: efin.tipo === tp ? (tp === 'receita' ? T.green : T.red) : T.bg,
+                color: efin.tipo === tp ? '#FFF' : T.gray
+              }}>{lbl}</button>
+            ))}
+          </div>
+          <Inp label="Valor (R$) *" value={efin.valor} onChange={v => setEfin(e => ({ ...e, valor: v }))} type="number" />
+          <Sel label="Categoria" value={efin.cat} onChange={v => setEfin(e => ({ ...e, cat: v }))} opts={(efin.tipo === 'receita' ? catR : catD).map(v => ({ v, l: v }))} />
+          <Inp label="Descrição" value={efin.desc} onChange={v => setEfin(e => ({ ...e, desc: v }))} placeholder="Opcional..." />
+          <Inp label="Data" value={efin.data} onChange={v => setEfin(e => ({ ...e, data: v }))} type="date" />
+          <Btn l="💾 Salvar Alterações" onClick={salvarEditFin} dis={!efin.valor} />
+        </Modal>
       </DetailPage>
     )
   }

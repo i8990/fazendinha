@@ -9,7 +9,7 @@ import { Btn, Inp, Sel, Modal,
 import { FinanceiroPessoal }           from './FinanceiroPessoal.jsx'
 
 const catR = ['Venda de gado', 'Leite', 'Arrendamento', 'Outros']
-const catD = ['Alimentação', 'Manutenção', 'Animal', 'Pasto', 'Combustível', 'Mão de obra', 'Outros']
+const catD = ['Alimentação', 'Medicamento', 'Sal Mineral', 'Manutenção', 'Combustível', 'Mão de Obra', 'Animal', 'Pasto', 'Outros']
 
 const MESES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 
@@ -31,8 +31,8 @@ export function Financeiro({ fin, setFin, finP, setFinP }) {
 
   const mes  = `${ano}-${String(mesIdx + 1).padStart(2, '0')}`
   const tM   = fin.filter(t => t.data.startsWith(mes))
-  const rec  = tM.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0)
-  const desp = tM.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0)
+  const rec  = tM.filter(t => t.tipo === 'receita').reduce((s, t) => s + (+t.valor || 0), 0)
+  const desp = tM.filter(t => t.tipo === 'despesa').reduce((s, t) => s + (+t.valor || 0), 0)
   const saldo = rec - desp
 
   const lista = (aba === 'tudo' ? tM : tM.filter(t => t.tipo === (aba === 'rec' ? 'receita' : 'despesa')))
@@ -61,8 +61,8 @@ export function Financeiro({ fin, setFin, finP, setFinP }) {
     const tMs = fin.filter(t => t.data.startsWith(key))
     return {
       name: MESES[m].slice(0, 3),
-      Entradas: tMs.filter(t => t.tipo === 'receita').reduce((s, t) => s + t.valor, 0),
-      Saídas:   tMs.filter(t => t.tipo === 'despesa').reduce((s, t) => s + t.valor, 0),
+      Entradas: tMs.filter(t => t.tipo === 'receita').reduce((s, t) => s + (+t.valor || 0), 0),
+      Saídas:   tMs.filter(t => t.tipo === 'despesa').reduce((s, t) => s + (+t.valor || 0), 0),
     }
   })
 
