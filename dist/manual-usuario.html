@@ -64,8 +64,6 @@
     display: inline-block; background: var(--gPale); color: var(--green);
     border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-bottom: 6px;
   }
-  .tag.blue { background: #E8EFF2; color: var(--blue); }
-  .tag.orange { background: #F5EDE9; color: var(--orange); }
   .divider { height: 1px; background: var(--border); margin: 6px 0 12px; }
   .footer { text-align: center; padding: 24px 20px; color: var(--gray); font-size: 12px; }
   .footer span { color: var(--green); font-weight: 700; }
@@ -78,13 +76,14 @@
 
 <div class="hero">
   <h1>🌿 Manual do Usuário</h1>
-  <p>Fazendinha App — prático e direto</p>
+  <p>Fazendinha App — gestão rural offline</p>
   <div class="badge">v11.0</div>
 </div>
 
 <div class="toc">
   <div class="toc-title">📋 Conteúdo</div>
-  <a href="#dashboard"><span>🏠</span> Dashboard (Home)<span class="arr">›</span></a>
+  <a href="#primeiros"><span>🚀</span> Primeiros Passos<span class="arr">›</span></a>
+  <a href="#dashboard"><span>🏠</span> Dashboard<span class="arr">›</span></a>
   <a href="#animais"><span>🐄</span> Animais<span class="arr">›</span></a>
   <a href="#pastos"><span>🌿</span> Pastos<span class="arr">›</span></a>
   <a href="#financeiro"><span>💰</span> Financeiro<span class="arr">›</span></a>
@@ -92,6 +91,27 @@
   <a href="#ferramentas"><span>🧮</span> Ferramentas<span class="arr">›</span></a>
   <a href="#acoes"><span>⚡</span> Ações Rápidas<span class="arr">›</span></a>
   <a href="#config"><span>⚙️</span> Configurações<span class="arr">›</span></a>
+  <a href="#dicas"><span>💡</span> Dicas Importantes<span class="arr">›</span></a>
+</div>
+
+<div class="section" id="primeiros">
+  <div class="section-header">
+    <div class="section-icon green">🚀</div>
+    <h2>Primeiros Passos</h2>
+  </div>
+  <div class="card">
+    <h3>Login</h3>
+    <p>Ao abrir o app, faça login com email e senha. Se não tiver conta, use <strong>"Criar conta"</strong> (sign up). Seus dados ficam vinculados a essa conta e sincronizados entre dispositivos.</p>
+  </div>
+  <div class="card">
+    <h3>Navegação</h3>
+    <p>A barra inferior tem 5 abas: <strong>Home · Animais · Caixa · Ferramentas · Config.</strong> A aba ativa fica destacada em verde. Toque para alternar.</p>
+    <p>Na aba <strong>Animais</strong>, um badge vermelho mostra quantos bezerros nasceram nos últimos 7 dias.</p>
+  </div>
+  <div class="card">
+    <h3>Offline</h3>
+    <p>O app funciona offline. Uma barra laranja ⚡ aparece no topo quando sem conexão. Os dados são salvos localmente e sincronizados automaticamente quando a internet voltar.</p>
+  </div>
 </div>
 
 <div class="section" id="dashboard">
@@ -100,12 +120,30 @@
     <h2>Dashboard (Home)</h2>
   </div>
   <div class="card">
-    <h3>O que você vê</h3>
-    <p><strong>Topo:</strong> totais de adultos e bezerros, alertas (animais sem pasto, sal baixo, pastos degradados).</p>
-    <p><strong>Bezerros recentes:</strong> últimos 30 dias com idade e badge de fase (neonato, lactente, desmame, recria).</p>
-    <p><strong>Ações Rápidas:</strong> 4 botões para registrar nascimento, sal, despesa ou ida à fazenda sem sair da Home.</p>
-    <p><strong>Clima:</strong> previsão do tempo para Baependi/MG via Open-Meteo (temperatura, chuva acumulada).</p>
-    <p><strong>Financeiro do mês:</strong> receita vs despesa do mês corrente. Toque em "Ver detalhes →" para ir ao Financeiro.</p>
+    <h3>Indicadores do rebanho</h3>
+    <p>Topo da tela: total de <strong>adultos</strong> e <strong>bezerros</strong>, nome da fazenda e data atual.</p>
+  </div>
+  <div class="card">
+    <h3>Alertas</h3>
+    <p>Três tipos de alerta aparecem automaticamente:</p>
+    <ul>
+      <li><strong>🚜 Animais sem pasto</strong> — animais ativos sem piquete atribuído</li>
+      <li><strong>🧂 Sal baixo</strong> — pastos com estoque de sal para menos de 7 dias</li>
+      <li><strong>🌱 Pastos degradados</strong> — piquetes marcados como degradados</li>
+    </ul>
+    <p>Toque em qualquer alerta para ir direto à seção correspondente.</p>
+  </div>
+  <div class="card">
+    <h3>Bezerros recentes</h3>
+    <p>Lista os <strong>bezerros nascidos nos últimos 30 dias</strong>, com idade, fase (neonato, lactente, desmame, recria), sexo e raça.</p>
+  </div>
+  <div class="card">
+    <h3>Clima</h3>
+    <p>Widget com previsão para Baependi/MG: temperatura atual, sensação térmica, precipitação, previsão de 7 dias e acumulado mensal de chuva. Fonte: Open-Meteo (gratuita, sem chave de API).</p>
+  </div>
+  <div class="card">
+    <h3>Financeiro do mês</h3>
+    <p>Card com receita vs despesa do mês corrente. Toque em <strong>"Ver detalhes →"</strong> para abrir o Financeiro completo.</p>
   </div>
 </div>
 
@@ -115,27 +153,44 @@
     <h2>Animais</h2>
   </div>
   <div class="card">
-    <h3>Abas disponíveis</h3>
+    <h3>Abas</h3>
     <ul>
-      <li><strong>Rebanho</strong> — adultos ativos, ordenados por brinco, peso, idade ou lote.</li>
-      <li><strong>Bezerros</strong> — filhotes com idade, fase e dados da mãe.</li>
-      <li><strong>Pastos</strong> — gestão dos piquetes (detalhada na seção abaixo).</li>
-      <li><strong>Manejo</strong> — timeline unificada de eventos (movimentações, tratamentos, finanças).</li>
-      <li><strong>Vendidos</strong> — histórico de animais vendidos, com opção de reativar.</li>
+      <li><strong>Rebanho</strong> — todos os adultos ativos. Ordenação por brinco, peso, idade ou lote.</li>
+      <li><strong>Bezerros</strong> — filhotes com idade, fase, dados da mãe. Stats de total/macho/fêmea.</li>
+      <li><strong>Pastos</strong> — gestão de piquetes (detalhada na seção abaixo).</li>
+      <li><strong>Manejo</strong> — timeline de eventos (movimentações, tratamentos, nascimentos, finanças).</li>
+      <li><strong>Vendidos</strong> — histórico de animais vendidos, com opção "↩️ Reativar Animal".</li>
     </ul>
   </div>
   <div class="card">
+    <h3>Busca e ordenação</h3>
+    <p>Campo de busca por <strong>brinco ou lote</strong>. Abaixo, chips de ordenação: 🔢 Brinco (padrão), ⚖️ Peso, 📅 Idade, 📋 Lote.</p>
+  </div>
+  <div class="card">
     <h3>Cadastrar animal</h3>
-    <p>Toque em <strong>"+ Cadastrar Animal"</strong> → preencha identificador, categoria, sexo, raça, lote, peso, pasto, mãe → Salvar.</p>
+    <p>Toque em <strong>"+ Cadastrar Animal"</strong> ou <strong>"+ Cadastrar Bezerro"</strong> (dependendo da aba).</p>
+    <p>Preencha: categoria (Boi, Vaca, Novilha, Bezerro, Touro), sexo, identificador, raça, lote, peso, nascimento, pasto e mãe. Todos os campos obrigatórios têm asterisco.</p>
   </div>
   <div class="card">
     <h3>Ficha do animal</h3>
-    <p>Toque em qualquer animal da lista para ver: dados, idade calculada, filhos, movimentações entre pastos, histórico de manejos.</p>
-    <p>Ações disponíveis: <strong>Editar</strong>, <strong>Mover de Pasto</strong>, <strong>Vender</strong> (distribui o valor em 12 meses no financeiro), <strong>Excluir</strong>.</p>
+    <p>Toque em qualquer animal para abrir a ficha completa:</p>
+    <ul>
+      <li><strong>Dados</strong> — categoria, sexo, raça, lote, peso, pasto atual, nascimento, idade calculada, mãe, observações</li>
+      <li><strong>Filhos</strong> — lista de filhos com idade</li>
+      <li><strong>Movimentações</strong> — histórico de trocas de pasto (origem → destino)</li>
+      <li><strong>Manejos</strong> — tratamentos aplicados (vacinas, vermífugos, etc.)</li>
+    </ul>
+    <p>Ações disponíveis na ficha:</p>
+    <ul>
+      <li><strong>✏️ Editar</strong> — altera qualquer dado do animal</li>
+      <li><strong>🌿 Mover de Pasto</strong> — transfere para outro piquete, registra movimentação</li>
+      <li><strong>💰 Vender</strong> — registra preço, distribui receita em 12 meses no financeiro</li>
+      <li><strong>🗑️ Excluir</strong> — remove o animal (com confirmação em 2 passos)</li>
+    </ul>
   </div>
   <div class="card">
-    <h3>Busca e ordenação</h3>
-    <p>Campo de busca por brinco ou lote. Chips de ordenação: Brinco, Peso, Idade ou Lote.</p>
+    <h3>Vender animal</h3>
+    <p>Informe o <strong>preço de venda</strong> (R$), a data e observação opcional. O valor é automaticamente distribuído em 12 parcelas mensais iguais no financeiro, como receitas de "Venda de gado".</p>
   </div>
 </div>
 
@@ -145,18 +200,29 @@
     <h2>Pastos</h2>
   </div>
   <div class="card">
-    <h3>Gerenciar pastos</h3>
-    <p>Na aba Pastos (dentro de Animais): veja todos os piquetes com status (ocupado, vazio, descanso, degradado, recuperando), estado da pastagem, área e capacidade.</p>
-    <p><strong>+ Novo Pasto:</strong> nome, tamanho (ha/ac/m²), capacidade, status, taxa de sal.</p>
-    <p><strong>Ficha do pasto:</strong> mostra animais alocados, estoque de sal (kg e dias restantes), histórico de movimentações e adubações.</p>
+    <h3>Lista de pastos</h3>
+    <p>Na aba Pastos, veja todos os piquetes com: status (ocupado/vazio/descanso/degradado/recuperando), estado da pastagem (bom/médio/ruim/muito ruim), área, capacidade, e badge de estoque de sal.</p>
+    <p>Filtre por status usando os chips no topo.</p>
+  </div>
+  <div class="card">
+    <h3>Cadastrar pasto</h3>
+    <p>Toque em <strong>"+ Novo Pasto"</strong>. Preencha: nome, tamanho e unidade (ha/ac/m²), capacidade, status, estado da pastagem, taxa de sal (g/animal/dia) e observações.</p>
   </div>
   <div class="card">
     <h3>Medição por satélite</h3>
-    <p>Ao cadastrar/editar um pasto, use <strong>Medir no Mapa</strong> para demarcar a área no satélite ESRI. Clique nos vértices da área desejada e o app calcula os hectares automaticamente.</p>
+    <p>Ao cadastrar ou editar um pasto, use <strong>"📍 Medir no Mapa"</strong>. O mapa abre em tela cheia com imagens de satélite ESRI. Clique nos vértices da área desejada — o app desenha o polígono e calcula a área em hectares automaticamente usando cálculo geodésico. Toque em "Aplicar" para usar o valor.</p>
+  </div>
+  <div class="card">
+    <h3>Ficha do pasto</h3>
+    <p>Toque em um pasto para ver: dados, animais alocados, estoque de sal (kg restantes e dias), histórico de movimentações e adubações vinculadas.</p>
   </div>
   <div class="card">
     <h3>Sal mineral</h3>
-    <p>Registre a reposição de sal por pasto (sacos de 30 kg). O app calcula o estoque restante e emite alerta quando o sal está baixo (menos de 7 dias).</p>
+    <ul>
+      <li><strong>Estoque:</strong> o app calcula o sal restante baseado nos registros de reposição e consumo diário (padrão 225g/animal/dia)</li>
+      <li><strong>Alerta:</strong> quando o estoque cai para menos de 7 dias, um alerta aparece no Dashboard</li>
+      <li><strong>Registrar:</strong> use o botão "🧂 Registrar Sal" na ficha do pasto, ou a Ação Rápida na Home</li>
+    </ul>
   </div>
 </div>
 
@@ -166,17 +232,26 @@
     <h2>Financeiro</h2>
   </div>
   <div class="card">
-    <h3>Caixa da fazenda</h3>
-    <p>Navegue por mês com as setas. Veja saldo consolidado (receitas - despesas), gráfico de 6 meses e lista de transações. Filtre por Tudo, Entradas ou Saídas.</p>
+    <h3>Duas contas separadas</h3>
+    <p>Use as abas <strong>🌾 Fazenda</strong> e <strong>👤 Pessoal</strong> para separar as finanças da fazenda das pessoais.</p>
   </div>
   <div class="card">
-    <h3>Lançar transação</h3>
-    <p>Toque em <strong>+ Receita</strong> ou <strong>+ Despesa</strong> → preencha valor, categoria, descrição e data. Categorias disponíveis: Venda de gado, Leite, Alimentação, Medicamento, Combustível, etc.</p>
-    <p><strong>Importante:</strong> vendas de animais lançam receita automática distribuída em 12 meses.</p>
+    <h3>Navegação mensal</h3>
+    <p>Use as setas ‹ › para navegar entre os meses. O card de saldo mostra entradas, saídas e saldo do mês. O gráfico de barras exibe os últimos 6 meses.</p>
+  </div>
+  <div class="card">
+    <h3>Tipos de transação</h3>
+    <p><strong>Fazenda:</strong> Receitas (Venda de gado, Leite, Arrendamento, Outros) e Despesas (Alimentação, Medicamento, Sal Mineral, Manutenção, Combustível, Mão de Obra, Animal, Pasto, Outros).</p>
+    <p><strong>Pessoal:</strong> Receitas (Salário, Freelance, Investimentos, Aluguel, Outros) e Despesas (Moradia, Alimentação, Transporte, Saúde, Educação, Lazer, Vestuário, Assinaturas, Outros).</p>
+  </div>
+  <div class="card">
+    <h3>Lançar e gerenciar</h3>
+    <p>Toque em <strong>"+ Lançar Transação"</strong> → escolha entrada ou saída, preencha valor, categoria, descrição, data. Toque em qualquer item da lista para ver detalhes, editar ou excluir.</p>
+    <p><strong>Importante:</strong> Vendas de animais são lançadas automaticamente como receita de "Venda de gado" distribuída em 12 meses.</p>
   </div>
   <div class="card">
     <h3>Financeiro Pessoal</h3>
-    <p>Na aba "Pessoal", gerencie finanças pessoais separadas da fazenda, com categorias como Salário, Moradia, Alimentação, Lazer, etc.</p>
+    <p>Na aba Pessoal, além da lista, há um botão <strong>"📊 Ver gastos por categoria"</strong> que mostra um breakdown com totais por categoria de despesa, ordenado do maior para o menor.</p>
   </div>
 </div>
 
@@ -187,12 +262,19 @@
   </div>
   <div class="card">
     <h3>Timeline unificada</h3>
-    <p>A aba Manejo reúne todos os eventos em ordem cronológica: movimentações entre pastos, manejos sanitários, nascimentos e transações financeiras.</p>
-    <p>Filtre por tipo: <strong>Todos, Manejos, Pastos, Nascimentos, Finanças</strong>. KPIs mensais mostram totais do mês corrente.</p>
+    <p>Todos os eventos do app em ordem cronológica: movimentações entre pastos, manejos sanitários, nascimentos e transações financeiras. KPIs mensais mostram totais do mês corrente.</p>
+    <p>Filtre por tipo: <strong>Todos, Manejos, Pastos, Nascimentos, Finanças</strong>.</p>
   </div>
   <div class="card">
     <h3>Ferramenta Curral</h3>
-    <p>Ideal para manejos em lote. Selecione o tipo de manejo (ivermectina, vacina, vermífugo, etc.), filtre os animais por pasto ou busque pelo brinco, e marque cada animal conforme é atendido. Salve tudo de uma vez.</p>
+    <p>Disponível dentro do Histórico e também em Ferramentas. Ideal para manejos em lote:</p>
+    <ol>
+      <li>Selecione o tipo de manejo (Ivermectina, Vacina, Vermífugo, etc.) e configure dose e data</li>
+      <li>Filtre animais por pasto ou busque pelo brinco</li>
+      <li>Marque/desmarque individualmente ou use "Marcar todos" / "Desmarcar todos"</li>
+      <li>Toque em "💾 Salvar Manejo" — um único registro é criado com todos os animais selecionados</li>
+    </ol>
+    <p>Tipos de manejo: Ivermectina 💉, Fio do Lombo 🩺, Antibiótico 💊, Vacina 🩹, Vermífugo 🔬, Outro ✚.</p>
   </div>
 </div>
 
@@ -202,23 +284,47 @@
     <h2>Ferramentas</h2>
   </div>
   <div class="card">
-    <h3>Calculadoras disponíveis</h3>
+    <h3>Menu grid</h3>
+    <p>Grade 3×3 com 8 ferramentas. Toque em qualquer uma para abrir em tela cheia.</p>
+  </div>
+  <div class="card">
+    <h3>Calculadoras (sem persistência)</h3>
     <ul>
-      <li><strong>UA</strong> — converte rebanho em Unidades Animais (1 UA = 450 kg).</li>
-      <li><strong>Lotação</strong> — calcula UA suportadas por ha com presets (extensivo 0,5 a super-intensivo 2,5).</li>
-      <li><strong>Sal Mineral</strong> — kg e sacos de 30 kg necessários para o período.</li>
-      <li><strong>GMD</strong> — projeção de ganho de peso médio diário.</li>
-      <li><strong>Peso Fita</strong> — estima peso pela circunferência torácica.</li>
-      <li><strong>Pop. Plantas</strong> — densidade de plantio (milho/capim).</li>
+      <li><strong>⚖️ UA</strong> — converte animais em Unidades Animais (1 UA = 450 kg). Informe nº de animais e peso médio.</li>
+      <li><strong>🌿 Lotação</strong> — capacidade máxima do pasto em UA. Presets: Extensivo 0,5, Médio 1,0, Intensivo 1,5, Super-int. 2,5 UA/ha. Ou valor manual.</li>
+      <li><strong>🧂 Sal Mineral</strong> — kg e sacos de 30 kg necessários. Informe animais, taxa (g/dia) e período.</li>
+      <li><strong>📈 GMD</strong> — Ganho Médio Diário. Informe peso inicial, final e dias. Resultado com classificação: ✅ Excelente, ⚠️ Médio, 🚨 Abaixo.</li>
+      <li><strong>📏 Peso Fita</strong> — estima peso pela circunferência torácica (cm). Inclui tutorial visual de como medir. Faixa de ±10%.</li>
+      <li><strong>🌱 Pop. Plantas</strong> — plantio linear (milho) ou lanço (capim). Calcula metros lineares, população/ha, distribuição de adubo (g/m linear).</li>
     </ul>
   </div>
   <div class="card">
-    <h3>Adubação (Embrapa)</h3>
-    <p>Insira os dados da análise de solo (pH, P, K, Ca, Mg, CTC, V%, MO). O app calcula: calagem (t/ha), adubação de plantio (fórmula NPK) e cobertura nitrogenada. Gera relatórios detalhados compatíveis com recomendações Embrapa.</p>
+    <h3>🌱 Adubação (Embrapa)</h3>
+    <p>Análise completa de solo com recomendação baseada no método Embrapa de saturação de bases:</p>
+    <ul>
+      <li><strong>Diagnóstico</strong> — classifica pH, P, K, Ca+Mg, V%, MO</li>
+      <li><strong>Calagem</strong> — NC em t/ha e sacos de 50 kg (PRNT 80)</li>
+      <li><strong>Plantio</strong> — seleciona fórmula NPK (8-28-16, 20-05-20 ou 4-14-8) conforme níveis de P e K</li>
+      <li><strong>Cobertura</strong> — ureia protegida 47%, com ajustes para MO e pH</li>
+      <li><strong>Relatório</strong> — gera PDF-like com diagnóstico e justificativa</li>
+    </ul>
+    <p>Cada análise fica salva e pode ser vinculada a um pasto. Histórico completo com opção de excluir.</p>
   </div>
   <div class="card">
-    <h3>Confinamento</h3>
-    <p>Simulador completo: animais, peso inicial, GMD, dias. Calcula peso de saída, @ arrobas, consumo total, ingredientes da dieta (silagem 55%, fubá 22%, farelo 13%, sal 7%, núcleo 3%).</p>
+    <h3>🏚️ Confinamento</h3>
+    <p>Simulador completo de confinamento:</p>
+    <ul>
+      <li>Informe: nº animais, peso inicial, GMD (presets ou personalizado), dias e peso alvo</li>
+      <li>Cálculos: peso saída, @ arrobas na entrada/saída, ganho total, eficiência alimentar</li>
+      <li>Dieta: silagem 55%, fubá 22%, farelo soja 13%, sal proteinado 7%, núcleo mineral 3%</li>
+      <li>Gráfico de evolução de peso com marcador de meta 🎯</li>
+      <li>Lista de compras por ingrediente com quantidades e sacos</li>
+      <li>Alerta visual se GMD &lt; 0,8 kg/dia</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>🏚️ Curral</h3>
+    <p>Mesma ferramenta descrita no Histórico — checklist para manejos em lote. Acessível também por aqui.</p>
   </div>
 </div>
 
@@ -228,13 +334,17 @@
     <h2>Ações Rápidas</h2>
   </div>
   <div class="card">
-    <p>Disponíveis na Home para registrar rapidamente:</p>
+    <p>Na Home, 4 botões de ação rápida — abrem modais sem sair da tela:</p>
     <ul>
-      <li><strong>🐮 Nascimento</strong> — cadastra bezerro com sexo, mãe e pasto.</li>
-      <li><strong>🧂 Sal Mineral</strong> — registra reposição de sal em um pasto.</li>
-      <li><strong>💸 Despesa</strong> — lança despesa financeira rápida.</li>
-      <li><strong>⛽ Ida à Fazenda</strong> — calcula custo de combustível (ida/volta) e registra como despesa.</li>
+      <li><strong>🐮 Nascimento</strong> — registra bezerro: sexo, identificador, data, raça, peso, mãe, pasto</li>
+      <li><strong>🧂 Sal Mineral</strong> — reposição de sal: seleciona pasto (apenas ocupados), sacos (30 kg), data</li>
+      <li><strong>💸 Despesa</strong> — lançamento rápido: descrição, valor, categoria (Alimentação, Medicamento, etc.), data</li>
+      <li><strong>⛽ Ida à Fazenda</strong> — calcula custo de combustível: distância (ida), consumo (km/l), preço (R$/l). Resultado mostra (km×2)÷consumo×preço. Permite editar o valor final. Os dados do veículo são salvos no navegador para a próxima vez.</li>
     </ul>
+  </div>
+  <div class="card">
+    <h3>Modal "Mover Pasto"</h3>
+    <p>Acessível pelo Dashboard. Busca animal pelo brinco, seleciona um, escolhe o pasto de destino e confirma. A movimentação é registrada automaticamente.</p>
   </div>
 </div>
 
@@ -246,16 +356,33 @@
   <div class="card">
     <h3>Aba Geral</h3>
     <ul>
-      <li><strong>🌙 Modo Escuro</strong> — alterna tema light/dark.</li>
-      <li><strong>🔄 Sincronização</strong> — busca dados mais recentes do servidor.</li>
-      <li><strong>💾 Dados</strong> — exportar backup (JSON), importar backup, resetar todos os dados.</li>
-      <li><strong>📖 Ajuda</strong> — abre este manual e o manual do desenvolvedor.</li>
-      <li><strong>🚪 Sair</strong> — desconecta da conta.</li>
+      <li><strong>🎨 Modo Escuro</strong> — alterna entre tema claro e escuro com animação suave</li>
+      <li><strong>🔄 Sincronização</strong> — busca dados mais recentes do servidor manualmente. A sincronização automática ocorre em segundo plano.</li>
+      <li><strong>💾 Dados</strong> — Exportar backup (JSON), Importar backup (seleciona arquivo), Resetar todos os dados (com confirmação em 2 passos)</li>
+      <li><strong>📖 Ajuda</strong> — abre este manual e o manual do desenvolvedor</li>
+      <li><strong>🚪 Sair</strong> — desconecta da conta e volta para a tela de login</li>
+      <li><strong>ℹ️ Sobre</strong> — versão, autor e estrutura do app</li>
     </ul>
   </div>
   <div class="card">
     <h3>Aba Histórico</h3>
-    <p><strong>📅 Calendário de Eventos</strong> — visão mensal com dots coloridos por tipo de evento. Toque em um dia para ver os registros.</p>
+    <p><strong>📅 Calendário de Eventos</strong> — visão mensal com dots coloridos: 🐮 nascimentos, 🔄 movimentações, 💉 manejos, 💰 finanças. Toque em um dia para ver a lista de eventos abaixo.</p>
+  </div>
+</div>
+
+<div class="section" id="dicas">
+  <div class="section-header">
+    <div class="section-icon green">💡</div>
+    <h2>Dicas Importantes</h2>
+  </div>
+  <div class="card">
+    <ul>
+      <li><strong>Backup regular:</strong> vá em Config. → Dados → Exportar Backup (JSON). Mantenha cópias periódicas.</li>
+      <li><strong>Dados offline:</strong> o app salva localmente e sincroniza quando a internet voltar. A fila de sincronização mostra "Processando fila" no console.</li>
+      <li><strong>Botão "Voltar ao topo":</strong> em listas longas, role para o topo manualmente (não há botão flutuante).</li>
+      <li><strong>Venda de animal:</strong> o valor é distribuído em 12 meses, a partir de janeiro do ano da venda. Planeje-se.</li>
+      <li><strong>Badge de bezerros:</strong> o número vermelho na aba Animais indica quantos bezerros nasceram há menos de 7 dias.</li>
+    </ul>
   </div>
 </div>
 

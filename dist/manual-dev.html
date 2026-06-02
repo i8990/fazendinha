@@ -8,25 +8,24 @@
   :root {
     --green: #55604D; --gDark: #4E3B31; --gLight: #8A6B55; --gPale: #EDE8DF;
     --bg: #ECE9E2; --card: #F9F7F3; --text: #2E2D2A; --gray: #7A6F65;
-    --border: #D7C7AE; --orange: #B87333; --red: #9B4C3C; --blue: #5B7B8A; --purple: #7A6B8A;
+    --border: #D7C7AE; --red: #9B4C3C; --blue: #5B7B8A; --teal: #4F7A72;
     --shadow: rgba(78,59,49,0.08);
-    --code-bg: #2E2D2A; --code-text: #EDE8DF;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system,BlinkMacSystemFont,'Inter',system-ui,sans-serif;
     background: var(--bg); color: var(--text);
-    max-width: 720px; margin: 0 auto; padding: 0 0 60px; line-height: 1.65;
+    max-width: 800px; margin: 0 auto; padding: 0 0 60px; line-height: 1.65;
   }
   .hero {
-    background: linear-gradient(145deg, #2E2D2A, var(--green));
+    background: linear-gradient(145deg, #2a3d33, var(--teal));
     padding: 48px 24px 32px; text-align: center;
   }
-  .hero h1 { color: #fff; font-size: 26px; font-weight: 800; }
-  .hero p { color: rgba(255,255,255,0.65); font-size: 13px; margin-top: 4px; font-family: monospace; }
+  .hero h1 { color: #fff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+  .hero p { color: rgba(255,255,255,0.7); font-size: 13px; margin-top: 6px; }
   .badge {
-    display: inline-block; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.85);
-    border-radius: 6px; padding: 3px 10px; font-size: 10px; font-weight: 700; margin-top: 10px; letter-spacing: 0.3px;
+    display: inline-block; background: rgba(255,255,255,0.18); color: rgba(255,255,255,0.9);
+    border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; margin-top: 12px;
   }
   .toc {
     background: var(--card); margin: 16px; border-radius: 18px; padding: 16px 18px;
@@ -35,76 +34,53 @@
   .toc-title { font-size: 11px; font-weight: 700; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
   .toc a {
     display: flex; align-items: center; gap: 8px; padding: 7px 0;
-    border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 13px; font-weight: 500;
+    border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 13.5px; font-weight: 500;
   }
   .toc a:last-child { border-bottom: none; }
-  .toc a .arr { margin-left: auto; color: var(--gray); font-size: 12px; }
-  .toc a .chip {
-    font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
-    background: var(--gPale); color: var(--green); margin-left: 4px;
-  }
-  .section { margin: 0 16px 20px; }
+  .toc a .arr { margin-left: auto; color: var(--gray); font-size: 11px; }
+  .section { margin: 0 16px 18px; }
   .section-header {
     display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding-top: 6px;
   }
   .section-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
   }
   .section-icon.green { background: var(--gPale); }
   .section-icon.blue { background: #E8EFF2; }
-  .section-icon.orange { background: #F5EDE9; }
   .section-icon.purple { background: #EDE9F2; }
-  .section-icon.dark { background: #2E2D2A; color: #EDE8DF; }
-  .section h2 { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
-  .section .sub { font-size: 11px; color: var(--gray); font-family: monospace; }
+  .section-icon.orange { background: #F5EDE9; }
+  .section h2 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
   .card {
-    background: var(--card); border-radius: 16px; padding: 16px;
+    background: var(--card); border-radius: 14px; padding: 14px;
     box-shadow: 0 2px 8px var(--shadow); margin-bottom: 8px;
   }
-  .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-  .card h3 code { font-size: inherit; }
-  .card p, .card li { font-size: 13px; color: var(--gray); line-height: 1.65; }
+  .card h3 { font-size: 13.5px; font-weight: 700; margin-bottom: 6px; color: var(--gDark); }
+  .card h4 { font-size: 12.5px; font-weight: 700; margin-bottom: 4px; color: var(--teal); }
+  .card p, .card li { font-size: 13px; color: var(--gray); line-height: 1.6; }
   .card strong { color: var(--text); }
-  .card ul { padding-left: 18px; }
+  .card ul, .card ol { padding-left: 18px; }
   .card li { margin-bottom: 3px; }
-  .card .file { font-family: monospace; font-size: 12px; color: var(--blue); font-weight: 600; }
-
-  pre, code {
-    font-family: 'SF Mono','Menlo','Monaco','Courier New',monospace;
-  }
-  pre {
-    background: var(--code-bg); color: var(--code-text);
-    border-radius: 12px; padding: 14px;
-    font-size: 12px; line-height: 1.7; overflow-x: auto; margin: 8px 0;
+  .tag {
+    display: inline-block; background: var(--gPale); color: var(--green);
+    border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin-bottom: 6px;
   }
   code {
-    background: rgba(85,96,77,0.1); color: var(--green);
-    border-radius: 4px; padding: 1px 6px; font-size: 12.5px;
+    background: #E8E6DE; color: #3B3228;
+    padding: 1px 5px; border-radius: 4px; font-size: 12.5px; font-family: 'SF Mono','Fira Code','Monaco',monospace;
   }
-  pre code { background: transparent; color: inherit; padding: 0; border-radius: 0; font-size: inherit; }
-  .cm { color: #8E8E93; } .kw { color: #FF79C6; } .st { color: #F1FA8C; }
-  .nm { color: #61DAFB; } .op { color: #FF79C6; }
-
-  .info-row {
-    display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 8px 0; border-bottom: 1px solid var(--border); gap: 10px; font-size: 13px;
+  pre {
+    background: #E8E6DE; border-radius: 10px; padding: 12px; font-size: 12px;
+    overflow-x: auto; margin: 6px 0; border-left: 3px solid var(--teal);
   }
-  .info-row:last-child { border-bottom: none; }
-  .info-label { color: var(--gray); flex-shrink: 0; }
-  .info-value { font-weight: 500; color: var(--text); text-align: right; }
-
-  .tip {
-    background: var(--gPale); border-left: 3px solid var(--green);
-    border-radius: 0 10px 10px 0; padding: 12px 14px;
-    font-size: 12.5px; color: var(--gDark); line-height: 1.6; margin-bottom: 8px;
-  }
-  .tip.warn { background: #F5EDE9; border-left-color: var(--orange); color: #5c3900; }
-  .tip code { background: rgba(85,96,77,0.15); }
-
+  pre code { background: none; padding: 0; font-size: 12px; }
+  .divider { height: 1px; background: var(--border); margin: 6px 0 12px; }
   .footer { text-align: center; padding: 24px 20px; color: var(--gray); font-size: 12px; }
   .footer span { color: var(--green); font-weight: 700; }
-
+  .kbd {
+    display: inline-block; background: #D7D3C9; border-radius: 4px; padding: 0 5px;
+    font-size: 11px; font-weight: 700; font-family: 'SF Mono','Fira Code',monospace;
+  }
   @media (max-width: 480px) {
     .hero { padding: 36px 18px 24px; }
   }
@@ -114,408 +90,624 @@
 
 <div class="hero">
   <h1>⚙️ Manual do Desenvolvedor</h1>
-  <p>fazendinha-app — arquitetura por função</p>
-  <div class="badge">React 18</div>
-  <div class="badge">Vite 5</div>
-  <div class="badge">Supabase</div>
-  <div class="badge">Vercel</div>
+  <p>Fazendinha App — arquitetura, fluxo de dados e algoritmos</p>
+  <div class="badge">React + Vite + Supabase · Offline-first</div>
 </div>
 
 <div class="toc">
-  <div class="toc-title">📑 Sumário</div>
-  <a href="#estrutura"><span>📁</span> Estrutura de Arquivos<span class="arr">›</span></a>
-  <a href="#app"><span>🏗️</span> app.jsx — Estado e Roteamento<span class="arr">›</span></a>
-  <a href="#pages"><span>📄</span> Páginas (pages/)<span class="arr">›</span></a>
-  <a href="#tools"><span>🧮</span> Ferramentas (tools/)<span class="arr">›</span></a>
-  <a href="#storage"><span>💾</span> storage.js — Persistência<span class="arr">›</span></a>
-  <a href="#ui"><span>🎨</span> ui.jsx — Design System<span class="arr">›</span></a>
-  <a href="#utils"><span>🔧</span> utils.js — Utilitários Puros<span class="arr">›</span></a>
-  <a href="#widgets"><span>🌤️</span> widgets.jsx — Componentes Complexos<span class="arr">›</span></a>
-  <a href="#algoritmos"><span>📐</span> Algoritmos e Cálculos<span class="arr">›</span></a>
-  <a href="#servicos"><span>🌐</span> Serviços Externos<span class="arr">›</span></a>
-  <a href="#deploy"><span>🚀</span> Deploy<span class="arr">›</span></a>
+  <div class="toc-title">📋 Sumário</div>
+  <a href="#visao">🏗️ Visão Geral<span class="arr">›</span></a>
+  <a href="#app">📱 App.jsx — Orquestrador<span class="arr">›</span></a>
+  <a href="#auth">🔐 Autenticação e Sessão<span class="arr">›</span></a>
+  <a href="#storage">💾 Armazenamento e Sincronização<span class="arr">›</span></a>
+  <a href="#ui">🎨 Sistema de UI (ui.jsx)<span class="arr">›</span></a>
+  <a href="#pages">📄 Páginas<span class="arr">›</span></a>
+  <a href="#animais">🐄 Animais — Algoritmos<span class="arr">›</span></a>
+  <a href="#pastos">🌿 Pastos — Estrutura de Dados<span class="arr">›</span></a>
+  <a href="#financeiro">💰 Financeiro — Fluxo Contábil<span class="arr">›</span></a>
+  <a href="#tools">🧮 Ferramentas — Algoritmos<span class="arr">›</span></a>
+  <a href="#confinamento">🏚️ Confinamento — Cálculos<span class="arr">›</span></a>
+  <a href="#adubacao">🌱 Adubação — Método Embrapa<span class="arr">›</span></a>
+  <a href="#curral">🏚️ Curral — Manejo em Lote<span class="arr">›</span></a>
+  <a href="#mapa">🗺️ Mapa Medição (Leaflet)<span class="arr">›</span></a>
+  <a href="#clima">🌤️ Clima — Open-Meteo API<span class="arr">›</span></a>
+  <a href="#manual">📖 Sistema de Ajuda<span class="arr">›</span></a>
+  <a href="#utils">🔧 Utilitários (utils.js)<span class="arr">›</span></a>
+  <a href="#pwa">📲 PWA e Meta Tags<span class="arr">›</span></a>
 </div>
 
-<!-- ESTRUTURA -->
-<div class="section" id="estrutura">
-  <div class="section-header">
-    <div class="section-icon dark">📁</div>
-    <h2>Estrutura de Arquivos</h2>
-  </div>
-  <div class="card">
-    <p><span class="file">main.jsx</span> — Entry point. Monta <code>&lt;App /&gt;</code> no <code>#root</code>.</p>
-    <p><span class="file">app.jsx</span> — Estado global (useState), <code>mk()</code> setters instrumentados, ThemeProvider, BottomNav, roteamento por página.</p>
-    <p><span class="file">constants.js</span> — Paletas LIGHT/DARK, <code>PS/PE/TM</code> enums, ThemeContext (<code>TC</code>) e hook <code>useT()</code>.</p>
-    <p><span class="file">utils.js</span> — Funções puras sem efeito colateral: datas (TODAY, fmtD, calcIdade), moeda (fmtR), sal mineral (calcSal).</p>
-    <p><span class="file">storage.js</span> — Camada de persistência: <code>dbSet</code> (fire-and-forget upsert), <code>dbLoad</code>, <code>dbExport</code>, <code>dbReset</code>.</p>
-    <p><span class="file">supabase.js</span> — Cliente Supabase inicializado com <code>VITE_SB_URL</code> e <code>VITE_SB_ANON_KEY</code>. Exporta <code>supabaseClient</code>, <code>signIn</code>, <code>signUp</code>, <code>signOut</code>.</p>
-    <p><span class="file">ui.jsx</span> — Design system completo: Card, Btn, Inp, Sel, Modal, Badge, Sprite, PgH, DetailPage, Section, InfoRow, DeleteBtn.</p>
-    <p><span class="file">widgets.jsx</span> — ClimaWidget (Open-Meteo), CalendarView, MapaMedicao (Leaflet/ESRI).</p>
-    <p><span class="file">Icon.jsx</span> — Sistema de ícones via spritesheet de 5×5 com nomes semânticos (touro, vaca, balanca, sal, etc).</p>
-  </div>
-  <div class="card">
-    <h3>pages/</h3>
-    <p><span class="file">Dashboard.jsx</span> — Home. KPIs, alertas, bezerros recentes, clima, financeiro do mês, ações rápidas.</p>
-    <p><span class="file">Animais.jsx</span> — Abas Rebanho/Bezerros/Pastos/Manejo/Vendidos. Busca, ordenação, cadastro, ficha do animal, venda.</p>
-    <p><span class="file">Pastos.jsx</span> — CRUD de piquetes, medição por satélite, estoque de sal. Renderizado dentro de Animais.</p>
-    <p><span class="file">Financeiro.jsx</span> — Caixa mensal (fazenda + pessoal), gráfico 6 meses, CRUD de transações.</p>
-    <p><span class="file">FinanceiroPessoal.jsx</span> — Mesma estrutura do Financeiro, porém com categorias pessoais.</p>
-    <p><span class="file">Historico.jsx</span> — Timeline unificada, KPIs mensais, filtros por tipo, telas de detalhe de manejo/mov/fin.</p>
-    <p><span class="file">GlobalModals.jsx</span> — 5 modais de ação rápida: nascimento, sal, despesa, gasolina, mover pasto.</p>
-    <p><span class="file">Settings.jsx</span> — Dark mode, sincronização, backup/restore, reset, ajuda, calendário, sobre.</p>
-    <p><span class="file">Ajuda.jsx</span> — Painel de ajuda com link para manuais HTML.</p>
-    <p><span class="file">Login.jsx</span> — Tela de autenticação (email/senha) via Supabase Auth.</p>
-  </div>
-  <div class="card">
-    <h3>tools/</h3>
-    <p><span class="file">Ferramentas.jsx</span> — Menu grid + roteamento interno para cada ferramenta.</p>
-    <p><span class="file">Calculadoras.jsx</span> — UA, Lotação, Sal Mineral, GMD, Peso Fita, Pop. Plantas (sem persistência).</p>
-    <p><span class="file">Adubacao.jsx</span> — Análise de solo + algoritmo Embrapa de recomendação de adubação.</p>
-    <p><span class="file">Confinamento.jsx</span> — Simulador de confinamento com dieta e projeção de ganho.</p>
-    <p><span class="file">CurralTool.jsx</span> — Checklist de manejo em lote: seleciona tipo, filtra animais, marca por brinco.</p>
-  </div>
+<!-- ============================================================ -->
+<div class="section" id="visao">
+<div class="section-header"><div class="section-icon green">🏗️</div><h2>Visão Geral</h2></div>
+<div class="card">
+  <p><strong>Stack:</strong> React 18 + Vite + Supabase (PostgreSQL) + <code>@capacitor/preferences</code> nativo + Leaflet + Open-Meteo API.</p>
+  <p><strong>Estrutura de diretórios:</strong></p>
+  <pre><code>src/
+  app.jsx           — Orquestrador, routing, splash, modais globais
+  pages/
+    Home.jsx        — Dashboard, alertas, bezerros, ações rápidas
+    Animais.jsx     — Abas Rebanho/Bezerros/Pastos/Manejo/Vendidos
+    Financeiro.jsx  — Contas Fazenda e Pessoal
+    Ferramentas.jsx — Grid de ferramentas
+    Settings.jsx    — Configurações, Sobre, Calendário
+    Ajuda.jsx       — Iframe para manuais
+    ForgotPW.jsx    — Recuperação de senha
+    Login.jsx       — Tela de login
+  tools/
+    Adubacao.jsx    — Análise de solo Embrapa
+    Confinamento.jsx— Simulador de confinamento
+    Calculadoras.jsx— 6 calculadoras (UA, Lotação, Sal, GMD, Peso Fita, Pop.)
+    CurralTool.jsx  — Manejo em lote
+  storage.js        — localStorage + Capacitor Preferences + Supabase sync
+  supabase.js       — Cliente Supabase, auth, getPerfil
+  localdb.js        — Wrapper Capacitor Preferences
+  ui.jsx            — Design system (Card, Btn, Inp, Sel, Modal, Sprite, etc.)
+  utils.js          — TODAY, calcIdade, calcSal, fmtD, fmtR, sub
+  widgets/
+    ClimaWidget.jsx — Previsão do tempo Open-Meteo
+    CalendarView.jsx— Calendário de eventos
+    MapaMedicao.jsx — Medição de área por satélite (Leaflet)
+public/
+  manual-usuario.html
+  manual-dev.html
+  icon-*.png
+  Splash*.png
+  logo*.png
+  nav/*.png         — Ícones da barra de navegação
+  sprites/          — Sprites para ícones nas páginas (CAT, SEX, LOT, etc.)</code></pre>
+  <p><strong>Base URL:</strong> Vite configurado com <code>base: "./"</code> para build estática relativa.</p>
+</div>
 </div>
 
-<!-- app.jsx -->
+<!-- ============================================================ -->
 <div class="section" id="app">
-  <div class="section-header">
-    <div class="section-icon dark">🏗️</div>
-    <h2>app.jsx — Estado e Roteamento</h2>
-  </div>
-  <div class="card">
-    <h3>Função principal</h3>
-    <p>Todo o estado global vive em <code>app.jsx</code> como <code>useState([])</code>. Nenhuma página acessa storage diretamente.</p>
-    <pre><span class="cm">// 7 entidades + 1 config:</span>
-<span class="kw">const</span> [pastos, setP] = useState([])
-<span class="kw">const</span> [animais, setA] = useState([])
-<span class="kw">const</span> [fin, setF] = useState([])
-<span class="kw">const</span> [movs, setMv] = useState([])
-<span class="kw">const</span> [sal, setSl] = useState([])
-<span class="kw">const</span> [manejos, setMj] = useState([])
-<span class="kw">const</span> [adubacoes, setAdu] = useState([])
-<span class="kw">const</span> [cfg, setCfg] = useState({ dark: false })</pre>
-  </div>
-  <div class="card">
-    <h3><code>mk()</code> — Setter instrumentado</h3>
-    <p>Cada setter exposto às páginas passa por <code>mk(key, setterLocal)</code> que persiste automaticamente no Supabase após cada mutação:</p>
-    <pre><span class="kw">const</span> mk = (k, s) => fn => {
-  <span class="kw">const</span> next = <span class="kw">typeof</span> fn === <span class="st">'function'</span> ? fn(prev) : fn
-  SAVERS[k]?.(next)  <span class="cm">// fire-and-forget upsert</span>
-  <span class="kw">return</span> next
+<div class="section-header"><div class="section-icon blue">📱</div><h2>App.jsx — Orquestrador</h2></div>
+<div class="card">
+  <h3>Estado global (useState)</h3>
+  <p>7 entidades gerenciadas como arrays de estado no <code>App()</code>:</p>
+  <pre><code>const [animais, setAnimais] = useState([])
+const [pastos, setPastos] = useState([])
+const [manejos, setManejos] = useState([])
+const [movs, setMovs] = useState([])
+const [financeiro, setFinanceiro] = useState([])
+const [adubacao, setAdubacao] = useState([])
+const [cfg, setCfg] = useState({})</code></pre>
+</div>
+<div class="card">
+  <h3>mk() — Setter instrumentado</h3>
+  <p>Toda chamada <code>setX()</code> passa por <code>mk()</code> que wrapper o setter original para auto-salvar no Supabase via <code>SAVERS</code>:</p>
+  <pre><code>const SAVERS = {
+  animais: dbSaveAnimais, pastos: dbSavePastos,
+  manejos: dbSaveManejos, movs: dbSaveMovs,
+  financeiro: dbSaveFin, adubacao: dbSaveAdub, cfg: saveCfg,
 }
-<span class="kw">const</span> setPastos = mk(<span class="st">'pastos'</span>, setP)
-<span class="kw">const</span> setAnimais = mk(<span class="st">'animais'</span>, setA)</pre>
-  </div>
-  <div class="card">
-    <h3>Roteamento</h3>
-    <p>Controle por estado <code>page</code> (string). BottomNav fixo com 5 abas: <strong>home</strong> | <strong>animais</strong> | <strong>financeiro</strong> | <strong>ferramentas</strong> | <strong>settings</strong>. Cada aba renderiza o componente correspondente condicionalmente.</p>
-    <p>O estado <code>globalAction</code> abre modais do GlobalModals de qualquer tela. <code>globalAction === null</code> → oculta.</p>
-  </div>
-  <div class="card">
-    <h3>Fluxo de boot</h3>
-    <p><code>useEffect</code> no mount carrega todos os dados do Supabase em paralelo via <code>dbLoad()</code>. Depois aplica dark mode se cfg.dark = true. Um estado <code>loading</code> controla a tela de splash inicial.</p>
-  </div>
+function mk(setter, name) {
+  return (v) => {
+    setter(v)
+    const fn = SAVERS[name]
+    fn && fn(v instanceof Function ? fn(v) : v)
+  }
+}</code></pre>
+  <p><strong>⚠️ Nota:</strong> A chamada acima contém um bug: <code>fn(v instanceof Function ? fn(v) : v)</code> deveria ser <code>setter(v)</code> ou uma referência ao estado anterior. Na prática, a persistência lê o estado atual do React, então funciona por coincidência.</p>
+</div>
+<div class="card">
+  <h3>Fluxo de inicialização</h3>
+  <ol>
+    <li><code>useEffect</code> com <code>onAuthStateChange</code> detecta sessão ativa</li>
+    <li>Se logado: chama <code>dbLoadAll()</code> que carrega localStorage → popula os 7 estados</li>
+    <li>Chama <code>syncAll()</code> em background para buscar dados do Supabase</li>
+    <li>Se não logado: mostra <code>&lt;Login /&gt;</code></li>
+    <li>Durante carregamento: mostra <code>&lt;Splash /&gt;</code> com logo + spinner</li>
+  </ol>
+</div>
+<div class="card">
+  <h3>Routing</h3>
+  <p>A página atual é controlada por <code>page</code> (Home, Animais, Financeiro, Ferramentas, Config) e <code>subPage</code> (detalhes: animal, pasto, transação, etc.), passados como props descendentes.</p>
+</div>
 </div>
 
-<!-- PAGES -->
-<div class="section" id="pages">
-  <div class="section-header">
-    <div class="section-icon green">📄</div>
-    <h2>Páginas (pages/)</h2>
-  </div>
-
-  <div class="card">
-    <h3>Dashboard.jsx <code>→ Home</code></h3>
-    <p><strong>Função:</strong> Exibe KPIs do rebanho, bezerros recentes (filtro 30 dias), 4 botões de ação rápida, widget de clima, resumo financeiro do mês, alertas automáticos.</p>
-    <p><strong>Arquitetura:</strong> Componente puramente de apresentação. Todos os cálculos (filtro de bezerros, total receita/despesa, alertas) são feitos no corpo do componente com <code>filter</code> + <code>reduce</code>. Recebe <code>setAction</code> e <code>setPage</code> como props para navegação.</p>
-    <p><strong>Alertas:</strong> 3 tipos — animais sem pasto (icone 🚜), sal baixo (🧂, <code>calcSal()</code>), pastos degradados (🌱). Cada alerta é um objeto com <code>{ icon, msg, cor, page }</code>.</p>
-  </div>
-
-  <div class="card">
-    <h3>Animais.jsx <code>→ Gestão do Rebanho</code></h3>
-    <p><strong>Função:</strong> 5 abas (rebanho, bezerros, pastos, manejo, vendidos). Cadastro, busca, ordenação, ficha detalhada com movimentações e manejos, venda (distribui receita em 12 meses).</p>
-    <p><strong>Arquitetura:</strong> Duas seções: <code>AnimalDetailPage</code> (full-screen detail) e <code>Animais</code> (lista com tabs). O estado <code>detailAnimal</code> controla qual animal está em detalhe. A ordenação usa <code>sortAnimals(arr)</code> com switch por critério (ident/peso/dataNasc/lote).</p>
-    <p><strong>Venda:</strong> Gera 12 objetos <code>fin</code> (receita, cat: 'Venda de gado') com valor distribuído. O registro original é movido para array <code>vendidos</code>.</p>
-  </div>
-
-  <div class="card">
-    <h3>Pastos.jsx <code>→ Piquetes</code></h3>
-    <p><strong>Função:</strong> CRUD de pastos, medição de área por satélite (Leaflet + ESRI), estoque de sal mineral por pasto.</p>
-    <p><strong>MapaMedicao:</strong> Usa Leaflet com tiles ESRI. Cliques no mapa registram coordenadas; o app calcula a área em hectares via fórmula geodésica e exibe o polígono no mapa.</p>
-  </div>
-
-  <div class="card">
-    <h3>Financeiro.jsx / FinanceiroPessoal.jsx <code>→ Caixa</code></h3>
-    <p><strong>Função:</strong> Navegação mensal, saldo consolidado, gráfico Recharts de 6 meses (barras empilhadas), filtro Tudo/Entradas/Saídas, CRUD de transações.</p>
-    <p><strong>Arquitetura:</strong> <code>FinanceiroPessoal.jsx</code> replica a estrutura do <code>Financeiro.jsx</code> com categorias diferentes (Salário, Moradia, etc). Ambos recebem <code>setFin</code> com a chave correta (<code>'fin'</code> vs <code>'finP'</code>).</p>
-  </div>
-
-  <div class="card">
-    <h3>Historico.jsx <code>→ Timeline</code></h3>
-    <p><strong>Função:</strong> Timeline unificada de todos os eventos (movs, manejos, nascimentos, finanças). Filtros por tipo, KPIs mensais, telas de detalhe.</p>
-    <p><strong>Arquitetura:</strong> Constrói um array único via <code>useMemo</code> mapeando cada tipo de evento com <code>_tipo</code>. Ordena por <code>data</code> descendente. Cada tipo tem renderização própria na função <code>renderCard()</code> com cor de borda e ícone específicos.</p>
-  </div>
-
-  <div class="card">
-    <h3>GlobalModals.jsx <code>→ Ações Rápidas</code></h3>
-    <p><strong>Função:</strong> 5 modais fullscreen acionados por <code>globalAction</code>: nascimento (cadastra bezerro), sal (registra reposição), despesa (lança financeiro), gasolina (calcula custo de combustível), mover pasto (transfere animal).</p>
-    <p><strong>Arquitetura:</strong> Renderiza um modal condicional por <code>if (action === 'sal')</code>, <code>if (action === 'nascimento')</code>, etc. Cada um com estado local próprio (<code>fS</code>, <code>fN</code>, <code>fD</code> etc). A gasolina usa <code>localStorage</code> para persistir os dados do veículo entre sessões.</p>
-  </div>
-
-  <div class="card">
-    <h3>Settings.jsx <code>→ Configurações</code></h3>
-    <p><strong>Função:</strong> Abas Geral e Histórico (calendário). Dark mode (Toggle iOS-style), sincronização, export/import JSON, reset total, ajuda, logout, Sobre.</p>
-    <p><strong>Toggle:</strong> Componente local com <code>translateX</code> animado, 51×31px, cor verde quando ativo.</p>
-    <p><strong>Import:</strong> Lê arquivo JSON via FileReader, chama <code>dbSet</code> para cada chave e atualiza os setters locais.</p>
-  </div>
+<!-- ============================================================ -->
+<div class="section" id="auth">
+<div class="section-header"><div class="section-icon orange">🔐</div><h2>Autenticação e Sessão</h2></div>
+<div class="card">
+  <p>Arquivo: <code>src/supabase.js</code></p>
+  <h3>Cliente Supabase</h3>
+  <pre><code>const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)</code></pre>
+  <p>Variáveis hardcoded do projeto Supabase "fazendinhaapp".</p>
+  <h3>Funções de Auth</h3>
+  <ul>
+    <li><code>signIn(email, password)</code> → <code>supabase.auth.signInWithPassword()</code></li>
+    <li><code>signUp(email, password)</code> → <code>supabase.auth.signUp()</code></li>
+    <li><code>signOut()</code> → <code>supabase.auth.signOut()</code></li>
+    <li><code>getPerfil()</code> → <code>supabase.auth.getUser()</code></li>
+    <li><code>resetPassword(email)</code> → <code>supabase.auth.resetPasswordForEmail()</code></li>
+  </ul>
+  <h3>Persistência local da sessão</h3>
+  <p>Após login, <code>user.id</code> e <code>user.email</code> são salvos via <code>setCurrentUserId()</code> no localStorage + Capacitor Preferences. Isso permite carregar dados offline mesmo após fechar o app.</p>
+  <p><code>onAuthStateChange</code> em <code>app.jsx</code> escuta mudanças de sessão e ajusta o estado global.</p>
+</div>
 </div>
 
-<!-- TOOLS -->
-<div class="section" id="tools">
-  <div class="section-header">
-    <div class="section-icon orange">🧮</div>
-    <h2>Ferramentas (tools/)</h2>
-  </div>
-
-  <div class="card">
-    <h3>Calculadoras.jsx <code>→ UA, Lotação, Sal, GMD, Peso Fita, Pop. Plantas</code></h3>
-    <p><strong>Arquitetura:</strong> Todas as calculadoras são funções puras de transformação. Nenhuma tem persistência — apenas exibem resultados em tempo real. Separadas em cards dentro de um scroll view.</p>
-    <ul>
-      <li><strong>UA:</strong> <code>nAnimais × (pesoMedio / 450)</code></li>
-      <li><strong>Lotação:</strong> <code>area / (uaPorCabeca / uaPorHa)</code> com presets 0.5/1.0/1.5/2.5 UA/ha</li>
-      <li><strong>Sal:</strong> <code>(nAnimais × consumoDia × dias) / 30000</code> → sacos de 30 kg</li>
-      <li><strong>GMD:</strong> <code>(pesoAlvo - pesoInicial) / gmdEsperado</code> → dias</li>
-      <li><strong>Peso Fita:</strong> Tabela de referência circunferência torácica → peso estimado</li>
-      <li><strong>Pop. Plantas:</strong> <code>(10000 / espacamento) × sementesPorMetro</code></li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <h3>Adubacao.jsx <code>→ Análise de Solo Embrapa</code></h3>
-    <p><strong>Função:</strong> Interpreta análise de solo (pH, P, K, Ca, Mg, Al, H+Al, CTC, V%, MO) e gera recomendação de calagem, adubação de plantio e cobertura nitrogenada segundo método Embrapa de saturação de bases.</p>
-    <p><strong>Algoritmo:</strong> <code>calcRecomendacao()</code> em 3 etapas:</p>
-    <pre><span class="cm">// 1. Calagem (NC = Necessidade de Calagem)</span>
-NC = CTC × (V2 − V1) / PRNT
-<span class="cm">// V2 = saturação alvo (70% para pastagem)</span>
-<span class="cm">// PRNT = 80 (calcário padrão)</span>
-
-<span class="cm">// 2. Fórmula NPK por nível de P e K:</span>
-P &lt; 15 → 8-28-16  (correção de fósforo)
-K &lt; 70 → 20-05-20 (correção de potássio)
-senão  → 4-14-8   (manutenção)
-
-<span class="cm">// 3. Cobertura nitrogenada:</span>
-ureiaKgHa = 100 + (MO &lt; 1.5 ? 20 : 0) + (pH &lt; 5.5 ? 10 : 0)</pre>
-    <p><strong>Persistência:</strong> Cada análise é salva em <code>adubacoes</code> com dados completos do solo e recomendação. Pode ser vinculada a um pasto.</p>
-  </div>
-
-  <div class="card">
-    <h3>Confinamento.jsx <code>→ Simulador de Confinamento</code></h3>
-    <p><strong>Função:</strong> Simula confinamento com dados de entrada (animais, peso inicial, GMD, dias). Calcula peso de saída, @ arrobas, consumo total e ingredientes da dieta.</p>
-    <p><strong>Algoritmos:</strong></p>
-    <pre><span class="cm">// Consumo: 2.5% do peso médio vivo</span>
-pesoMedio = (pInicial + pSaida) / 2
-consDiaAnimal = pesoMedio × 0.025
-consTotal = consDiaAnimal × nAnimais × dias
-
-<span class="cm">// Dieta (proporções fixas Embrapa):</span>
-silagem 55% | fubá 22% | farelo soja 13%
-sal proteinado 7% | núcleo mineral 3%</pre>
-  </div>
-
-  <div class="card">
-    <h3>CurralTool.jsx <code>→ Manejo em Lote</code></h3>
-    <p><strong>Função:</strong> Checklist para manejos no curral. Seleciona o tipo de manejo, filtra animais por pasto ou busca por brinco, marca individualmente conforme são atendidos, salva um único registro de manejo com array de IDs.</p>
-    <p><strong>Arquitetura:</strong> Estado local <code>marcados: Set()</code> controla quais animais foram atendidos. Ao salvar, gera um objeto <code>manejo</code> com <code>animaisIds</code> e <code>animaisIdents</code>. Usa <code>onSalvar</code> callback para devolver ao pai.</p>
-  </div>
-
-  <div class="card">
-    <h3>Ferramentas.jsx <code>→ Menu e Roteamento</code></h3>
-    <p><strong>Função:</strong> Exibe grid de 8 ferramentas, cada uma com ícone, nome e descrição. Ao tocar, renderiza a ferramenta correspondente no lugar do menu.</p>
-    <p><strong>Arquitetura:</strong> Estado <code>tool</code> controla qual ferramenta está aberta. Se <code>null</code>, exibe o menu grid. Cada ferramenta tem um botão "Voltar" que seta <code>tool</code> para <code>null</code>.</p>
-  </div>
-</div>
-
-<!-- STORAGE -->
+<!-- ============================================================ -->
 <div class="section" id="storage">
-  <div class="section-header">
-    <div class="section-icon blue">💾</div>
-    <h2>storage.js — Persistência</h2>
-  </div>
-  <div class="card">
-    <h3>Arquitetura de dados</h3>
-    <p>Schema único <code>app_state(key, value, updated_at)</code> no Supabase. Cada entidade é armazenada como um <code>jsonb</code> completo do array.</p>
-    <pre><span class="kw">CREATE TABLE</span> app_state (
-  key        text <span class="kw">PRIMARY KEY</span>,
-  value      jsonb <span class="kw">NOT NULL</span>,
-  updated_at timestamptz <span class="kw">DEFAULT</span> now()
-);</pre>
-    <p><strong>Chaves:</strong> <code>'pastos'</code>, <code>'animais'</code>, <code>'fin'</code>, <code>'movs'</code>, <code>'sal'</code>, <code>'manejos'</code>, <code>'adubacoes'</code>, <code>'cfg'</code>.</p>
-  </div>
-  <div class="card">
-    <h3>Funções</h3>
-    <ul>
-      <li><strong><code>dbSet(key, value)</code></strong> — Upsert fire-and-forget. Não bloqueia a UI. Loga sucesso/erro no console.</li>
-      <li><strong><code>dbLoad(key)</code></strong> — Busca do Supabase. Retorna o array ou fallback <code>[]</code>. Usada no boot do app.</li>
-      <li><strong><code>dbExport(data)</code></strong> — Gera Blob JSON e dispara download com nome <code>fazendinha-backup-{data}.json</code>.</li>
-      <li><strong><code>dbReset()</code></strong> — Apaga todas as chaves e limpa o localStorage.</li>
-      <li><strong><code>dbImport(file, setters)</code></strong> — Lê JSON, faz parse, chama <code>dbSet</code> + setter local para cada chave.</li>
-    </ul>
-  </div>
-  <div class="tip">
-    <strong>ℹ️ Regra:</strong> Nenhuma página importa <code>storage.js</code> diretamente. Todo acesso passa pelos setters instrumentados <code>mk()</code> em <code>app.jsx</code>. Exceção: <code>Settings.jsx</code> (export/import/reset).
-  </div>
-  <div class="card">
-    <h3>Autenticação</h3>
-    <p><span class="file">supabase.js</span> inicializa o cliente com <code>createClient(url, anonKey)</code>. Exporta <code>signIn(email, password)</code> e <code>signUp(email, password)</code> que usam <code>supabaseClient.auth</code>.</p>
-    <p><strong>Login:</strong> <code>Login.jsx</code> gerencia os estados <code>email</code>, <code>password</code>, <code>loading</code>, <code>error</code>, <code>isSignUp</code>. Após autenticação bem-sucedida, armazena <code>session</code> no estado do App.</p>
-  </div>
+<div class="section-header"><div class="section-icon purple">💾</div><h2>Armazenamento e Sincronização</h2></div>
+<div class="card">
+  <p>Arquivo: <code>src/storage.js</code> · auxiliar: <code>src/localdb.js</code></p>
+  <h3>Estratégia offline-first</h3>
+  <p>Três camadas de armazenamento em cascata:</p>
+  <ol>
+    <li><strong>localStorage</strong> (navegador) — primário para web</li>
+    <li><strong>Capacitor Preferences</strong> (nativo) — iOS/Android via <code>localGet/localSet</code></li>
+    <li><strong>Supabase</strong> (nuvem) — upsert em segundo plano</li>
+  </ol>
+  <h3>Funções de leitura</h3>
+  <pre><code>dbLoadAll()
+  Lê todas as 7 entidades do localStorage
+  Retorna { animais, pastos, manejos, movs, financeiro, adubacao, cfg }
+
+dbLoadUser() / setCurrentUserId(id)
+  Gerencia userId no localStorage + Capacitor Preferences
+  Usa chaves 'uid', 'uemail', 'uname'
+</code></pre>
+  <h3>Funções de escrita (dbSet)</h3>
+  <pre><code>dbSet(name, data)     → salva local + tenta Supabase upsert
+dbSaveAnimais(data)   → dbSet('animais', data)
+dbSavePastos(data)    → dbSet('pastos', data)
+... (idem para manejos, movs, financeiro, adubacao)
+saveCfg(data)         → dbSet('cfg', data)</code></pre>
+  <p>Cada <code>dbSet</code> faz:</p>
+  <ol>
+    <li>Grava no localStorage (chave = userId + entidade)</li>
+    <li>Grava no Capacitor Preferences (mesma chave)</li>
+    <li>Tenta upsert no Supabase. Se falhar (offline), adiciona à fila <code>syncQueue</code></li>
+  </ol>
+</div>
+<div class="card">
+  <h3>Sincronização (syncAll)</h3>
+  <pre><code>async function syncAll()
+  Busca app_state do Supabase (todas as entidades)
+  Para cada entidade:
+    Faz merge bidirecional por id + updatedAt:
+    - Se só existe local → upsert no Supabase
+    - Se só existe remoto → adiciona ao estado local
+    - Se existem ambos → mantém o mais recente por updatedAt
+  Processa syncQueue pendente (tentativas de salvamento que falharam)
+  Atualiza os 7 estados React via callbacks</code></pre>
+  <p>A sincronização automática ocorre:</p>
+  <ul>
+    <li>Ao iniciar o app (após load inicial)</li>
+    <li>Online/offline via event listeners (não implementado — manual via botão em Config.)</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>Schema Supabase</h3>
+  <p>Tabela única <code>app_state</code>:</p>
+  <pre><code>CREATE TABLE app_state (
+  user_id UUID REFERENCES auth.users(id),
+  key     TEXT,        -- entidade: 'animais', 'pastos', etc.
+  value   JSONB,       -- array completo da entidade
+  updated_at TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (user_id, key)
+);</code></pre>
+  <p><code>upsert</code> é feito com <code>supabase.from('app_state').upsert(...)</code>.</p>
+</div>
 </div>
 
-<!-- UI -->
+<!-- ============================================================ -->
 <div class="section" id="ui">
-  <div class="section-header">
-    <div class="section-icon green">🎨</div>
-    <h2>ui.jsx — Design System</h2>
-  </div>
-  <div class="card">
-    <h3>Componentes</h3>
-    <ul>
-      <li><strong><code>&lt;Card&gt;</code></strong> — Container com fundo <code>T.card</code>, <code>borderRadius: 22</code>, sombra. Aceita <code>ch</code> (children) e <code>onClick</code>.</li>
-      <li><strong><code>&lt;Btn&gt;</code></strong> — Botão com altura fixa 52px, borderRadius 16, fontWeight 600. Props: <code>color</code>, <code>l</code> (label), <code>dis</code> (disabled), <code>onClick</code>.</li>
-      <li><strong><code>&lt;Inp&gt;</code></strong> — Input com label animado. Altura 50px, borderRadius 13, ring verde no foco. Props: <code>label</code>, <code>value</code>, <code>onChange</code>, <code>type</code>, <code>placeholder</code>.</li>
-      <li><strong><code>&lt;Sel&gt;</code></strong> — Select customizado com chevron SVG. Renderiza <code>&lt;select&gt;</code> nativo estilizado.</li>
-      <li><strong><code>&lt;Modal&gt;</code></strong> — Bottom sheet com overlay escuro, pull indicator, drag-to-close. <code>z-index: 500</code>. Props: <code>open</code>, <code>onClose</code>, <code>title</code>.</li>
-      <li><strong><code>&lt;Badge&gt;</code></strong> — Chip de status 8px+ borderRadius. Props: <code>l</code> (label), <code>c</code> (cor texto), <code>bg</code> (fundo).</li>
-      <li><strong><code>&lt;Sprite&gt;</code></strong> — Ícone via spritesheet <code>/spritesheet1.png</code> (3×3 grid, 9 ícones). Nomes: <code>vacaBezerro</code>, <code>bezerro</code>, <code>rebanho</code>, <code>curral</code>, <code>cartaoMoeda</code>, <code>celularCheck</code>, <code>caminhonete</code>, <code>pins</code>, <code>salMineral</code>.</li>
-      <li><strong><code>&lt;PgH&gt;</code></strong> — Page header com gradiente verde. Props: <code>title</code>, <code>sub</code>, <code>extra</code>.</li>
-      <li><strong><code>&lt;DetailPage&gt;</code></strong> — Tela full-screen para detalhes. Props: <code>onBack</code>, <code>title</code>, <code>icon</code>, <code>color</code>.</li>
-      <li><strong><code>&lt;Section&gt;</code></strong> — Grupo com título e estado vazio. Props: <code>title</code>, <code>empty</code>.</li>
-      <li><strong><code>&lt;InfoRow&gt;</code></strong> — Par label + value com linha inferior.</li>
-      <li><strong><code>&lt;DeleteBtn&gt;</code></strong> — Botão de exclusão em 2 passos: primeiro mostra "Excluir", segundo confirma.</li>
-    </ul>
-  </div>
+<div class="section-header"><div class="section-icon orange">🎨</div><h2>Sistema de UI (ui.jsx)</h2></div>
+<div class="card">
+  <p>Arquivo: <code>src/ui.jsx</code> — Componentes atômicos do design system.</p>
+  <h3>Componentes</h3>
+  <table style="width:100%; border-collapse:collapse; font-size:13px;">
+    <tr><td><code>&lt;Card&gt;</code></td><td>Container com padding e sombra</td></tr>
+    <tr><td><code>&lt;Btn&gt;</code></td><td>Botão estilizado, props <code>onClick, children, className</code></td></tr>
+    <tr><td><code>&lt;Inp&gt;</code></td><td>Input com label flutuante, <code>value</code> pode ser string ou número</td></tr>
+    <tr><td><code>&lt;Sel&gt;</code></td><td>Select estilizado, recebe <code>opts</code> array de <code>{value, label}</code></td></tr>
+    <tr><td><code>&lt;Modal&gt;</code></td><td>Overlay + conteúdo centralizado, fecha com <code>onClose</code></td></tr>
+    <tr><td><code>&lt;PageHeader&gt;</code></td><td>Barra superior com título, subtítulo, <code>onBack</code> e ação opcional</td></tr>
+    <tr><td><code>&lt;DetailPage&gt;</code></td><td>Wrapper de página de detalhes com scroll</td></tr>
+    <tr><td><code>&lt;DeleteBtn&gt;</code></td><td>Botão vermelho de excluir com confirmação em 2 passos</td></tr>
+    <tr><td><code>&lt;Badge&gt;</code></td><td>Círculo numerado, usado na nav para bezerros recentes</td></tr>
+    <tr><td><code>&lt;Sprite&gt;</code></td><td>Ícone via CSS sprite sheet. <code>name</code> = string da entidade</td></tr>
+    <tr><td><code>&lt;PgH&gt;</code></td><td>Alias <code>&lt;PageHeader /&gt;</code></td></tr>
+  </table>
+  <h3>Ícones (Sprite system)</h3>
+  <p>O app usa dois sistemas de ícones:</p>
+  <ul>
+    <li><strong>Sprite CSS:</strong> imagens compiladas em <code>public/sprites/*.png</code>. O componente <code>&lt;Sprite name="vaca" /&gt;</code> exibe via <code>background-position</code> em um sprite sheet unificado.</li>
+    <li><strong>Ícones de navegação:</strong> arquivos PNG individuais em <code>public/nav/*.png</code> (home.png, animais.png, caixa.png, ferramentas.png, config.png), carregados via <code>src="./nav/..."</code>.</li>
+  </ul>
+</div>
 </div>
 
-<!-- UTILS -->
+<!-- ============================================================ -->
+<div class="section" id="pages">
+<div class="section-header"><div class="section-icon green">📄</div><h2>Páginas</h2></div>
+<div class="card">
+  <h3>Home.jsx — Dashboard</h3>
+  <ul>
+    <li>Indicadores: total adultos, total bezerros</li>
+    <li>3 tipos de alerta: animais sem pasto, sal baixo (&lt;7 dias), pastos degradados</li>
+    <li>Lista bezerros recentes (30 dias) com idade e fase</li>
+    <li>Widget de clima (Open-Meteo)</li>
+    <li>Card financeiro do mês corrente</li>
+    <li>4 ações rápidas modais: Nascimento, Sal, Despesa, Ida à Fazenda (combustível)</li>
+    <li>Modal "Mover Pasto" — busca por brinco, seleciona destino</li>
+    <li>Botão flutuante "+" no canto inferior direito</li>
+  </ul>
+  <h3>Animais.jsx</h3>
+  <p>5 abas internas controladas por <code>aba</code> state:</p>
+  <ul>
+    <li><strong>Rebanho:</strong> filtra <code>animais</code> onde <code>a.categoria !== 'Bezerro'</code> e <code>a.vendido !== true</code>. Ordenação por <code>sortAnimais()</code>.</li>
+    <li><strong>Bezerros:</strong> filtra <code>categoria === 'Bezerro'</code>. Stats: total/macho/fêmea.</li>
+    <li><strong>Pastos:</strong> delega para <code>&lt;PastosLista&gt;</code> (inline no mesmo arquivo).</li>
+    <li><strong>Manejo:</strong> timeline de eventos (movs + manejos + nascimentos + financeiro). KPIs mensais.</li>
+    <li><strong>Vendidos:</strong> filtra <code>a.vendido === true</code>. Botão "↩️ Reativar Animal" redefine <code>vendido: false</code>.</li>
+  </ul>
+  <h3>Financeiro.jsx</h3>
+  <p>Duas abas: Fazenda e Pessoal. Compartilham a mesma estrutura de dados (<code>financeiro[]</code>) diferenciada por <code>tipo: 'fazenda'|'pessoal'</code>.</p>
+  <ul>
+    <li>Navegação mensal com setas</li>
+    <li>Card saldo (entradas - saídas)</li>
+    <li>Gráfico de barras dos últimos 6 meses</li>
+    <li>Modal de lançamento + modal de detalhes/edição</li>
+    <li>Financeiro Pessoal tem botão extra "📊 Ver gastos por categoria" (breakdown com totais)</li>
+  </ul>
+  <h3>Ferramentas.jsx</h3>
+  <p>Grid 3×3 com atalhos para <code>Adubacao, Confinamento, Calculadoras, CurralTool</code>.</p>
+  <h3>Settings.jsx</h3>
+  <p>Modo escuro (ThemeContext), sincronização manual, export/import/reset de dados, Ajuda (abre <code>Ajuda.jsx</code>), Sair. Aba "Histórico" tem <code>CalendarView</code>. Seção "Sobre" (expansível) exibe versão, autor, stack.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="animais">
+<div class="section-header"><div class="section-icon orange">🐄</div><h2>Animais — Algoritmos</h2></div>
+<div class="card">
+  <h3>Atributos de um animal</h3>
+  <pre><code>{
+  id, categoria, sexo, ident, raca, lote,
+  peso, nascimento, pasto, mae, obs,
+  vendido, dataVenda, precoVenda, pesoMeta
+}</code></pre>
+</div>
+<div class="card">
+  <h3>sortAnimais(order)</h3>
+  <pre><code>function sortAnimais(lista, order) {
+  const copy = [...lista]
+  switch(order) {
+    case 'ident':  copy.sort((a,b) => (a.ident||'').localeCompare(b.ident||'')); break;
+    case 'peso':   copy.sort((a,b) => (b.peso||0) - (a.peso||0)); break;
+    case 'dataNasc': copy.sort((a,b) => new Date(a.nascimento) - new Date(b.nascimento)); break;
+    case 'lote':   copy.sort((a,b) => (a.lote||'').localeCompare(b.lote||'')); break;
+    default:       copy.sort((a,b) => (a.ident||'').localeCompare(b.ident||'')); break;
+  }
+  return copy
+}</code></pre>
+  <p>Ordenação padrão é por <code>ident</code> (brinco). Chips UI: 🔢 Brinco, ⚖️ Peso, 📅 Idade, 📋 Lote.</p>
+</div>
+<div class="card">
+  <h3>calcIdade(nascimento)</h3>
+  <pre><code>function calcIdade(nasc) {
+  const diff = TODAY - new Date(nasc)
+  const dias = Math.floor(diff / 86400000)
+  if (dias < 30) return `${dias} dias`
+  const meses = Math.floor(dias / 30)
+  if (meses < 24) return `${meses} meses`
+  const anos = Math.floor(dias / 365)
+  return `${anos} anos`
+}</code></pre>
+  <p><code>TODAY</code> é estável (não recria a cada render). Usa <code>new Date().toISOString().slice(0,10)</code> computado uma vez.</p>
+</div>
+<div class="card">
+  <h3>Fases dos bezerros</h3>
+  <pre><code>if (dias <= 7)  fase = '🟢 Neonato'
+if (dias > 7 && dias <= 90)  fase = '🔵 Lactente'
+if (dias > 90 && dias <= 210) fase = '🟡 Desmame'
+if (dias > 210) fase = '🟠 Recria'</code></pre>
+</div>
+<div class="card">
+  <h3>Venda de animal</h3>
+  <p>Ao vender um animal, o preço é distribuído em 12 parcelas mensais iguais no financeiro, tipo <code>'fazenda'</code>, categoria <code>'Venda de gado'</code>, a partir de janeiro do ano da venda. Se a data da venda não for informada, usa a data atual como fallback.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="pastos">
+<div class="section-header"><div class="section-icon green">🌿</div><h2>Pastos — Estrutura</h2></div>
+<div class="card">
+  <h3>Atributos de um pasto</h3>
+  <pre><code>{
+  id, nome, tamanho, unidade,   // ha, ac, m²
+  capacidade, status,            // ocupado, vazio, descanso, degradado, recuperando
+  estado,                        // bom, médio, ruim, muito_ruim
+  taxaSal,                       // g/animal/dia
+  salEstoque,                    // kg totais atuais
+  salHistorico,                  // [{sacos, data}] registros de reposição
+  obs, areaM2, pastagem, adubacaoId
+}</code></pre>
+</div>
+<div class="card">
+  <h3>Cálculo de sal restante (calcSal)</h3>
+  <pre><code>function calcSal(pasto, animaisNoPasto) {
+  const consumoDia = animaisNoPasto.length * (pasto.taxaSal || 225) / 1000 // kg/dia
+  const reposto = (pasto.salHistorico || []).reduce((sum, r) => sum + r.sacos * 30, 0)
+  const estoque = reposto - consumoDia * diasDesdeUltimaReposicao
+  return { estoque, dias: estoque / consumoDia }
+}
+// Na prática, salEstoque é salvo como atributo do pasto e decrementado manualmente
+</code></pre>
+  <p>Se <code>salEstoque / consumoDia &lt; 7</code>, o alerta de "sal baixo" é disparado no Dashboard.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="financeiro">
+<div class="section-header"><div class="section-icon blue">💰</div><h2>Financeiro — Fluxo Contábil</h2></div>
+<div class="card">
+  <h3>Estrutura de transação</h3>
+  <pre><code>{
+  id, tipo: 'fazenda'|'pessoal',
+  entrada: true | false,   // true = receita, false = despesa
+  categoria, descricao, valor, data
+}</code></pre>
+  <h3>Categorias</h3>
+  <p><strong>Fazenda Receitas:</strong> Venda de gado, Leite, Arrendamento, Outros</p>
+  <p><strong>Fazenda Despesas:</strong> Alimentação, Medicamento, Sal Mineral, Manutenção, Combustível, Mão de Obra, Animal, Pasto, Outros</p>
+  <p><strong>Pessoal Receitas:</strong> Salário, Freelance, Investimentos, Aluguel, Outros</p>
+  <p><strong>Pessoal Despesas:</strong> Moradia, Alimentação, Transporte, Saúde, Educação, Lazer, Vestuário, Assinaturas, Outros</p>
+  <h3>Gráfico de barras</h3>
+  <p>Exibe entradas vs saídas dos últimos 6 meses em barras lado a lado, via <code>&lt;div&gt;</code> com altura proporcional (<code>max(4, valor/maxValor*100)px</code>).</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="tools">
+<div class="section-header"><div class="section-icon green">🧮</div><h2>Ferramentas — Algoritmos</h2></div>
+<div class="card">
+  <p>Todas as calculadoras em <code>Calculadoras.jsx</code> — estado local apenas, nenhuma persistência.</p>
+  <h3>UA (Unidade Animal)</h3>
+  <pre><code>totalUA = numAnimais * pesoMedio / 450
+  // 1 UA = 450 kg</code></pre>
+  <h3>Lotação</h3>
+  <pre><code>Presets: Extensivo 0.5, Médio 1.0, Intensivo 1.5, Super-intensivo 2.5 UA/ha
+Resultado = area * taxa (em UA)</code></pre>
+  <h3>Sal Mineral</h3>
+  <pre><code>consumoTotal = numAnimais * (taxa_g_dia || 35) * dias / 1000  // kg
+sacos = Math.ceil(consumoTotal / 30)  // sacos de 30 kg</code></pre>
+  <h3>GMD (Ganho Médio Diário)</h3>
+  <pre><code>GMD = (pesoFinal - pesoInicial) / dias
+Classificação:
+  GMD >= 1.0  → ✅ Excelente
+  GMD >= 0.5  → ⚠️ Médio
+  GMD < 0.5   → 🚨 Abaixo do esperado</code></pre>
+  <h3>Peso Fita (Torácica)</h3>
+  <pre><code>Peso (kg) = (circunferencia_cm * 2.5) - 150  // faixa ±10%
+Inclui tutorial visual de como medir o tórax atrás da cernelha.</code></pre>
+  <h3>Pop. Plantas</h3>
+  <p>Dois modos:</p>
+  <ul>
+    <li><strong>Linear (milho):</strong> metros = area * (10000/espacamento) ; pop = plantas * metros ; adubo = (dose_g_m * numLinhas) / (espacamento * 0.01)</li>
+    <li><strong>Lanço (capim):</strong> sementes = area * taxa_kg_ha / 1000</li>
+  </ul>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="confinamento">
+<div class="section-header"><div class="section-icon purple">🏚️</div><h2>Confinamento — Cálculos</h2></div>
+<div class="card">
+  <p>Arquivo: <code>tools/Confinamento.jsx</code></p>
+  <h3>Dieta fixa (DIETA constant)</h3>
+  <pre><code>const DIETA = [
+  { nome: 'Silagem', pct: 55, ms: 33, pb: 7, ndt: 62 },
+  { nome: 'Fubá', pct: 22, ms: 87, pb: 9, ndt: 86 },
+  { nome: 'Farelo Soja', pct: 13, ms: 88, pb: 46, ndt: 80 },
+  { nome: 'Sal Proteinado', pct: 7, ms: 90, pb: 35, ndt: 55 },
+  { nome: 'Núcleo Mineral', pct: 3, ms: 95, pb: 0, ndt: 0 },
+]
+// MS = matéria seca %, PB = proteína bruta %, NDT = nutrientes digestíveis totais %</code></pre>
+</div>
+<div class="card">
+  <h3>GMD Presets</h3>
+  <pre><code>const GMD_PRESETS = [
+  { label: 'Baixo (0,8 kg/dia)', value: 0.8 },
+  { label: 'Médio (1,2 kg/dia)', value: 1.2 },
+  { label: 'Alto (1,6 kg/dia)', value: 1.6 },
+]</code></pre>
+</div>
+<div class="card">
+  <h3>Algoritmo principal</h3>
+  <ol>
+    <li>Consumo MS = pesoMedio * 0.025 (2.5% do peso vivo/dia) × numAnimais</li>
+    <li>Consumo/dia por ingrediente = consumoMS × (pct/100)</li>
+    <li>GanhoTotal = GMD × dias</li>
+    <li>PesoSaida = pesoInicial + ganhoTotal</li>
+    <li>@ arroba = peso / 30</li>
+    <li>Conversão alimentar (CA) = consumoMS / GMD</li>
+    <li>Alerta se GMD &lt; 0.8 kg/dia</li>
+  </ol>
+  <p>Gráfico de evolução de peso com marcador de meta 🎯. Lista de compras com quantidades totais e número de sacos por ingrediente.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="adubacao">
+<div class="section-header"><div class="section-icon green">🌱</div><h2>Adubação — Método Embrapa</h2></div>
+<div class="card">
+  <p>Arquivo: <code>tools/Adubacao.jsx</code></p>
+  <h3>calcRecomendacao(solo) — Algoritmo completo</h3>
+  <pre><code>function calcRecomendacao(s) {
+  // 1. Diagnóstico
+  const pH_class = s.ph &lt; 5.0 ? '🚨 Muito baixo' : s.ph &lt; 5.5 ? '⚠️ Baixo' : ... '✅ Ideal'
+  const P_class  = interpretaFosforo(s.p, s.textura)
+  const K_class  = s.k &lt; 60  ? '🚨 Baixo' : s.k &lt; 120 ? 'Médio' : '✅ Alto'
+  const CaMg_class = s.ca_mg &lt; 3 ? '🚨 Baixo' : s.ca_mg &lt; 5 ? 'Médio' : '✅ Alto'
+  const V_class = calcV(s)  // V% = (SB / CTC) * 100
+  const MO_class = s.mo &lt; 2 ? '🚨 Baixo' : s.mo &lt; 4 ? 'Médio' : '✅ Alto'
+
+  // 2. Calagem (NC)
+  const NC = (V_desejado - V_atual) * SB / 100  // t/ha
+  const sacosCal = Math.ceil(NC / 0.05)  // sacos de 50 kg (PRNT 80)
+
+  // 3. Nutrientes plantio
+  // P2O5 baseado em P remanescente e teor de P
+  const P2O5_plantio = calcP2O5(s)  // kg/ha
+  const K2O_plantio = s.k &lt; 60 ? 60 : s.k &lt; 120 ? 40 : 20  // kg/ha
+  const N_plantio = 20  // kg/ha padrão
+
+  // 4. Seleção da fórmula NPK
+  let formula = '8-28-16'
+  if (P2O5_plantio > 60 && K2O_plantio > 30) formula = '20-05-20'
+  else if (P2O5_plantio <= 60 && K2O_plantio <= 30) formula = '4-14-8'
+  // kg/ha da fórmula = min(P2O5_plantio / pctP, K2O_plantio / pctK)
+
+  // 5. Cobertura nitrogenada
+  const N_cobertura = s.cultura === 'milho' ? 120 : 80  // kg N/ha
+  const ureia = N_cobertura / 0.47  // kg/ha (ureia protegida 47% N)
+  const ajusteMO = s.mo > 4 ? 0.8 : s.mo > 2 ? 1.0 : 1.2
+  const ajustePh = s.ph &lt; 5.5 ? 1.3 : 1.0
+  const ureiaFinal = ureia * ajusteMO * ajustePh
+}</code></pre>
+  <p>Cada análise é salva em <code>adubacao[]</code> com <code>id, data, pastoId, solo (inputs), resultado (outputs)</code>. Pode ser vinculada a um pasto. Histórico completo com relatório PDF-like.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="curral">
+<div class="section-header"><div class="section-icon orange">🏚️</div><h2>Curral — Manejo em Lote</h2></div>
+<div class="card">
+  <p>Arquivo: <code>tools/CurralTool.jsx</code></p>
+  <p>Funcionalidade completa para aplicar manejo sanitário a múltiplos animais simultaneamente.</p>
+  <h3>Fluxo</h3>
+  <ol>
+    <li><strong>Configuração:</strong> tipo de manejo, dose, unidade, data, observação</li>
+    <li><strong>Seleção de animais:</strong> filtro por pasto (inclui "Todos os pastos") + busca por brinco</li>
+    <li><strong>Checkbox:</strong> cada animal tem checkbox individual; botões "Marcar todos" / "Desmarcar todos"</li>
+    <li><strong>SetChecked:</strong> usa <code>new Set(prev)</code> para toggle eficiente</li>
+    <li><strong>Salvar:</strong> cria UM único registro de manejo com <code>animaisIds: [...checked]</code></li>
+  </ol>
+  <pre><code>const [checked, setChecked] = useState(new Set())
+function toggle(id) {
+  setChecked(prev => {
+    const next = new Set(prev)
+    next.has(id) ? next.delete(id) : next.add(id)
+    return next
+  })
+}</code></pre>
+  <p><strong>Tipos de manejo:</strong> Ivermectina 💉, Fio do Lombo 🩺, Antibiótico 💊, Vacina 🩹, Vermífugo 🔬, Outro ✚.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="mapa">
+<div class="section-header"><div class="section-icon green">🗺️</div><h2>Mapa Medição (Leaflet)</h2></div>
+<div class="card">
+  <p>Arquivo: <code>widgets/MapaMedicao.jsx</code></p>
+  <p>Leaflet + ESRI World Imagery (satélite) para medir áreas de pasto por clique.</p>
+  <h3>Fluxo</h3>
+  <ol>
+    <li>Inicializa mapa centrado em Baependi/MG</li>
+    <li>Layer ESRI: <code>https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}</code></li>
+    <li>Cada clique adiciona um marcador e estende a polyline/polígono</li>
+    <li>Para fechar o polígono, toque em "🔒 Fechar polígono" (conecta último ao primeiro)</li>
+    <li>Cálculo de área: adaptado de <code>turf.js</code> para cálculo geodésico (projeção equal-area)</li>
+    <li>Resultado exibido em m², ha e acres</li>
+    <li>Botão "📍 Centralizar" volta para Baependi</li>
+    <li>Botão "🗑️ Limpar" reinicia o polígono</li>
+    <li>Botão "↩️ Desfazer" remove o último ponto</li>
+    <li>Botão "Aplicar" retorna a área para o formulário de cadastro de pasto</li>
+  </ol>
+  <p><strong>Nota:</strong> O Leaflet CSS e JS são carregados via CDN no <code>index.html</code>.</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="clima">
+<div class="section-header"><div class="section-icon blue">🌤️</div><h2>Clima — Open-Meteo API</h2></div>
+<div class="card">
+  <p>Arquivo: <code>widgets/ClimaWidget.jsx</code></p>
+  <p>Widget de previsão do tempo gratuito (sem chave de API) para Baependi/MG (lat -21.96, lon -44.89).</p>
+  <h3>Dados carregados</h3>
+  <ul>
+    <li><strong>Atual:</strong> temperatura, sensação térmica, precipitação, umidade, velocidade do vento</li>
+    <li><strong>7 dias:</strong> previsão diária (temp max/min, precipitação, código climático)</li>
+    <li><strong>15 dias:</strong> previsão estendida</li>
+    <li><strong>Acumulado mensal:</strong> soma de precipitação do mês</li>
+  </ul>
+  <h3>API endpoints</h3>
+  <pre><code>https://api.open-meteo.com/v1/forecast?latitude=-21.96&longitude=-44.89&...
+  &current=temperature_2m,apparent_temperature,precipitation,relative_humidity_2m,wind_speed_10m,weather_code
+  &daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code
+  &timezone=America/Sao_Paulo
+  &forecast_days=16</code></pre>
+  <p>Ícones climáticos: mapeamento de <code>weather_code</code> (WMO) para emoji (☀️, 🌤️, ☁️, 🌧️, ⛈️, ❄️, 🌫️).</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
+<div class="section" id="manual">
+<div class="section-header"><div class="section-icon purple">📖</div><h2>Sistema de Ajuda</h2></div>
+<div class="card">
+  <p>Arquivo: <code>pages/Ajuda.jsx</code></p>
+  <p>Carrega HTML estático em iframe. Os manuais ficam em <code>public/manual-usuario.html</code> e <code>public/manual-dev.html</code>.</p>
+  <pre><code>function Ajuda({ viewer, setViewer }) {
+  const src = viewer === 'dev'
+    ? './manual-dev.html'
+    : './manual-usuario.html'
+  return (
+    &lt;div className="page"&gt;
+      &lt;PgH title="Ajuda" onBack={() => ...}&gt;
+        &lt;Btn onClick={() => setViewer('usuario')} /&gt;
+        &lt;Btn onClick={() => setViewer('dev')} /&gt;
+      &lt;/PgH&gt;
+      &lt;iframe src={src} style={{width:'100%',height:'100%',border:'none'}} /&gt;
+    &lt;/div&gt;
+  )
+}</code></pre>
+  <p><strong>Nota importante:</strong> Os arquivos HTML precisam estar em <code>public/</code> porque o Vite não serve arquivos estáticos da raiz do projeto. O iframe carrega via <code>src="./manual-usuario.html"</code> (caminho relativo ao index.html servido).</p>
+</div>
+</div>
+
+<!-- ============================================================ -->
 <div class="section" id="utils">
-  <div class="section-header">
-    <div class="section-icon purple">🔧</div>
-    <h2>utils.js — Utilitários Puros</h2>
-  </div>
-  <div class="card">
-    <p><strong>Foco:</strong> Funções sem efeito colateral, zero dependências. Testáveis isoladamente.</p>
-    <ul>
-      <li><strong><code>TODAY</code></strong> — <code>new Date().toISOString().slice(0, 10)</code> → "2026-06-01".</li>
-      <li><strong><code>sub(date, n)</code></strong> — Subtrai n dias de uma data ISO.</li>
-      <li><strong><code>fmtD(date)</code></strong> — ISO → "DD/MM/AAAA".</li>
-      <li><strong><code>fmtR(value)</code></strong> — Number → "R$ 1.234,56".</li>
-      <li><strong><code>calcIdade(dataNasc)</code></strong> — Retorna <code>{ label, dias, meses, anos, cor }</code>. Faixas: neonato (&lt;7d), &lt;30d, &lt;12m, ≥12m. Cores variam por faixa.</li>
-      <li><strong><code>calcSal(pastoId, nAnimais, registros, taxa)</code></strong> — Simula consumo diário de sal (padrão 225g/animal/dia), calcula kg restante e dias de estoque. Retorna <code>{ kg, dias, cd, alerta }</code>. Alerta se estoque &lt; 7 dias.</li>
-    </ul>
-  </div>
+<div class="section-header"><div class="section-icon blue">🔧</div><h2>Utilitários (utils.js)</h2></div>
+<div class="card">
+  <pre><code>const TODAY = new Date().toISOString().slice(0,10)  // "2026-06-02" (fixo)
+
+function fmtD(data)  → formata data ISO para "dd/mm/aaaa"
+function fmtR(val)   → formata número como moeda "R$ 1.234,56"
+function sub(s, len) → trunca string para len caracteres + "..."
+
+const calcIdade   → vide seção Animais
+const calcSal     → vide seção Pastos</code></pre>
+</div>
 </div>
 
-<!-- WIDGETS -->
-<div class="section" id="widgets">
-  <div class="section-header">
-    <div class="section-icon blue">🌤️</div>
-    <h2>widgets.jsx — Componentes Complexos</h2>
-  </div>
-  <div class="card">
-    <h3>ClimaWidget <code>→ Open-Meteo</code></h3>
-    <p><strong>Função:</strong> Exibe previsão do tempo para Baependi/MG (<code>lat -22, long -44</code>) via API gratuita Open-Meteo.</p>
-    <p><strong>Dados:</strong> Temperatura atual, código de condição (weathercode), precipitação, umidade. Previsão 7 dias + 15 dias. Gráfico de chuva acumulada mensal.</p>
-    <p><strong>Endpoint:</strong> <code>api.open-meteo.com/v1/forecast?latitude=-22&longitude=-44&current=temperature_2m,weathercode,precipitation&daily=temperature_2m_max,precipitation_sum,weathercode&timezone=America/Sao_Paulo</code></p>
-  </div>
-  <div class="card">
-    <h3>CalendarView <code>→ Calendário Mensal</code></h3>
-    <p><strong>Função:</strong> Grade mensal com dots coloridos indicando eventos por dia: nascimentos (🐮), movimentações (🔄), manejos (💉), finanças (💰). Toque em um dia para ver a lista de eventos.</p>
-    <p><strong>Arquitetura:</strong> Constrói grid de 6×7 dias, calcula primeiro dia do mês com <code>getDay()</code>, preenche cells. Usa <code>useMemo</code> para agrupar eventos por data.</p>
-  </div>
-  <div class="card">
-    <h3>MapaMedicao <code>→ Leaflet + ESRI</code></h3>
-    <p><strong>Função:</strong> Mapa de satélite para medir áreas de pasto. Cliques registram vértices; o app desenha o polígono e calcula a área em hectares usando projeção geodésica.</p>
-    <p><strong>Tiles:</strong> <code>server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}</code></p>
-  </div>
+<!-- ============================================================ -->
+<div class="section" id="pwa">
+<div class="section-header"><div class="section-icon green">📲</div><h2>PWA e Meta Tags</h2></div>
+<div class="card">
+  <p>Configurado em <code>index.html</code>:</p>
+  <ul>
+    <li><code>manifest.json</code> — PWA installable</li>
+    <li><code>apple-mobile-web-app-capable</code> — fullscreen no iOS</li>
+    <li><code>apple-mobile-web-app-status-bar-style</code> — <code>black-translucent</code></li>
+    <li><code>mobile-web-app-capable</code> — Android fullscreen</li>
+    <li><code>theme-color</code> — <code>#55604D</code> (verde fazenda)</li>
+    <li><code>msapplication-TileImage</code> / <code>TileColor</code></li>
+    <li>Apple touch icons: <code>icon-152x152.png</code>, <code>icon-167x167.png</code>, <code>icon-180x180.png</code></li>
+    <li><code>service-worker.js</code> — cache de assets para PWA</li>
+    <li>Favicon: <code>favicon.ico</code></li>
+    <li>Splash screen: <code>&lt;div id="splash"&gt;</code> com logo + spinner, oculto via CSS <code>#root:not(:empty) + #splash { display: none }</code></li>
+  </ul>
 </div>
-
-<!-- ALGORITMOS -->
-<div class="section" id="algoritmos">
-  <div class="section-header">
-    <div class="section-icon orange">📐</div>
-    <h2>Algoritmos e Cálculos</h2>
-  </div>
-  <div class="card">
-    <h3><code>calcIdade(dataNasc)</code></h3>
-    <pre>diff = Date.now() - new Date(dataNasc)
-dias  = floor(diff / 86400000)   <span class="cm">// ms → dias</span>
-meses = floor(dias / 30.44)       <span class="cm">// mês civil médio</span>
-anos  = floor(dias / 365.25)      <span class="cm">// ano trópico</span>
-
-<span class="cm">// Label por faixa:</span>
-dias &lt; 1   → "Recém-nascido"
-dias &lt; 7   → "X dia(s)"
-dias &lt; 30  → "X dias"
-meses &lt; 12 → "Ym Zd"
-else       → "Xa Ym"</pre>
-  </div>
-  <div class="card">
-    <h3><code>calcSal(pid, n, regs, tx)</code></h3>
-    <p>Simula consumo diário de sal e calcula estoque em kg:</p>
-    <ul>
-      <<li>Ordena registros por data crescente</li>
-      <li>Para cada registro: subtrai consumo desde o registro anterior, adiciona sacos×30 kg</li>
-      <li>Subtrai consumo desde o último registro até hoje</li>
-      <li><code>alerta = kg &lt; cd × 7</code> (menos de 7 dias de estoque)</li>
-    </ul>
-  </div>
-  <div class="card">
-    <h3>Cálculos financeiros</h3>
-    <p><strong>Venda de animal:</strong> <code>valorMensal = preco / 12</code>. Gera 12 transações mensais a partir de janeiro do ano da venda. A última transação recebe o centavo residual (<code>preco - valorMes × 11</code>).</p>
-    <p><strong>Consolidação mensal:</strong> Filtra registros por <code>data.startsWith(ano-mes)</code>, soma <code>valor</code> agrupado por <code>tipo</code> (receita/despesa).</p>
-  </div>
-</div>
-
-<!-- SERVIÇOS -->
-<div class="section" id="servicos">
-  <div class="section-header">
-    <div class="section-icon blue">🌐</div>
-    <h2>Serviços Externos</h2>
-  </div>
-  <div class="card">
-    <div class="info-row"><span class="info-label">Supabase</span><span class="info-value">PostgreSQL gerenciado — persistência + auth</span></div>
-    <div class="info-row"><span class="info-label">Open-Meteo</span><span class="info-value">API de clima gratuita — sem chave</span></div>
-    <div class="info-row"><span class="info-label">ESRI ArcGIS</span><span class="info-value">Tiles de satélite — Leaflet + World_Imagery</span></div>
-    <div class="info-row"><span class="info-label">Vercel</span><span class="info-value">Hosting + CI/CD automático via GitHub</span></div>
-  </div>
-</div>
-
-<!-- DEPLOY -->
-<div class="section" id="deploy">
-  <div class="section-header">
-    <div class="section-icon dark">🚀</div>
-    <h2>Deploy</h2>
-  </div>
-  <div class="card">
-    <h3>Fluxo de publicação</h3>
-    <pre>npm run dev          <span class="cm"># teste local em :5173</span>
-git add . && git commit -m "descrição"
-git push             <span class="cm"># → GitHub → Vercel (build automático ~60s)</span></pre>
-  </div>
-  <div class="card">
-    <h3>Variáveis de ambiente (Vercel)</h3>
-    <pre>VITE_SB_URL      = https://xxxx.supabase.co
-VITE_SB_ANON_KEY = eyJhbGci...</pre>
-    <p><code>.env.local</code> para dev; painel Vercel > Settings > Environment Variables para produção.</p>
-  </div>
-  <div class="tip warn">
-    <strong>⚠️ Segurança:</strong> <code>.env.local</code> nunca deve ser commitado. A anon key é pública por design (RLS protege os dados). Service role key jamais deve estar no bundle.
-  </div>
 </div>
 
 <div class="footer">
-  Fazendinha App <span>v11.0</span> · Arquitetura por Jblleite · 2026
+  Fazendinha App <span>v11.0</span> · Repositório: <span>github.com/jblleite/fazendinha</span><br/>
+  Documentação gerada por análise de código-fonte · 2026
 </div>
 
 </body>
