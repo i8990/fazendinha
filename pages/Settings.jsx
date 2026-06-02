@@ -80,38 +80,38 @@ function SobreCard() {
   const T = useT()
   const [expandido, setExpandido] = useState(false)
   return <>
-    <div style={{ fontWeight: 700, color: T.text, marginBottom: 8 }}>ℹ️ Sobre</div>
+    <div style={{ fontWeight: 700, color: T.text, marginBottom: 4 }}>ℹ️ Sobre</div>
     <div style={{ fontSize: 13, color: T.gray, lineHeight: 1.8 }}>
-      FazendinhaApp <span style={{ fontWeight: 700, color: T.green }}>v11.0</span><br />
-      Gestão rural offline — pastagens, rebanho e financeiro.<br />
-      Baependi, MG — Open-Meteo · Satélite ESRI · Supabase.<br />
-      <span style={{ fontWeight: 700, color: T.green }}>Desenvolvido por Jblleite</span>
+      FazendinhaApp <span style={{ fontWeight: 700, color: T.green }}>v11.0</span> — <span style={{ fontWeight: 500, color: T.text }}>Jblleite</span>
+    </div>
+    <div style={{ fontSize: 12, color: T.gray, lineHeight: 1.6, marginTop: 4 }}>
+      React 18 · Supabase · Open-Meteo · Leaflet/ESRI · Vite 5 · Vercel · Baependi, MG
     </div>
     <button
       onClick={() => setExpandido(e => !e)}
       style={{
-        marginTop: 12, background: 'none',
+        marginTop: 10, background: 'none',
         border: `1.5px solid ${T.border}`, borderRadius: 9,
-        padding: '7px 14px', fontSize: 12, fontWeight: 700,
+        padding: '6px 12px', fontSize: 12, fontWeight: 700,
         color: T.green, cursor: 'pointer',
         display: 'flex', alignItems: 'center', gap: 6
       }}
     >
-      📖 {expandido ? 'Ocultar' : 'Ver'} estrutura do app
+      📖 {expandido ? 'Ocultar' : 'Ver'} estrutura
       <span style={{ fontSize: 10, transition: 'transform .2s', display: 'inline-block', transform: expandido ? 'rotate(90deg)' : 'none' }}>›</span>
     </button>
     {expandido && (
       <div style={{
-        marginTop: 10, background: T.bg, borderRadius: 12,
-        padding: 14, border: `1px solid ${T.border}`,
+        marginTop: 8, background: T.bg, borderRadius: 10,
+        padding: 12, border: `1px solid ${T.border}`,
         fontSize: 12, color: T.text, lineHeight: 2
       }}>
-        <div>📦 <b>Dados</b> — salvos em tempo real no Supabase (cloud), chave por entidade.</div>
-        <div>🌿 <b>Pastos</b> — status, estado, sal mineral e medição por satélite (ESRI).</div>
-        <div>🐄 <b>Animais</b> — ficha individual, movimentação, linhagem e manejos vinculados.</div>
-        <div>💰 <b>Financeiro</b> — caixa mensal com receitas, despesas e saldo consolidado.</div>
-        <div>🧮 <b>Ferramentas</b> — calculadoras de UA, lotação, sal, GMD e adubação (Embrapa).</div>
-        <div>🌱 <b>Adubação</b> — interpreta análise de solo e recomenda produtos e doses por ha.</div>
+        <div>📦 <b>Dados</b> — <span style={{color:T.gray}}>Supabase key-value, fire-and-forget upsert</span></div>
+        <div>🌿 <b>Pastos</b> — <span style={{color:T.gray}}>status, medição satélite, sal mineral</span></div>
+        <div>🐄 <b>Animais</b> — <span style={{color:T.gray}}>ficha, movimentação, manejos, venda (12 meses)</span></div>
+        <div>💰 <b>Financeiro</b> — <span style={{color:T.gray}}>caixa mensal + pessoal, gráfico 6 meses</span></div>
+        <div>🧮 <b>Ferramentas</b> — <span style={{color:T.gray}}>UA, lotação, sal, GMD, adubação Embrapa, confinamento</span></div>
+        <div>🌐 <b>Offline</b> — <span style={{color:T.gray}}>dados sincronizados em tempo real, PWA instalável</span></div>
       </div>
     )}
   </>

@@ -164,7 +164,7 @@ export function AnimalDetailPage({ animal, onBack, animais, pastos, movs, manejo
           <div style={{ fontSize: 12, color: T.gray }}>O valor será distribuído em 12 meses no financeiro</div>
         </div>
         <Inp label="Preço de Venda (R$) *" value={venda.preco} onChange={v => setVenda(e => ({ ...e, preco: v }))} type="number" placeholder="0,00" />
-        <Inp label="Data da Venda" value={venda.data} onChange={v => setVenda(e => ({ ...e, data: v }))} type="date" />
+        <Inp label="Data da Venda" value={venda.data || TODAY} onChange={v => setVenda(e => ({ ...e, data: v }))} type="date" />
         <Inp label="Observação" value={venda.obs} onChange={v => setVenda(e => ({ ...e, obs: v }))} placeholder="Comprador, motivo..." />
         <Btn l="✅ Confirmar Venda" color={T.orange} onClick={vender} dis={!venda.preco} />
       </Modal>
@@ -219,6 +219,7 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
   const [aba,          setAba]         = useState('rebanho')
   const [addM,         setAddM]        = useState(false)
   const [busca,        setBusca]       = useState('')
+  const [sortBy,       setSortBy]      = useState('ident')
   const [detailAnimal, setDetailAnimal] = useState(null)
 
   const vacas   = animais.filter(a => a.status === 'ativo' && (a.cat === 'Vaca' || a.cat === 'Novilha'))
@@ -229,15 +230,27 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
   const rebanho  = ativos.filter(a => a.cat !== 'Bezerro')
   const bezerros = ativos.filter(a => a.cat === 'Bezerro')
 
-  const sortIdent = arr => [...arr].sort((a, b) => {
-    const numA = /^\d+$/.test(a.ident), numB = /^\d+$/.test(b.ident)
-    if (numA !== numB) return numA ? 1 : -1
-    if (numA && numB) return +a.ident - +b.ident
-    return a.ident.localeCompare(b.ident)
-  })
-  const filtrR = sortIdent(busca ? rebanho.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase()) || a.lote.toLowerCase().includes(busca.toLowerCase())) : rebanho)
+  const sortAnimals = arr => {
+    const sorted = [...arr]
+    switch (sortBy) {
+      case 'peso':
+        return sorted.sort((a, b) => (b.peso || 0) - (a.peso || 0))
+      case 'dataNasc':
+        return sorted.sort((a, b) => (b.dataNasc || '').localeCompare(a.dataNasc || ''))
+      case 'lote':
+        return sorted.sort((a, b) => a.lote?.localeCompare(b.lote || '') || a.ident.localeCompare(b.ident))
+      default:
+        return sorted.sort((a, b) => {
+          const numA = /^\d+$/.test(a.ident), numB = /^\d+$/.test(b.ident)
+          if (numA !== numB) return numA ? 1 : -1
+          if (numA && numB) return +a.ident - +b.ident
+          return a.ident.localeCompare(b.ident)
+        })
+    }
+  }
+  const filtrR = sortAnimals(busca ? rebanho.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase()) || a.lote.toLowerCase().includes(busca.toLowerCase())) : rebanho)
   const filtrB = busca ? bezerros.filter(a => a.ident.toLowerCase().includes(busca.toLowerCase())) : bezerros
-  const bezOrd = sortIdent(filtrB)
+  const bezOrd = sortAnimals(filtrB)
 
   const nomePasto = id => pastos.find(p => p.id === id)?.nome || '—'
   const cI = { Boi: '🐂', Vaca: '🐄', Novilha: '🐄', Bezerro: '🐮', Touro: '🐂' }
@@ -345,6 +358,22 @@ export function Animais({ animais, setAnimais, pastos, setPastos, movs, setMovs,
           <input value={busca} onChange={e => setBusca(e.target.value)} placeholder="🔍 Buscar..."
             style={{ width: '100%', border: `1.5px solid ${T.border}`, borderRadius: 12, padding: '11px 13px', fontSize: 14, outline: 'none', background: T.card, color: T.text, marginBottom: 11 }}
           />
+
+          <div style={{ display: 'flex', gap: 6, marginBottom: 11, overflowX: 'auto' }}>
+            {[
+              { v: 'ident', l: '🔢 Brinco' },
+              { v: 'peso', l: '⚖️ Peso' },
+              { v: 'dataNasc', l: '📅 Idade' },
+              { v: 'lote', l: '📋 Lote' },
+            ].map(opt => (
+              <button key={opt.v} onClick={() => setSortBy(opt.v)} style={{
+                border: `1.5px solid ${sortBy === opt.v ? T.green : T.border}`,
+                borderRadius: 16, padding: '5px 12px', fontSize: 12, fontWeight: 600,
+                cursor: 'pointer', background: sortBy === opt.v ? T.gPale : T.card,
+                color: sortBy === opt.v ? T.green : T.gray, whiteSpace: 'nowrap',
+              }}>{opt.l}</button>
+            ))}
+          </div>
 
           {aba === 'rebanho' && <>
             {filtrR.map(a => (
